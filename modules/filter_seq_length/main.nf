@@ -1,11 +1,4 @@
-// filter_seq_length
-params.filter_seq_length = {}
-params.filter_seq_length.method = "length"
-params.filter_seq_length.nproc = params.nproc
-params.filter_seq_length.q = ""
-params.filter_seq_length.n_length = "750"
-params.filter_seq_length.n_missing = ""
-params.filter_seq_length.fasta = ""
+
 
 process filter_seq_length {
 
@@ -15,7 +8,7 @@ process filter_seq_length {
 		tuple val(name), file(reads)
 
 	output:
-		tuple val(name), file("*_${method}-pass.fast*"), emit: output  					// for FastQC, MaskPrimers_CPRIMERS
+		tuple val(name), file("${reads.getBaseName()}_${method}-pass.fast*"), emit: output  					// for FastQC, MaskPrimers_CPRIMERS
 		tuple val(name), file("FS_*"), emit: log_file						// for parse_log
 		tuple val(name), file("*_${method}-fail.fast*") optional true  		// fail file
 		tuple val(name), file("out*") optional true							// script output

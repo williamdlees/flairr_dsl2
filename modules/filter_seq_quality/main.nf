@@ -1,11 +1,4 @@
 // filter_seq_quality
-params.filter_seq_quality = {}
-params.filter_seq_quality.method = "quality"
-params.filter_seq_quality.nproc = params.nproc
-params.filter_seq_quality.q = "20"
-params.filter_seq_quality.n_length = ""
-params.filter_seq_quality.n_missing = ""
-params.filter_seq_quality.fasta = ""
 
 process filter_seq_quality 
 {
@@ -14,7 +7,7 @@ process filter_seq_quality
         tuple val(name), path(reads)
 
     output:
-        tuple val(name), file("*_${method}-pass.fast*"), emit: output       // reads passed to next stage
+        tuple val(name), file("${reads.getBaseName()}_${method}-pass.fast*"), emit: output       // reads passed to next stage
         tuple val(name), file("FS_*"), emit: log_file                     // log file passed to parse_log 
         tuple val(name), file("*_${method}-fail.fast*") optional true     // failed reads
         tuple val(name), file("out*") optional true                       // FilterSeq output

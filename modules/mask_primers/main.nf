@@ -1,3 +1,5 @@
+
+
 process MaskPrimers {
 
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_primers-fail.fastq$/) "failed_reads/$filename"}

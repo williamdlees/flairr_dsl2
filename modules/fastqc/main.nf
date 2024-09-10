@@ -1,3 +1,5 @@
+
+
 process FastQC {
 
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html|zip)$/) "reports/$filename"}
