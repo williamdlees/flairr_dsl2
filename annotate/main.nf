@@ -35,8 +35,8 @@ workflow {
 	igblast(seqs, make_blast_db_v.out.blastdb, make_blast_db_d.out.blastdb, make_blast_db_j.out.blastdb, make_blast_db_c.out.blastdb, params.aux, params.ndm)
 	makedb(seqs, igblast.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
 	collapse_annotations(makedb.out.annotations, "")
-	create_germlines_pass1(collapse_annotations.out.output, params.v_ref, params.d_ref, params.j_ref)
+	create_germlines_pass1(collapse_annotations.out.output, params.v_ref, params.d_ref, params.j_ref, "false")
 	define_clones(create_germlines_pass1.out.output)
-	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref)
+	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true")
 	single_clone_representative(create_germlines_pass2.out.output)
 }

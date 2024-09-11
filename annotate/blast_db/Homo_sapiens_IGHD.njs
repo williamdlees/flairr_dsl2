@@ -6,7 +6,7 @@
   "description": "tmp_germline.fasta",
   "number-of-letters": 790,
   "number-of-sequences": 33,
-  "last-updated": "2024-09-10T12:19:00",
+  "last-updated": "2024-09-10T17:20:00",
   "number-of-volumes": 1,
   "bytes-total": 52882,
   "bytes-to-cache": 730,

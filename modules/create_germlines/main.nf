@@ -7,6 +7,7 @@ process create_germlines {
 		path(v_germline_file)
 		path(d_germline_file)
 		path(j_germline_file)
+		val cloned
 
 	output:
 		path("*_germ-pass.tsv"), emit: output
@@ -15,7 +16,6 @@ process create_germlines {
 		failed = params.create_germlines.failed
 		format = params.create_germlines.format
 		g = params.create_germlines.g
-		cloned = params.create_germlines.cloned
 		seq_field = params.create_germlines.seq_field
 		v_field = params.create_germlines.v_field
 		d_field = params.create_germlines.d_field
