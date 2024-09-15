@@ -1,0 +1,108 @@
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+
+plot_titles <- c("UMI")
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("align_size", 
+        paste("Histogram of UMI read group sizes (reads per UMI). The x-axis indicates the number of reads in a UMI group and the y-axis is the 
+        number of UMI groups with that size."))
+
+```
+
+```{r, echo=FALSE}
+#' Plot AlignSets log table
+#' 
+#' @param    ...          data.frames returned by loadLogTable to plot
+#' @param    titles       vector of titles for each log in ...; 
+#'                        if NULL the titles will be empty.
+#' @param    style        type of plot to draw. One of:
+#'                        \itemize{
+#'                          \item \code{"size"}:       distribution of UMI read group sizes
+#'                                                     (number of reads per UMI).
+#'                        }
+#' @param    min_size     minimum UMI count threshold.
+#' @param    sizing       defines the style and sizing of the theme. One of 
+#'                        \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                        sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                        is sized for an interactive session.
+#'                  
+#' @return   NULL
+#' 
+#' @family   pRESTO log plotting functions
+#' 
+#' @export
+plotAlignSets <- function(..., titles=NULL, style=c("size"), min_size=1, sizing=c("figure", "window")) {
+    # Parse arguments
+    style <- match.arg(style)
+    sizing <- match.arg(sizing)
+    log_list <- list(...)
+    log_count <- length(log_list)
+    
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam::baseTheme(sizing=sizing) +
+        theme(legend.position="bottom")
+    
+    # Define plot objects for each log table
+    plot_list <- list()
+    for (i in 1:log_count) {
+        log_df <- log_list[[i]]
+        
+        if (style == "size") {
+            # Check for valid log table
+            check <- alakazam::checkColumns(log_df, c("SEQCOUNT"))
+            if (check != TRUE) { stop(check) }
+            
+            # Plot UMI size distribution
+            seq_tab <- log_df %>%
+                group_by(!!rlang::sym("SEQCOUNT")) %>%
+                dplyr::summarize(UMICOUNT=n())
+            
+            p1 <- ggplot() + 
+                base_theme +
+                ggtitle(titles[i]) +
+                xlab("Reads per UMI") +
+                ylab("Number of UMIs") +
+                scale_y_log10(breaks=trans_breaks("log10", function(x) 10^x),
+                              labels=trans_format("log10", math_format(10^.x))) + 
+                geom_bar(data=seq_tab, aes(x=SEQCOUNT, y=UMICOUNT), stat="identity", 
+                         color=PRESTO_PALETTE["blue"], fill=PRESTO_PALETTE["blue"], 
+                         position="identity", na.rm=TRUE) +
+                geom_vline(xintercept=min_size, color=PRESTO_PALETTE["red"], linewidth=0.5, linetype=3)
+        } else {
+            stop("Nothing to plot.")
+        }
+        
+        plot_list[[i]] <- p1
+    }
+    
+    # Plot
+    do.call(gridPlot, args=c(plot_list, ncol=1))    
+}
+
+
+align_log <- loadLogTable(align_log_file)
+```
+\newpage
+# Multiple Alignment of UMI Read Groups
+
+Reads sharing the same UMI are multiple aligned using the muscle wrapper in the 
+AlignSets tool.
+
+## Reads per UMI
+
+```{r, echo=FALSE}
+plotAlignSets(align_log, style="size", sizing="figure")
+```
+
+`r figures("align_size")`

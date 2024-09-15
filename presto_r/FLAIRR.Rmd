@@ -1,0 +1,76 @@
+---
+header-includes: 
+    \usepackage{titling}
+    \pretitle{
+      \begin{center}
+      \includegraphics[width=\textwidth]{`r system.file("reports/presto.jpg", package="prestor")`}
+      \end{center}
+    }
+    \posttitle{}
+output:
+    pdf_document:
+        toc: true
+    html_document:
+        toc: true
+params:
+    title: "pRESTO FLAIRR Report"
+    sample: "Sample"
+    run: "Run"
+    author: "Author"
+    version: "Version"
+    description: "Description"
+    date: "Date"
+    data: "../processed_samples/1001-667/results/reports"
+
+title: "`r params$title`"
+---
+
+```{r, setup, child="Setup.Rmd"}
+```
+    
+```{r files, echo=FALSE, message=FALSE, results="hide", eval=TRUE}
+
+
+# Function to get file to process, using the toml config
+
+file_config = read.config("../processed_samples/flairr_logs.toml")
+
+get_log_file <- function(phase, config) {
+  for (element in file_config$sample_files) {
+    if (element[1] == phase) {
+      matched_files <- Sys.glob(file.path("../processed_samples/1001-667", element[2]))
+      if (length(matched_files) == 1) {
+        return(matched_files[1])
+      } else {
+        return(NULL)
+      }
+    }
+  }
+  return(NULL)  # Return NULL if the input_name is not found
+}
+
+quality_log_file = get_log_file('filterSeq_quality', file_config)
+length_log_file = get_log_file('filterSeq_length', file_config)
+primer_log_file_1 = get_log_file('maskPrimer_C', file_config)
+primer_log_file_2 = get_log_file('maskPrimer_V', file_config)
+align_log_file = get_log_file('alignSets', file_config)
+```
+
+
+```{r, front, child="Front.Rmd", eval=TRUE}
+```
+
+```{r, quality, child="Single-Quality.Rmd", quality_log_file=quality_log_file, eval=!is.null(quality_log_file)}
+```
+
+```{r, length, child="Single-Length.Rmd", length_log_file=length_log_file, eval=!is.null(length_log_file)}
+```
+
+```{r, length, child="MaskPrimers.Rmd", primer_log_file_1=primer_log_file_1, primer_log_file_2=primer_log_file_2, eval=(!is.null(primer_log_file_1) && !is.null(primer_log_file_2))}
+```
+
+```{r, length, child="Single-Align.Rmd", align_log_file=align_log_file, eval=!is.null(align_log_file)}
+```
+
+
+

@@ -1,0 +1,15 @@
+sample_dirs = "../processed_samples/*"
+sample_files = [
+    ["input", "results/reads/*hifi_reads_*.fastq"],
+    ["filterSeq_quality", "results/reports/*FSQ_table.tab"],
+    ["filterSeq_length", "results/reports/*FSL_table.tab"],
+	["maskPrimer_C", "results/reports/*MPC_table.tab"],
+	["maskPrimer_V", "results/reports/*MPV_table.tab"],
+    ["maskPrimers_extract", "results/reports/*MPE_table.tab"],
+    ["alignSets", "results/reports/AS_R1_*_table.tab"],
+    ["buildConsensus", "results/reports/BC_*_table.tab"],
+    ["unique", "results/reads/*_consensus-pass_reheader_collapse-unique.fasta"],
+    ["unique_atleast_2", "results/reads/*_consensus-pass_reheader_collapse-unique_atleast-2.fasta"],
+    ["makedb_db-pass", "results/alignment/*db-pass.tsv"],
+    ["clone_rep_passed", "results/clones/*rep-passed.tsv"],
+]

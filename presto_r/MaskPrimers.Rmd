@@ -1,0 +1,209 @@
+```{r, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(prestor)
+library(knitr)
+library(captioner)
+library(dplyr)
+
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("primers_count", 
+        paste("Count of assigned primers.",
+              "The bar height indicates the total reads assigned to the given primer,
+               stacked for those under the error rate threshold (Pass) and
+               over the threshold (Fail)."))
+figures("primers_hist", 
+        paste("Distribution of primer match error rates.",
+              "The error rate is the percentage of mismatches between the primer sequence and the 
+               read for the best matching primer. The dotted line indicates the error threshold used."))
+figures("primers_error", 
+        paste("Distribution of primer match error rates,",
+              "broken down by assigned primer. The error rate is the percentage of mismatches between the 
+               primer sequence and the read for the best matching primer. The dotted line indicates the error
+               threshold used."))
+```
+
+```{r, echo=FALSE}
+
+#' Plot MaskPrimer log table
+#'
+#' @param    ...        data.frames returned by loadLogTable to plot.
+#' @param    titles     vector of titles for each log in ...; 
+#'                      if NULL the titles will be empty.
+#' @param    style      type of plot to draw. One of:
+#'                      \itemize{
+#'                        \item \code{"histogram"}:  total error distribution
+#'                        \item \code{"count"}:      count of matches for each primer
+#'                        \item \code{"error"}:      error distributions for each primer
+#'                        \item \code{"position"}:   distribution of start positions by primer
+#'                                                   for matches >= max_error.
+#'                      }
+#' @param    max_error  error threshold to used to determing whether a primer match is valid.
+#' @param    sizing     defines the style and sizing of the theme. One of 
+#'                      \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                      sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                      is sized for an interactive session.
+#'                  
+#' @return   NULL
+#' 
+#' @family   pRESTO log plotting functions
+#' 
+#' @export
+plotMaskPrimers <- function(..., titles=NULL, style=c("histogram", "count", "error", "position"),
+                            max_error=0.3, sizing=c("figure", "window")) {
+    ## DEBUG
+    # c('PRIMER', 'PRSTART', 'BARCODE', 'ERROR')
+    # titles=NULL
+    # max_error=0.2
+    # style="h"
+
+    # Parse arguments
+    style <- match.arg(style)
+    sizing <- match.arg(sizing)
+    log_list <- list(...)
+    log_count <- length(log_list)
+    
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam::baseTheme(sizing=sizing)
+    
+    # Define plot objects for each log table
+    plot_list <- list()
+    for (i in 1:log_count) {
+        log_df <- log_list[[i]]
+        if (style == "histogram") {
+            # Check for valid log table
+            check <- alakazam::checkColumns(log_df, c("ERROR"))
+            if (check != TRUE) { stop(check) }
+            
+            # Plot total error distribution
+            log_df <- dplyr::filter(log_df, !is.na(ERROR))
+            p1 <- ggplot(log_df, aes(x=ERROR)) +
+                base_theme +     
+                ggtitle(titles[i]) +
+                xlab("Error") +
+                ylab("Reads") +
+                scale_x_continuous(limits=c(-0.05, 1.05), breaks=seq(0.0, 1.0, 0.2)) +
+                scale_y_continuous(labels=scientific_format()) + 
+                geom_histogram(binwidth=0.025, colour="white", fill=PRESTO_PALETTE["blue"], 
+                               linewidth=0.25, center=0) +
+                geom_vline(xintercept=max_error, color=PRESTO_PALETTE["red"], linewidth=0.5, linetype=3)
+        } else if (style == "count") {
+            # Check for valid log table
+            check <- alakazam::checkColumns(log_df, c("ERROR", "PRIMER"))
+            if (check != TRUE) { stop(check) }
+            
+            # Set passed and failed 
+            log_df$RESULT <- factor(log_df$ERROR <= max_error, 
+                                    levels=c(TRUE, FALSE), 
+                                    labels=c("Pass", "Fail"))
+            
+            # Plot primer match counts
+            guide_values <- setNames(c(PRESTO_PALETTE["blue"], PRESTO_PALETTE["red"]), c("Pass", "Fail"))
+            log_df <- dplyr::filter(log_df, !is.finite(PRIMER), !is.na(RESULT))
+            p1 <- ggplot(log_df, aes(x=PRIMER)) +
+                base_theme + 
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
+                ggtitle(titles[i]) +
+                xlab("") +
+                ylab("Reads") +
+                scale_fill_manual(name="", values=guide_values) +
+                geom_bar(aes(fill=RESULT), position="stack", width=0.7, na.rm=TRUE)
+        } else if (style == "error") {
+            # Check for valid log table
+            if (!all(c("ERROR", "PRIMER") %in% names(log_df))) {
+                stop("Log table must contain the fields 'PRIMER' and 'ERROR'.")
+            } else if (all(is.na(log_df$ERROR))) {
+                stop("The field 'ERROR' contains no data.")
+            } else if (all(is.na(log_df$PRIMER))) {
+                stop("The field 'PRIMER' contains no data.")
+            }
+            
+            # Plot error distribution by primer
+            log_df <- dplyr::filter(log_df, !is.na(ERROR), !is.na(PRIMER))
+            p1 <- ggplot(log_df, aes(x=PRIMER, y=ERROR)) +
+                base_theme + 
+                theme(legend.position="none") +
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
+                ggtitle(titles[i]) +
+                xlab("") +
+                ylab("Error") +
+                scale_y_continuous(limits=c(-0.05, 1.05), breaks=seq(0, 1, 0.2)) +
+                geom_violin(aes(fill=PRIMER), adjust=3.0, scale="width", trim=T, width=0.7) +
+                geom_errorbarh(aes(xmin=(after_stat(x)) - 0.4, xmax=(after_stat(x)) + 0.4), linewidth=1.5,
+                               stat="summary", fun="mean") +
+                geom_hline(yintercept=max_error, color=PRESTO_PALETTE["red"], linewidth=0.5, linetype=3)    
+        } else if (style == "position") {
+            # Check for valid log table
+            check <- alakazam::checkColumns(log_df, c("PRIMER", "PRSTART"))
+            if (check != TRUE) { stop(check) }
+            
+            # Plot start position by primer
+            log_df <- dplyr::filter(log_df, ERROR <= max_error, !is.na(PRSTART), !is.na(PRIMER))
+            p1 <- ggplot(log_df, aes(x=PRIMER, y=PRSTART)) +
+                base_theme + 
+                theme(legend.position="none") +
+                theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
+                ggtitle(titles[i]) +
+                xlab("") +
+                ylab("Start position") +
+                geom_boxplot(aes(fill=PRIMER), width=0.7)
+        } else {
+            stop("Nothing to plot.")
+        }
+
+        plot_list[[i]] <- p1
+    }
+    
+    # Plot
+    do.call(gridPlot, args=c(plot_list, ncol=1))
+}
+
+
+primer_log_1 <- loadLogTable(primer_log_file_1)
+primer_log_2 <- loadLogTable(primer_log_file_2)
+plot_titles <- c("Constant region primer", "V region primer")
+```
+\newpage
+# Primer Identification
+
+The MaskPrimers tool supports identification of multiplexed primers and UMIs.
+Identified primer regions may be masked (with Ns) or cut to mitigate downstream
+SHM analysis artifacts due to errors in the primer region. An annotion is added to 
+each sequences that indicates the UMI and best matching primer. In the case of
+the constant region primer, the primer annotation may also be used for isotype 
+assignment.
+
+## Count of primer matches
+
+```{r, echo=FALSE, warning=FALSE}
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles,
+                style="count", sizing="figure")
+```
+
+`r figures("primers_count")`
+
+## Primer match error rates
+
+```{r, echo=FALSE, warning=FALSE}
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+                style="hist", sizing="figure")
+```
+
+`r figures("primers_hist")`
+
+```{r, echo=FALSE, warning=FALSE}
+plotMaskPrimers(primer_log_1, primer_log_2, titles=plot_titles, 
+                style="error", sizing="figure")
+```
+
+`r figures("primers_error")`
+
+
+```

@@ -1,6 +1,9 @@
 .nextflow.log
 .nextflow.log.*
 .nextflow/
+.RData
+.Rhistory
+Rplots.pdf
 *_reads.fastq
 work/
 results/

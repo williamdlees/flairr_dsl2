@@ -1,0 +1,119 @@
+
+```{R, message=FALSE, echo=FALSE, results="hide"}
+library(prestor)
+library(knitr)
+library(captioner)
+
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("quality", 
+        "Mean Phred quality scores. The dotted line indicates the average quality score of 20
+         under which reads were removed.")
+```
+
+```{r, echo=FALSE}
+#' Plot FilterSeqQuality log table
+#'
+#' @param    ...     data.frames returned by loadLogTable to plot
+#' @param    titles  vector of titles for each log in ...; 
+#'                   if NULL the titles will be empty.
+#' @param    cutoff  value at which to draw a vertical line separating 
+#'                   passing and failing values.
+#' @param    sizing  defines the style and sizing of the theme. One of 
+#'                   \code{c("figure", "window")} where \code{sizing="figure"} is appropriately
+#'                   sized for pdf export at 7 to 7.5 inch width, and \code{sizing="window"}
+#'                   is sized for an interactive session.
+#' 
+#' @return   NULL
+#' 
+#' @family   pRESTO log plotting functions
+#' 
+#' @export
+plotFilterSeqQuality <- function(..., titles=NULL, cutoff=20, sizing=c("figure", "window")) {
+    ## DEBUG
+    # titles=NULL
+    # cutoff=20
+
+    # Parse arguments
+    log_list <- list(...)
+    log_count <- length(log_list)
+    sizing <- match.arg(sizing)
+    
+    # Define titles
+    if (is.null(titles)) {
+        titles <- rep("", log_count)
+    } else if (length(titles) != log_count) {
+        stop("You must specify one title per input log table.")
+    }
+    
+    # Set base plot settings
+    base_theme <- alakazam::baseTheme(sizing=sizing)
+
+    # Define plot objects for each log table
+    plot_list <- list()
+    for (i in 1:log_count) {
+        log_df <- log_list[[i]]
+        
+        # Get count field
+        log_fields <- names(log_df)
+        count_field <- log_fields[log_fields %in% names(FILTER_COUNT_FIELDS)]
+        if (length(count_field) < 1) {
+            stop("No valid FilterSeq log field was found.")
+        } else if (length(count_field) < 1) {
+            stop("Too many FilterSeq log fields were found. Only one count field should be present.")
+        }
+        # Check count field
+        check <- alakazam::checkColumns(log_df, count_field)
+        if (check != TRUE) { stop(check) }
+        
+        # Table counts
+        log_tab <- as.data.frame(table(value=floor(as.numeric(log_df[, count_field]))), 
+                                 responseName="count")
+        #print(log_tab)
+        #log_tab$value <- as.numeric(log_tab$value)
+        x_intercept <- 20
+        
+        #if (!"0" %in% levels(log_tab$value)) {
+        #    log_tab$value <- factor(log_tab$value, levels = c("0", levels(log_tab$value)))
+        #}
+        log_tab$value <- as.numeric(as.character(log_tab$value))
+        
+        p1 <- ggplot(log_tab, aes(x=value, y=count)) +
+            base_theme +     
+            ggtitle(titles[i]) +
+            xlab(FILTER_COUNT_FIELDS[count_field]) +
+            ylab("Reads") +
+            scale_x_continuous(breaks = seq(0, max(log_tab$value), by = 10), expand = c(0, 0)) + 
+            scale_y_continuous(labels=scientific) + 
+            #geom_histogram(fill=PRESTO_PALETTE["blue"], binwidth=1, center=0) +
+            geom_bar(fill=PRESTO_PALETTE["blue"], stat="identity", width=0.95, na.rm=TRUE) +
+            geom_vline(xintercept=x_intercept, color=PRESTO_PALETTE["red"], linewidth=0.5, linetype=3)
+
+        plot_list[[i]] <- p1
+    }
+    
+    # Plot
+    do.call(gridPlot, args=c(plot_list, ncol=1))
+}
+
+
+quality_log <- loadLogTable(quality_log_file)
+```
+\newpage
+
+# Quality Scores
+
+Quality filtering is an essential step in most sequencing workflows. pRESTO’s
+FilterSeq tool remove reads with low mean Phred quality scores. 
+Phred quality scores are assigned to each nucleotide base call in automated 
+sequencer traces. The quality score (`Q`) of a base call is logarithmically 
+related to the probability that a base call is incorrect (`P`): 
+$Q = -10 log_{10} P$. For example, a base call with `Q=30` is incorrectly 
+assigned 1 in 1000 times. The most commonly used approach is to remove read 
+with average `Q` below 20.
+
+```{r, echo=FALSE}
+plotFilterSeqQuality(quality_log, sizing="figure")
+```
+
+`r figures("quality")`

@@ -1,0 +1,53 @@
+```{R, message=FALSE, echo=FALSE, results="hide"}
+
+# Imports
+library(knitr)
+library(captioner)
+library(prestor)
+library(scales)
+library(alakazam)
+library(bibtex)
+library(rlang)
+
+
+library(stats)
+library(stringi)
+library(tidyr)
+library(utils)
+library(configr)
+
+#### Constants ####
+FILTER_COUNT_FIELDS <- c("LENGTH"  = "Read length", 
+                         "MASKED"  = "Masked positions", 
+                         "MISSING" = "Missing characters", 
+                         "QUALITY" = "Mean quality score", 
+                         "REPEATS" = "Maximum repeat length")
+
+# n <- 5
+# plot(1:n, col=colorspace::rainbow_hcl(n, l=65, c=100), pch=16, cex=8)
+# PRESTO_PALETTE <- c("red"    = "#FF6C91",
+#                    "orange" = "#BC9D00",
+#                    "green"  = "#00BC57",
+#                    "blue"   = "#00B8E5",
+#                    "purple" = "#CD79FF",
+#                    "grey"   = "#7F7F7F")
+# n <- 5
+# plot(1:n, col=RColorBrewer::brewer.pal(n, "Set1"), pch=16, cex=8)
+PRESTO_PALETTE <- c("red"        = "#E41A1C",
+                    "orange"     = "#FF7F00",
+                    "green"      = "#4DAF4A",
+                    "blue"       = "#377EB8",
+                    "purple"     = "#984EA3",
+                    "grey"       = "#999999",
+                    "dark_blue"  = "#17364F",
+                    "dark_red"   = "#6A0C0D",
+                    "dark_green" = "#234F21")
+
+
+# Options
+knitr::opts_chunk$set(child.path=system.file("reports", package="prestor"))
+
+# Define table and figure legend object
+tables <- captioner(prefix="Table")
+figures <- captioner(prefix="Figure")
+```
