@@ -1,5 +1,0 @@
-# install in the base image so that we cache dependencies
-library(devtools)
-install_bitbucket('yaarilab/rabhit')
-# vdjvasevis needs a pinned version of dplyr at the moment - install in my_flask
-#install_bitbucket('yaarilab/vdjbaseVis')
