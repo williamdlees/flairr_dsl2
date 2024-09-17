@@ -1,0 +1,3 @@
+library(remotes)
+library(devtools)
+install_bitbucket("kleinstein/prestor@master")

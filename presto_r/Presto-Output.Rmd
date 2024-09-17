@@ -1,0 +1,75 @@
+```{R, message=FALSE, echo=FALSE, results="hide"}
+# Setup
+library(knitr)
+library(captioner)
+if (!exists("tables")) { tables <- captioner(prefix="Table") }
+if (!exists("figures")) { figures <- captioner(prefix="Figure") }
+figures("headers_conscount", "Histogram showing the distribution of read counts (CONSCOUNT) for 
+                              total sequences (top) and unique sequences (bottom).")
+figures("headers_dupcount", "Histogram showing the distribution of unique UMI counts for 
+                             all unique sequences (top) and unique sequences represented 
+                             by at least two raw reads (bottom).")
+figures("headers_pr1", "Percentage internal C-region annotations for total sequences.
+                        Parenthetical numbers in the legend are the number of sequences.")
+figures("headers_pr2", "Percentage internal C-region annotations for all unique sequences.
+                        Parenthetical numbers in the legend are the number of sequences.")
+figures("headers_pr3", "Percentage internal C-region annotations for unique sequences represented by at least two raw reads.
+                        Parenthetical numbers in the legend are the number of sequences.")
+```
+
+```{r, echo=FALSE}
+parse_log_1 <- loadLogTable(log_file_total)
+parse_log_2 <- loadLogTable(log_file_unique)
+parse_log_3 <- loadLogTable(log_file_atleast2)
+primer_field <- "PRCONS"
+```
+
+# Summary of Final Output
+
+Final processed output is contained in the `total`, `unique`, and `unique-atleast-2` 
+files, which contain all processed sequences, unique sequences, and only those unique
+sequences represented by at least two raw reads, respectively. The figures below
+shown the distributions of annotations for these final output files.
+
+## Distribution of read and UMI counts
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_1, parse_log_2, 
+                 titles=c("Total", "Unique"), 
+                 style="count", primer=primer_field, count="CONSCOUNT", 
+                 sizing="figure")
+```
+
+`r figures("headers_conscount")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_2, parse_log_3, 
+                 titles=c("Unique", "At least 2 Reads"), 
+                 style="count", primer=primer_field, count="DUPCOUNT", 
+                 sizing="figure")
+```
+
+`r figures("headers_dupcount")`
+
+## C-region annotations
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_1, titles=c("Total"), 
+                 style="primer", primer=primer_field, sizing="figure")
+```
+
+`r figures("headers_pr1")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_2, titles=c("Unique"), 
+                 style="primer", primer=primer_field, sizing="figure") 
+```
+
+`r figures("headers_pr2")`
+
+```{r, echo=FALSE}
+plotParseHeaders(parse_log_3,  titles=c("Unique At least 2 Reads"), 
+                 style="primer", primer=primer_field, sizing="figure") 
+```
+
+`r figures("headers_pr3")`

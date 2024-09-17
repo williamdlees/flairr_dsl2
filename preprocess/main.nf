@@ -11,7 +11,7 @@ include { MaskPrimers as MaskPrimers_CPRIMERS; MaskPrimers as MaskPrimers_VPRIME
 include { check_for_seqs } from '../modules/check_for_seqs'
 include { align_sets } from '../modules/align_sets'
 include { cluster_sets } from '../modules/cluster_sets'
-include { parse_headers as parse_headers_copy; parse_headers as parse_headers_collapse; parse_headers as parse_headers_table } from '../modules/parse_headers'
+include { parse_headers as parse_headers_copy; parse_headers as parse_headers_consensus; parse_headers as parse_headers_collapse; parse_headers as parse_headers_split } from '../modules/parse_headers'
 include { build_consensus } from '../modules/build_consensus'
 include { collapse_seq } from '../modules/collapse_seq'
 include { split_seq } from '../modules/split_seq'
@@ -42,17 +42,16 @@ workflow {
 	parse_log_AS(align_sets.out.log_file, "AS", "ID BARCODE SEQCOUNT ERROR")
 	
 	cluster_sets(align_sets.out.output)
-	
-	parse_headers_copy(cluster_sets.out.output, "copy", "cat", "-f BARCODE -k CLUSTER")
+	parse_headers_copy(cluster_sets.out.output, "CS", "copy", "cat", "-f BARCODE -k CLUSTER")
 	
 	build_consensus(parse_headers_copy.out.output)
 	parse_log_BC(build_consensus.out.log_file, "BC", "BARCODE SEQCOUNT CONSCOUNT PRCONS PRFREQ ERROR")
+	parse_headers_consensus(build_consensus.out.output, "BC_TOTAL", "table", "min", "-f ID PRCONS CONSCOUNT")
 	
-	parse_headers_collapse(build_consensus.out.output, "collapse", "min", "-f CONSCOUNT")
-	
-	collapse_seq(parse_headers_collapse.out.output)
+	collapse_seq(build_consensus.out.output)
+	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
 	
 	split_seq(collapse_seq.out.output)
-	parse_headers_table(split_seq.out.output, "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
+	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
 }
 

@@ -5,6 +5,7 @@ process parse_headers {
 	
 	input:
 		tuple val(name), file(reads)
+		val prefix
 		val method
 		val act
 		val args
@@ -13,22 +14,23 @@ process parse_headers {
 		tuple val(name), file("*${out}"), emit: output
 
 	script:
+		outname = prefix + "_" + name
 		if(method=="collapse" || method=="copy" || method=="rename" || method=="merge"){
 			out="_reheader.fastq"
 			act = (act=="none") ? "" : "--act ${act}"
 			"""
-			ParseHeaders.py  ${method} -s ${reads} ${args} ${act}
+			ParseHeaders.py  ${method} --outname ${outname} -s ${reads} ${args} ${act}
 			"""
 		}else{
 			if(method=="table"){
 					out=".tab"
 					"""
-					ParseHeaders.py ${method} -s ${reads} ${args}
+					ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
 					"""	
 			}else{
 				out="_reheader.fastq"
 				"""
-				ParseHeaders.py ${method} -s ${reads} ${args}
+				ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
 				"""		
 			}
 		}

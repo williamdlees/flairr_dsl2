@@ -1,6 +1,5 @@
 
 ```{R, message=FALSE, echo=FALSE, results="hide"}
-library(prestor)
 library(knitr)
 library(captioner)
 

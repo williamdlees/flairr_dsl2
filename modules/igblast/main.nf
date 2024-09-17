@@ -4,10 +4,10 @@ process igblast {
 
 	input:
 		path fastaFile
-		tuple val(db_v), path(db_v_path, stageAs: 'db_v_path')
-		tuple val(db_d), path(db_d_path, stageAs: 'db_d_path')
-		tuple val(db_j), path(db_j_path, stageAs: 'db_j_path')
-		tuple val(db_c), path(db_c_path, stageAs: 'db_c_path')
+		path(db_v_path)
+		path(db_d_path)
+		path(db_j_path,)
+		path(db_c_path)
 		path auxiliary_data
 		path custom_internal_data
 
@@ -27,10 +27,10 @@ process igblast {
 		export IGDATA=/usr/local/share/igblast
 		
 		igblastn -query ${fastaFile} \
-			-germline_db_V ${db_v_path}/${db_v} \
-			-germline_db_D ${db_d_path}/${db_d} \
-			-germline_db_J ${db_j_path}/${db_j} \
-			-c_region_db ${db_c_path}/${db_c} \
+			-germline_db_V ${db_v_path.toRealPath()} \
+			-germline_db_D ${db_d_path.toRealPath()} \
+			-germline_db_J ${db_j_path.toRealPath()} \
+			-c_region_db ${db_c_path.toRealPath()} \
 			-num_alignments_V ${num_alignments_V} \
 			-domain_system imgt \
 			-auxiliary_data ${auxiliary_data} \

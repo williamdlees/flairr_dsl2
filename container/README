@@ -1,0 +1,4 @@
+To reduce dependency pain:
+- Remember most R package installation failures are caused by the absence of system libraries installed by apt-get
+- To monitor progress easily, use docker build --no-cache -t my_r . | tee docker.log | grep "DONE\|ERROR"
+- Fix any errors immediately on sight. Explicitly install failing pacjkages at the top of the script, for fast feedback

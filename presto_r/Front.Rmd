@@ -12,22 +12,18 @@ params:
   date: "Date"
 ---
 
+# Sample Information
+
+Date: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`
+
+Sample: `r params$sample`
+
+
 ```{r, echo=FALSE, results="hide", eval=FALSE}
 bib_file <- system.file("reports/references.bib", package="prestor")
 bib <- bibtex::read.bib(bib_file)
 print(bib[["VanderHeiden2014"]])
 ```
 
-# Overview of Data
 
-Date: `r params$date`
 
-Author: `r params$author`
-
-Description: `r params$description`
-
-Run: `r params$run`
-
-Sample: `r params$sample`
-
-pRESTO Version: `r params$version`

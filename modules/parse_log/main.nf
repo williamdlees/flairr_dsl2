@@ -14,7 +14,7 @@ process parse_log {
 
 	script:
 		readArray = log_file.toString()
-		outname = readArray - '.log' +  suffix
+		outname = readArray - '.log' +  "_" + suffix
 
 		"""
 		ParseLog.py -l ${readArray} --outname ${outname} -f ${args}

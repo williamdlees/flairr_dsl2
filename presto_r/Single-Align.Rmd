@@ -1,8 +1,4 @@
 ```{R, message=FALSE, echo=FALSE, results="hide"}
-# Setup
-library(prestor)
-library(knitr)
-library(captioner)
 
 plot_titles <- c("UMI")
 if (!exists("tables")) { tables <- captioner(prefix="Table") }

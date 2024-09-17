@@ -10,11 +10,11 @@ for sample in 1001 1002 1003 1004 1005 1006 1008 1012
 do
 mkdir $sample-667
 cd $sample-667
-nextflow ../../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*667*$sample*.fastq --outdir $(pwd)/results
+#nextflow ../../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*667*$sample*.fastq --outdir $(pwd)/results
 # cd is needed to avoid a Java bug - probably wsl specific
 cd ..
 cd $sample-667
-nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*_consensus-pass_reheader_collapse-unique_atleast-2.fasta --outdir $(pwd)/results
+nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*collapse-unique_atleast-2.fasta --outdir $(pwd)/results
 cd ..
 done
 
@@ -25,11 +25,11 @@ for sample in 1001 1003
 do
 mkdir $sample-986
 cd $sample-986
-nextflow ../../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*986*$sample*.fastq --outdir $(pwd)/results
+#nextflow ../../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*986*$sample*.fastq --outdir $(pwd)/results
 # cd is needed to avoid a Java bug - probably wsl specific
 cd ..
 cd $sample-667
-nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*_consensus-pass_reheader_collapse-unique_atleast-2.fasta --outdir $(pwd)/results
+nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*collapse-unique_atleast-2.fasta --outdir $(pwd)/results
 cd ..
 done
 
