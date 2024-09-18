@@ -12,8 +12,8 @@ process make_blast_db {
 		ddb = germlineFile.getBaseName() + '.db'
 		
 		"""
-		python3 "${baseDir}/../python/degap.py" ${germlineFile} gdb
+		python3 "${baseDir}/../python/degap.py" ${germlineFile} germline.fasta
 		touch ${ddb}
-		makeblastdb -parse_seqids -dbtype nucl -in ${gdb} -out ${ddb}
+		makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out ${ddb}
 		"""
 }
