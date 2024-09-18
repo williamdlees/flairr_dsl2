@@ -1,6 +1,4 @@
 
-import java.nio.file.Paths
-
 process make_blast_db {
 
 	input:
