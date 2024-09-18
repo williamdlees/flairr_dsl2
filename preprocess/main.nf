@@ -15,17 +15,18 @@ include { parse_headers as parse_headers_copy; parse_headers as parse_headers_co
 include { build_consensus } from '../modules/build_consensus'
 include { collapse_seq } from '../modules/collapse_seq'
 include { split_seq } from '../modules/split_seq'
+include { presto_report } from '../modules/presto_report'
+
 
 workflow {
 	read_pairs_ch = channel.fromFilePairs(params.reads, checkIfExists: true)
+	FastQC(read_pairs_ch)
 	
 	filter_seq_quality(read_pairs_ch)
 	parse_log_FSQ(filter_seq_quality.out.log_file, "FSQ", "ID QUALITY")
 
 	filter_seq_length(filter_seq_quality.out.output)
 	parse_log_FSL(filter_seq_length.out.log_file, "FSL", "ID LENGTH")
-	
-	FastQC(filter_seq_length.out.output)
 	
 	MaskPrimers_CPRIMERS(filter_seq_length.out.output, params.MaskPrimers_CPRIMERS, params.C_R1_primers, params.C_R2_primers)
 	parse_log_MPC(MaskPrimers_CPRIMERS.out.log_file, "MPC", "ID PRIMER BARCODE ERROR")
@@ -53,5 +54,7 @@ workflow {
 	
 	split_seq(collapse_seq.out.output)
 	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
+
+	presto_report(channel.fromPath("$baseDir/../presto_r/FLAIRR.Rmd"), parse_headers_split.out.output)
 }
 

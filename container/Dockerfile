@@ -14,6 +14,7 @@ RUN apt-get update && \
                 r-base-dev=4.2.2.20221110-2 \
                 r-base-core=4.2.2.20221110-2 \
 				vim \
-				r-cran-devtools 
+				r-cran-devtools \
+				texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra lmodern
 
 RUN Rscript /app/install_r_packages

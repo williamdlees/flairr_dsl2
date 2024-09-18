@@ -25,7 +25,7 @@ title: "`r params$title`"
 
 ```{r includes, echo=FALSE, results="hide", warning = FALSE, message = FALSE}
 
-# From the command line: R -e "rmarkdown::render('FLAIRR.Rmd', params=list(data='../processed_samples/1001-667/results/reports', sample='1001-667'))"
+# From the command line: R -e "rmarkdown::render('../presto_r/FLAIRR.Rmd', params=list(data='../processed_samples/1001-667/results/reports', sample='1001-667'), output_file='../processed_samples/1001-667/1001-667_presto.pdf')"
 
 # Imports
 library(knitr)

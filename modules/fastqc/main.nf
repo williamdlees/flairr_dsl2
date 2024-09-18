@@ -27,7 +27,7 @@ process FastQC {
 			${runGzip}
 			fastqc ${file} 
 		else
-			touch process.skiped.html
+			touch FastQC.skipped.html
 		fi
 		"""
 }

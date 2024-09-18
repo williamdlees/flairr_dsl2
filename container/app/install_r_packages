@@ -1,3 +1,12 @@
 library(remotes)
 library(devtools)
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("Biostrings")
+BiocManager::install("GenomicAlignments")
+BiocManager::install("IRanges")
+devtools::install_github("adletaw/captioner")
+install.packages('alakazam')
 install_bitbucket("kleinstein/prestor@master")
+install.packages('configr')
+
