@@ -1,0 +1,908 @@
+import _frozen_importlib # frozen
+import _imp # builtin
+import '_thread' # <class '_frozen_importlib.BuiltinImporter'>
+import '_warnings' # <class '_frozen_importlib.BuiltinImporter'>
+import '_weakref' # <class '_frozen_importlib.BuiltinImporter'>
+import '_io' # <class '_frozen_importlib.BuiltinImporter'>
+import 'marshal' # <class '_frozen_importlib.BuiltinImporter'>
+import 'posix' # <class '_frozen_importlib.BuiltinImporter'>
+import '_frozen_importlib_external' # <class '_frozen_importlib.FrozenImporter'>
+# installing zipimport hook
+import 'time' # <class '_frozen_importlib.BuiltinImporter'>
+import 'zipimport' # <class '_frozen_importlib.FrozenImporter'>
+# installed zipimport hook
+# /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/codecs.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/codecs.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/codecs.cpython-39.pyc'
+import '_codecs' # <class '_frozen_importlib.BuiltinImporter'>
+import 'codecs' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2974f100>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/aliases.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/aliases.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/aliases.cpython-39.pyc'
+import 'encodings.aliases' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda297606a0>
+import 'encodings' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda297baee0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/utf_8.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/utf_8.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/utf_8.cpython-39.pyc'
+import 'encodings.utf_8' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda297badc0>
+import '_signal' # <class '_frozen_importlib.BuiltinImporter'>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/latin_1.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/encodings/latin_1.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/encodings/__pycache__/latin_1.cpython-39.pyc'
+import 'encodings.latin_1' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29760790>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/io.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/io.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/io.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/abc.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/abc.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/abc.cpython-39.pyc'
+import '_abc' # <class '_frozen_importlib.BuiltinImporter'>
+import 'abc' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29760c40>
+import 'io' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29760970>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/site.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/site.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/os.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/os.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/os.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/stat.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/stat.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/stat.cpython-39.pyc'
+import '_stat' # <class '_frozen_importlib.BuiltinImporter'>
+import 'stat' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda297184f0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_collections_abc.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/_collections_abc.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_collections_abc.cpython-39.pyc'
+import '_collections_abc' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29718580>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/posixpath.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/posixpath.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/posixpath.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/genericpath.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/genericpath.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/genericpath.cpython-39.pyc'
+import 'genericpath' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2973cbb0>
+import 'posixpath' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29718ca0>
+import 'os' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29779be0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_sitebuiltins.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/_sitebuiltins.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_sitebuiltins.cpython-39.pyc'
+import '_sitebuiltins' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2970efa0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_bootlocale.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/_bootlocale.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_bootlocale.cpython-39.pyc'
+import '_locale' # <class '_frozen_importlib.BuiltinImporter'>
+import '_bootlocale' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2973cfa0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/_distutils_hack/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/_distutils_hack/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/_distutils_hack/__pycache__/__init__.cpython-39.pyc'
+import '_distutils_hack' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296afcd0>
+import 'site' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29760c70>
+Python 3.9.12 | packaged by conda-forge | (main, Mar 24 2022, 23:22:55) 
+[GCC 10.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/warnings.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/warnings.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/warnings.cpython-39.pyc'
+import 'warnings' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296be6a0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_globals.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_globals.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_globals.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/enum.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/enum.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/enum.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/types.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/types.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/types.cpython-39.pyc'
+import 'types' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296e5520>
+import 'enum' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296befd0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/functools.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/functools.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/functools.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/collections/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/collections/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/collections/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/heapq.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/heapq.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/heapq.cpython-39.pyc'
+# extension module '_heapq' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_heapq.cpython-39-x86_64-linux-gnu.so'
+# extension module '_heapq' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_heapq.cpython-39-x86_64-linux-gnu.so'
+import '_heapq' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fda296a4c40>
+import 'heapq' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296a4730>
+import 'itertools' # <class '_frozen_importlib.BuiltinImporter'>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/keyword.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/keyword.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/keyword.cpython-39.pyc'
+import 'keyword' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296a4d30>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/operator.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/operator.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/operator.cpython-39.pyc'
+import '_operator' # <class '_frozen_importlib.BuiltinImporter'>
+import 'operator' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296a4df0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/reprlib.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/reprlib.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/reprlib.cpython-39.pyc'
+import 'reprlib' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296a4eb0>
+import '_collections' # <class '_frozen_importlib.BuiltinImporter'>
+import 'collections' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2967ebb0>
+import '_functools' # <class '_frozen_importlib.BuiltinImporter'>
+import 'functools' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29674430>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/_convertions.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/_convertions.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/_convertions.cpython-39.pyc'
+import 'numpy._utils._convertions' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29674a30>
+import 'numpy._utils' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296e5fd0>
+import 'numpy._globals' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296becd0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_expired_attrs_2_0.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_expired_attrs_2_0.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_expired_attrs_2_0.cpython-39.pyc'
+import 'numpy._expired_attrs_2_0' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296beeb0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/version.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/version.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/version.cpython-39.pyc'
+import 'numpy.version' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2967e160>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_distributor_init.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_distributor_init.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_distributor_init.cpython-39.pyc'
+import 'numpy._distributor_init' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29689370>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/__config__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__config__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/__config__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/multiarray.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/multiarray.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/multiarray.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/overrides.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/overrides.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/overrides.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/_inspect.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/_inspect.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_utils/__pycache__/_inspect.cpython-39.pyc'
+import 'numpy._utils._inspect' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29640490>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/datetime.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/datetime.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/datetime.cpython-39.pyc'
+# extension module 'math' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/math.cpython-39-x86_64-linux-gnu.so'
+# extension module 'math' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/math.cpython-39-x86_64-linux-gnu.so'
+import 'math' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd98aa2d8e0>
+# extension module '_datetime' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_datetime.cpython-39-x86_64-linux-gnu.so'
+# extension module '_datetime' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_datetime.cpython-39-x86_64-linux-gnu.so'
+import '_datetime' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd98aa2df40>
+import 'datetime' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29640bb0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/exceptions.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/exceptions.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/exceptions.cpython-39.pyc'
+import 'numpy.exceptions' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29640a60>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_exceptions.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_exceptions.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_exceptions.cpython-39.pyc'
+import 'numpy._core._exceptions' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29640b20>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/dtypes.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/dtypes.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/dtypes.cpython-39.pyc'
+import 'numpy.dtypes' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98aa41f70>
+# extension module 'numpy._core._multiarray_umath' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_multiarray_umath.cpython-39-x86_64-linux-gnu.so'
+# extension module 'numpy._core._multiarray_umath' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_multiarray_umath.cpython-39-x86_64-linux-gnu.so'
+import 'numpy._core._multiarray_umath' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fda29640a00>
+import 'numpy._core.overrides' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2963afd0>
+import 'numpy._core.multiarray' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29635c40>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/umath.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/umath.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/umath.cpython-39.pyc'
+import 'numpy._core.umath' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda2963ab80>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/numerictypes.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/numerictypes.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/numerictypes.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/numbers.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/numbers.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/numbers.cpython-39.pyc'
+import 'numbers' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98a91b310>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_string_helpers.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_string_helpers.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_string_helpers.cpython-39.pyc'
+import 'numpy._core._string_helpers' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888ab2b0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_type_aliases.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_type_aliases.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_type_aliases.cpython-39.pyc'
+import 'numpy._core._type_aliases' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888ab4f0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_dtype.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_dtype.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_dtype.cpython-39.pyc'
+import 'numpy._core._dtype' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888ab9a0>
+import 'numpy._core.numerictypes' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98a91b7f0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/numeric.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/numeric.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/numeric.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/shape_base.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/shape_base.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/shape_base.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/fromnumeric.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/fromnumeric.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/fromnumeric.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_methods.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_methods.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_methods.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/pickle.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/pickle.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/pickle.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/copyreg.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/copyreg.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/copyreg.cpython-39.pyc'
+import 'copyreg' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888d7880>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/struct.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/struct.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/struct.cpython-39.pyc'
+# extension module '_struct' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_struct.cpython-39-x86_64-linux-gnu.so'
+# extension module '_struct' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_struct.cpython-39-x86_64-linux-gnu.so'
+import '_struct' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd9888d7e20>
+import 'struct' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888d7be0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/re.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/re.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/re.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_compile.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/sre_compile.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_compile.cpython-39.pyc'
+import '_sre' # <class '_frozen_importlib.BuiltinImporter'>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_parse.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/sre_parse.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_parse.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_constants.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/sre_constants.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/sre_constants.cpython-39.pyc'
+import 'sre_constants' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988828af0>
+import 'sre_parse' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988828100>
+import 'sre_compile' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888e5820>
+import 're' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888d7e80>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_compat_pickle.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/_compat_pickle.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_compat_pickle.cpython-39.pyc'
+import '_compat_pickle' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988841160>
+# extension module '_pickle' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_pickle.cpython-39-x86_64-linux-gnu.so'
+# extension module '_pickle' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_pickle.cpython-39-x86_64-linux-gnu.so'
+import '_pickle' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd9888411f0>
+import 'pickle' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888c9d90>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/contextlib.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/contextlib.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/contextlib.cpython-39.pyc'
+import 'contextlib' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888d7700>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_ufunc_config.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_ufunc_config.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_ufunc_config.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/collections/__pycache__/abc.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/collections/abc.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/collections/__pycache__/abc.cpython-39.pyc'
+import 'collections.abc' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988857df0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/contextvars.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/contextvars.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/contextvars.cpython-39.pyc'
+# extension module '_contextvars' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_contextvars.cpython-39-x86_64-linux-gnu.so'
+# extension module '_contextvars' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_contextvars.cpython-39-x86_64-linux-gnu.so'
+import '_contextvars' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd9887bf040>
+import 'contextvars' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988857ee0>
+import 'numpy._core._ufunc_config' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888419d0>
+import 'numpy._core._methods' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98aa2d880>
+import 'numpy._core.fromnumeric' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98aa23910>
+import 'numpy._core.shape_base' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9888c94f0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/arrayprint.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/arrayprint.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/arrayprint.cpython-39.pyc'
+import 'numpy._core.arrayprint' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98aa2db50>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_asarray.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_asarray.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_asarray.cpython-39.pyc'
+import 'numpy._core._asarray' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887bf670>
+import 'numpy._core.numeric' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98a91b610>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/records.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/records.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/records.cpython-39.pyc'
+import 'numpy._core.records' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98aa23b20>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/memmap.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/memmap.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/memmap.cpython-39.pyc'
+import 'numpy._core.memmap' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887f0580>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/function_base.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/function_base.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/function_base.cpython-39.pyc'
+import 'numpy._core.function_base' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887f07c0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_machar.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_machar.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_machar.cpython-39.pyc'
+import 'numpy._core._machar' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887f0ca0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/getlimits.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/getlimits.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/getlimits.cpython-39.pyc'
+import 'numpy._core.getlimits' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887f0e50>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/einsumfunc.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/einsumfunc.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/einsumfunc.cpython-39.pyc'
+import 'numpy._core.einsumfunc' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887848b0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_add_newdocs.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_add_newdocs.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_add_newdocs.cpython-39.pyc'
+# extension module 'numpy._core._multiarray_tests' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_multiarray_tests.cpython-39-x86_64-linux-gnu.so'
+# extension module 'numpy._core._multiarray_tests' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_multiarray_tests.cpython-39-x86_64-linux-gnu.so'
+import 'numpy._core._multiarray_tests' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd988784fa0>
+import 'numpy._core._add_newdocs' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988784e50>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_add_newdocs_scalars.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_add_newdocs_scalars.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_add_newdocs_scalars.cpython-39.pyc'
+import 'numpy._core._add_newdocs_scalars' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988784fd0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_dtype_ctypes.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_dtype_ctypes.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_dtype_ctypes.cpython-39.pyc'
+import 'numpy._core._dtype_ctypes' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887a12b0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_internal.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/_internal.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_core/__pycache__/_internal.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/ast.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/ast.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/ast.cpython-39.pyc'
+import '_ast' # <class '_frozen_importlib.BuiltinImporter'>
+import 'ast' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887b7580>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/__pycache__/__init__.cpython-39.pyc'
+# extension module '_ctypes' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_ctypes.cpython-39-x86_64-linux-gnu.so'
+# extension module '_ctypes' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_ctypes.cpython-39-x86_64-linux-gnu.so'
+import '_ctypes' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd9886dc3d0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/__pycache__/_endian.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/_endian.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/ctypes/__pycache__/_endian.cpython-39.pyc'
+import 'ctypes._endian' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886ef190>
+import 'ctypes' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887b7d60>
+import 'numpy._core._internal' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887a13a0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_pytesttester.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_pytesttester.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/__pycache__/_pytesttester.cpython-39.pyc'
+import 'numpy._pytesttester' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887a1820>
+import 'numpy._core' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29635730>
+import 'numpy.__config__' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296bed00>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/array_utils.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/array_utils.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/array_utils.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_array_utils_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_array_utils_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_array_utils_impl.cpython-39.pyc'
+import 'numpy.lib._array_utils_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9887539a0>
+import 'numpy.lib.array_utils' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988753610>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/introspect.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/introspect.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/introspect.cpython-39.pyc'
+import 'numpy.lib.introspect' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988753730>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/mixins.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/mixins.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/mixins.cpython-39.pyc'
+import 'numpy.lib.mixins' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988753c40>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/npyio.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/npyio.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/npyio.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_npyio_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_npyio_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_npyio_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/weakref.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/weakref.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/weakref.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_weakrefset.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/_weakrefset.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/_weakrefset.cpython-39.pyc'
+import '_weakrefset' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988676310>
+import 'weakref' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98870d100>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/format.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/format.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/format.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_utils_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_utils_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_utils_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/textwrap.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/textwrap.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/textwrap.cpython-39.pyc'
+import 'textwrap' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988677c10>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/platform.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/platform.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/platform.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/subprocess.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/subprocess.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/subprocess.cpython-39.pyc'
+import 'errno' # <class '_frozen_importlib.BuiltinImporter'>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/signal.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/signal.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/signal.cpython-39.pyc'
+import 'signal' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988639220>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/threading.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/threading.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/threading.cpython-39.pyc'
+import 'threading' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988639610>
+import 'pwd' # <class '_frozen_importlib.BuiltinImporter'>
+# extension module 'grp' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/grp.cpython-39-x86_64-linux-gnu.so'
+# extension module 'grp' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/grp.cpython-39-x86_64-linux-gnu.so'
+import 'grp' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd98864b4c0>
+# extension module '_posixsubprocess' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_posixsubprocess.cpython-39-x86_64-linux-gnu.so'
+# extension module '_posixsubprocess' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/_posixsubprocess.cpython-39-x86_64-linux-gnu.so'
+import '_posixsubprocess' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd98864bdc0>
+# extension module 'select' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/select.cpython-39-x86_64-linux-gnu.so'
+# extension module 'select' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/lib-dynload/select.cpython-39-x86_64-linux-gnu.so'
+import 'select' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd98864be50>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/selectors.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/selectors.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/selectors.cpython-39.pyc'
+import 'selectors' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98864bf10>
+import 'subprocess' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886a5100>
+import 'platform' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988696100>
+import 'numpy.lib._utils_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988677610>
+import 'numpy.lib.format' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988676f40>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_datasource.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_datasource.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_datasource.cpython-39.pyc'
+import 'numpy.lib._datasource' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886779d0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_iotools.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_iotools.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_iotools.cpython-39.pyc'
+import 'numpy.lib._iotools' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98866b3a0>
+import 'numpy.lib._npyio_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886fb820>
+import 'numpy.lib.npyio' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886fb670>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/scimath.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/scimath.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/scimath.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_scimath_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_scimath_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_scimath_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_type_check_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_type_check_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_type_check_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_ufunclike_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_ufunclike_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_ufunclike_impl.cpython-39.pyc'
+import 'numpy.lib._ufunclike_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885f7340>
+import 'numpy.lib._type_check_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885ee940>
+import 'numpy.lib._scimath_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885ee2e0>
+import 'numpy.lib.scimath' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886fb6a0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/stride_tricks.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/stride_tricks.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/stride_tricks.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_stride_tricks_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_stride_tricks_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_stride_tricks_impl.cpython-39.pyc'
+import 'numpy.lib._stride_tricks_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885f7190>
+import 'numpy.lib.stride_tricks' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886fb640>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_index_tricks_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_index_tricks_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_index_tricks_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/__pycache__/defmatrix.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/defmatrix.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/matrixlib/__pycache__/defmatrix.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/linalg.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/linalg.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/linalg.cpython-39.pyc'
+import 'numpy.linalg.linalg' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98860db80>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/_linalg.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/_linalg.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/__pycache__/_linalg.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/typing.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/typing.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/typing.cpython-39.pyc'
+import 'typing' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988621b20>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_twodim_base_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_twodim_base_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_twodim_base_impl.cpython-39.pyc'
+import 'numpy.lib._twodim_base_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885a8b50>
+# extension module 'numpy.linalg._umath_linalg' loaded from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/_umath_linalg.cpython-39-x86_64-linux-gnu.so'
+# extension module 'numpy.linalg._umath_linalg' executed from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/linalg/_umath_linalg.cpython-39-x86_64-linux-gnu.so'
+import 'numpy.linalg._umath_linalg' # <_frozen_importlib_external.ExtensionFileLoader object at 0x7fd9885667c0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/__init__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__init__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/__init__.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/__future__.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/__future__.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/__pycache__/__future__.cpython-39.pyc'
+import '__future__' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988575910>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_nested_sequence.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_nested_sequence.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_nested_sequence.cpython-39.pyc'
+import 'numpy._typing._nested_sequence' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988582310>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_nbit.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_nbit.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_nbit.cpython-39.pyc'
+import 'numpy._typing._nbit' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885828b0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_char_codes.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_char_codes.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_char_codes.cpython-39.pyc'
+import 'numpy._typing._char_codes' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988582940>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_scalars.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_scalars.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_scalars.cpython-39.pyc'
+import 'numpy._typing._scalars' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988594160>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_shape.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_shape.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_shape.cpython-39.pyc'
+import 'numpy._typing._shape' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988594520>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_dtype_like.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_dtype_like.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_dtype_like.cpython-39.pyc'
+import 'numpy._typing._dtype_like' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988594670>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_array_like.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/_array_like.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/_typing/__pycache__/_array_like.cpython-39.pyc'
+import 'numpy._typing._array_like' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98859b6a0>
+import 'numpy._typing' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988575430>
+import 'numpy.linalg._linalg' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98860dc70>
+import 'numpy.linalg' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98860d7c0>
+import 'numpy.matrixlib.defmatrix' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988606a30>
+import 'numpy.matrixlib' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886066a0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_function_base_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_function_base_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_function_base_impl.cpython-39.pyc'
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_histograms_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_histograms_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_histograms_impl.cpython-39.pyc'
+import 'numpy.lib._histograms_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd98851c6d0>
+import 'numpy.lib._function_base_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9886067c0>
+import 'numpy.lib._index_tricks_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd988700eb0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_nanfunctions_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_nanfunctions_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_nanfunctions_impl.cpython-39.pyc'
+import 'numpy.lib._nanfunctions_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9885f7d60>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_shape_base_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_shape_base_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_shape_base_impl.cpython-39.pyc'
+import 'numpy.lib._shape_base_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884b76d0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arraysetops_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_arraysetops_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arraysetops_impl.cpython-39.pyc'
+import 'numpy.lib._arraysetops_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884c6250>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_polynomial_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_polynomial_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_polynomial_impl.cpython-39.pyc'
+import 'numpy.lib._polynomial_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884d0d00>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arrayterator_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_arrayterator_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arrayterator_impl.cpython-39.pyc'
+import 'numpy.lib._arrayterator_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884db8e0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arraypad_impl.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_arraypad_impl.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_arraypad_impl.cpython-39.pyc'
+import 'numpy.lib._arraypad_impl' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884dbaf0>
+# /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_version.cpython-39.pyc matches /usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/_version.py
+# code object from '/usr/local/miniconda3/envs/py39/lib/python3.9/site-packages/numpy/lib/__pycache__/_version.cpython-39.pyc'
+import 'numpy.lib._version' # <_frozen_importlib_external.SourceFileLoader object at 0x7fd9884dbf70>
+import 'numpy.lib' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda29635970>
+import 'numpy' # <_frozen_importlib_external.SourceFileLoader object at 0x7fda296af3d0>
+# clear builtins._
+# clear sys.path
+# clear sys.argv
+# clear sys.ps1
+# clear sys.ps2
+# clear sys.last_type
+# clear sys.last_value
+# clear sys.last_traceback
+# clear sys.path_hooks
+# clear sys.path_importer_cache
+# clear sys.meta_path
+# clear sys.__interactivehook__
+# restore sys.stdin
+# restore sys.stdout
+# restore sys.stderr
+# cleanup[2] removing sys
+# cleanup[2] removing builtins
+# cleanup[2] removing _frozen_importlib
+# cleanup[2] removing _imp
+# cleanup[2] removing _thread
+# cleanup[2] removing _warnings
+# cleanup[2] removing _weakref
+# cleanup[2] removing _io
+# cleanup[2] removing marshal
+# cleanup[2] removing posix
+# cleanup[2] removing _frozen_importlib_external
+# cleanup[2] removing time
+# cleanup[2] removing zipimport
+# destroy zipimport
+# cleanup[2] removing _codecs
+# cleanup[2] removing codecs
+# cleanup[2] removing encodings.aliases
+# cleanup[2] removing encodings
+# destroy encodings
+# cleanup[2] removing encodings.utf_8
+# cleanup[2] removing _signal
+# cleanup[2] removing encodings.latin_1
+# cleanup[2] removing _abc
+# cleanup[2] removing abc
+# cleanup[2] removing io
+# cleanup[2] removing __main__
+# destroy __main__
+# cleanup[2] removing _stat
+# cleanup[2] removing stat
+# cleanup[2] removing _collections_abc
+# cleanup[2] removing genericpath
+# cleanup[2] removing posixpath
+# cleanup[2] removing os.path
+# cleanup[2] removing os
+# cleanup[2] removing _sitebuiltins
+# cleanup[2] removing _locale
+# cleanup[2] removing _bootlocale
+# destroy _bootlocale
+# cleanup[2] removing _distutils_hack
+# destroy _distutils_hack
+# cleanup[2] removing site
+# destroy site
+# cleanup[2] removing warnings
+# cleanup[2] removing types
+# cleanup[2] removing enum
+# cleanup[2] removing _heapq
+# cleanup[2] removing heapq
+# cleanup[2] removing itertools
+# cleanup[2] removing keyword
+# destroy keyword
+# cleanup[2] removing _operator
+# cleanup[2] removing operator
+# cleanup[2] removing reprlib
+# destroy reprlib
+# cleanup[2] removing _collections
+# cleanup[2] removing collections
+# cleanup[2] removing _functools
+# cleanup[2] removing functools
+# cleanup[2] removing numpy._utils._convertions
+# cleanup[2] removing numpy._utils
+# cleanup[2] removing numpy._globals
+# cleanup[2] removing numpy._expired_attrs_2_0
+# cleanup[2] removing numpy.version
+# cleanup[2] removing numpy._distributor_init
+# cleanup[2] removing numpy._utils._inspect
+# cleanup[2] removing math
+# cleanup[2] removing _datetime
+# cleanup[2] removing datetime
+# destroy datetime
+# cleanup[2] removing numpy.exceptions
+# cleanup[2] removing numpy._core._exceptions
+# cleanup[2] removing numpy.dtypes
+# cleanup[2] removing numpy._core._multiarray_umath
+# cleanup[2] removing numpy._core.overrides
+# cleanup[2] removing numpy._core.multiarray
+# cleanup[2] removing numpy._core.umath
+# cleanup[2] removing numbers
+# cleanup[2] removing numpy._core._string_helpers
+# cleanup[2] removing numpy._core._type_aliases
+# cleanup[2] removing numpy._core._dtype
+# cleanup[2] removing numpy._core.numerictypes
+# cleanup[2] removing copyreg
+# cleanup[2] removing _struct
+# cleanup[2] removing struct
+# destroy struct
+# cleanup[2] removing _sre
+# cleanup[2] removing sre_constants
+# destroy sre_constants
+# cleanup[2] removing sre_parse
+# cleanup[2] removing sre_compile
+# cleanup[2] removing re
+# cleanup[2] removing _compat_pickle
+# cleanup[2] removing _pickle
+# cleanup[2] removing pickle
+# cleanup[2] removing contextlib
+# cleanup[2] removing collections.abc
+# cleanup[2] removing _contextvars
+# cleanup[2] removing contextvars
+# cleanup[2] removing numpy._core._ufunc_config
+# cleanup[2] removing numpy._core._methods
+# cleanup[2] removing numpy._core.fromnumeric
+# cleanup[2] removing numpy._core.shape_base
+# cleanup[2] removing numpy._core.arrayprint
+# cleanup[2] removing numpy._core._asarray
+# cleanup[2] removing numpy._core.numeric
+# cleanup[2] removing numpy._core.records
+# cleanup[2] removing numpy._core.memmap
+# destroy numpy._core.memmap
+# cleanup[2] removing numpy._core.function_base
+# cleanup[2] removing numpy._core._machar
+# cleanup[2] removing numpy._core.getlimits
+# cleanup[2] removing numpy._core.einsumfunc
+# cleanup[2] removing numpy._core._multiarray_tests
+# cleanup[2] removing numpy._core._add_newdocs
+# cleanup[2] removing numpy._core._add_newdocs_scalars
+# cleanup[2] removing numpy._core._dtype_ctypes
+# cleanup[2] removing _ast
+# destroy _ast
+# cleanup[2] removing ast
+# cleanup[2] removing _ctypes
+# cleanup[2] removing ctypes._endian
+# cleanup[2] removing ctypes
+# cleanup[2] removing numpy._core._internal
+# cleanup[2] removing numpy._pytesttester
+# cleanup[2] removing numpy._core
+# cleanup[2] removing numpy.__config__
+# cleanup[2] removing numpy.lib._array_utils_impl
+# cleanup[2] removing numpy.lib.array_utils
+# cleanup[2] removing numpy.lib.introspect
+# cleanup[2] removing numpy.lib.mixins
+# cleanup[2] removing _weakrefset
+# destroy _weakrefset
+# cleanup[2] removing weakref
+# cleanup[2] removing textwrap
+# cleanup[2] removing errno
+# cleanup[2] removing signal
+# cleanup[2] removing threading
+# cleanup[2] removing pwd
+# cleanup[2] removing grp
+# cleanup[2] removing _posixsubprocess
+# cleanup[2] removing select
+# cleanup[2] removing selectors
+# cleanup[2] removing subprocess
+# cleanup[2] removing platform
+# cleanup[2] removing numpy.lib._utils_impl
+# cleanup[2] removing numpy.lib.format
+# cleanup[2] removing numpy.lib._datasource
+# cleanup[2] removing numpy.lib._iotools
+# cleanup[2] removing numpy.lib._npyio_impl
+# cleanup[2] removing numpy.lib.npyio
+# cleanup[2] removing numpy.lib._ufunclike_impl
+# cleanup[2] removing numpy.lib._type_check_impl
+# cleanup[2] removing numpy.lib._scimath_impl
+# cleanup[2] removing numpy.lib.scimath
+# cleanup[2] removing numpy.lib._stride_tricks_impl
+# cleanup[2] removing numpy.lib.stride_tricks
+# cleanup[2] removing numpy.linalg.linalg
+# cleanup[2] removing typing
+# destroy typing
+# cleanup[2] removing numpy.lib._twodim_base_impl
+# cleanup[2] removing numpy.linalg._umath_linalg
+# cleanup[2] removing __future__
+# destroy __future__
+# cleanup[2] removing numpy._typing._nested_sequence
+# cleanup[2] removing numpy._typing._nbit
+# cleanup[2] removing numpy._typing._char_codes
+# cleanup[2] removing numpy._typing._scalars
+# cleanup[2] removing numpy._typing._shape
+# cleanup[2] removing numpy._typing._dtype_like
+# cleanup[2] removing numpy._typing._array_like
+# cleanup[2] removing numpy._typing
+# cleanup[2] removing numpy.linalg._linalg
+# cleanup[2] removing numpy.linalg
+# cleanup[2] removing numpy.matrixlib.defmatrix
+# cleanup[2] removing numpy.matrixlib
+# cleanup[2] removing numpy.lib._histograms_impl
+# cleanup[2] removing numpy.lib._function_base_impl
+# cleanup[2] removing numpy.lib._index_tricks_impl
+# cleanup[2] removing numpy.lib._nanfunctions_impl
+# cleanup[2] removing numpy.lib._shape_base_impl
+# cleanup[2] removing numpy.lib._arraysetops_impl
+# cleanup[2] removing numpy.lib._polynomial_impl
+# cleanup[2] removing numpy.lib._arrayterator_impl
+# cleanup[2] removing numpy.lib._arraypad_impl
+# cleanup[2] removing numpy.lib._version
+# cleanup[2] removing numpy.lib
+# cleanup[2] removing numpy
+# destroy _sitebuiltins
+# cleanup[3] wiping numpy
+# destroy numpy._utils
+# destroy numpy._globals
+# destroy numpy._expired_attrs_2_0
+# destroy numpy._distributor_init
+# destroy numpy._pytesttester
+# destroy numpy._core
+# destroy numpy._typing
+# destroy numpy.version
+# destroy numpy.exceptions
+# destroy numpy.dtypes
+# destroy numpy.__config__
+# destroy numpy.linalg
+# destroy numpy.linalg.linalg
+# destroy numpy.linalg._linalg
+# destroy numpy.lib
+# cleanup[3] wiping numpy.lib._version
+# cleanup[3] wiping numpy.lib._arraypad_impl
+# cleanup[3] wiping numpy.lib._arrayterator_impl
+# cleanup[3] wiping numpy.lib._polynomial_impl
+# cleanup[3] wiping numpy.lib._arraysetops_impl
+# cleanup[3] wiping numpy.lib._shape_base_impl
+# cleanup[3] wiping numpy.lib._nanfunctions_impl
+# cleanup[3] wiping numpy.lib._index_tricks_impl
+# destroy numpy.matrixlib
+# destroy numpy.matrixlib.defmatrix
+# cleanup[3] wiping numpy.lib._function_base_impl
+# cleanup[3] wiping numpy.lib._histograms_impl
+# cleanup[3] wiping numpy._typing._array_like
+# cleanup[3] wiping numpy._typing._dtype_like
+# cleanup[3] wiping numpy._typing._shape
+# cleanup[3] wiping numpy._typing._scalars
+# cleanup[3] wiping numpy._typing._char_codes
+# cleanup[3] wiping numpy._typing._nbit
+# cleanup[3] wiping numpy._typing._nested_sequence
+# cleanup[3] wiping numpy.linalg._umath_linalg
+# cleanup[3] wiping numpy.lib._twodim_base_impl
+# cleanup[3] wiping numpy.lib.stride_tricks
+# cleanup[3] wiping numpy.lib._stride_tricks_impl
+# cleanup[3] wiping numpy.lib.scimath
+# cleanup[3] wiping numpy.lib._scimath_impl
+# cleanup[3] wiping numpy.lib._type_check_impl
+# cleanup[3] wiping numpy.lib._ufunclike_impl
+# cleanup[3] wiping numpy.lib.npyio
+# cleanup[3] wiping numpy.lib._npyio_impl
+# destroy weakref
+# cleanup[3] wiping numpy.lib._iotools
+# cleanup[3] wiping numpy.lib._datasource
+# cleanup[3] wiping numpy.lib.format
+# cleanup[3] wiping numpy.lib._utils_impl
+# destroy textwrap
+# destroy platform
+# cleanup[3] wiping subprocess
+# destroy errno
+# destroy signal
+# destroy threading
+# destroy selectors
+# cleanup[3] wiping select
+# cleanup[3] wiping _posixsubprocess
+# cleanup[3] wiping grp
+# cleanup[3] wiping pwd
+# cleanup[3] wiping numpy.lib.mixins
+# cleanup[3] wiping numpy.lib.introspect
+# cleanup[3] wiping numpy.lib.array_utils
+# cleanup[3] wiping numpy.lib._array_utils_impl
+# cleanup[3] wiping numpy._core._internal
+# destroy ctypes
+# cleanup[3] wiping ctypes._endian
+# cleanup[3] wiping _ctypes
+# cleanup[3] wiping ast
+# cleanup[3] wiping numpy._core._dtype_ctypes
+# cleanup[3] wiping numpy._core._add_newdocs_scalars
+# cleanup[3] wiping numpy._core._add_newdocs
+# cleanup[3] wiping numpy._core._multiarray_tests
+# cleanup[3] wiping numpy._core.einsumfunc
+# cleanup[3] wiping numpy._core.getlimits
+# cleanup[3] wiping numpy._core._machar
+# cleanup[3] wiping numpy._core.function_base
+# cleanup[3] wiping numpy._core.records
+# cleanup[3] wiping numpy._core.numeric
+# cleanup[3] wiping numpy._core._asarray
+# cleanup[3] wiping numpy._core.arrayprint
+# cleanup[3] wiping numpy._core.shape_base
+# cleanup[3] wiping numpy._core.fromnumeric
+# cleanup[3] wiping numpy._core._methods
+# destroy pickle
+# cleanup[3] wiping numpy._core._ufunc_config
+# destroy contextvars
+# cleanup[3] wiping _contextvars
+# destroy _contextvars
+# cleanup[3] wiping collections.abc
+# cleanup[3] wiping contextlib
+# cleanup[3] wiping _pickle
+# cleanup[3] wiping _compat_pickle
+# cleanup[3] wiping re
+# destroy sre_compile
+# destroy copyreg
+# cleanup[3] wiping sre_parse
+# cleanup[3] wiping _sre
+# cleanup[3] wiping _struct
+# cleanup[3] wiping numpy._core.numerictypes
+# destroy numbers
+# cleanup[3] wiping numpy._core._dtype
+# cleanup[3] wiping numpy._core._type_aliases
+# cleanup[3] wiping numpy._core._string_helpers
+# cleanup[3] wiping numpy._core.umath
+# cleanup[3] wiping numpy._core.multiarray
+# cleanup[3] wiping numpy._core.overrides
+# cleanup[3] wiping numpy._core._multiarray_umath
+# cleanup[3] wiping numpy._core._exceptions
+# cleanup[3] wiping _datetime
+# cleanup[3] wiping math
+# cleanup[3] wiping numpy._utils._inspect
+# cleanup[3] wiping numpy._utils._convertions
+# cleanup[3] wiping functools
+# cleanup[3] wiping _functools
+# destroy _functools
+# cleanup[3] wiping collections
+# destroy heapq
+# destroy collections.abc
+# cleanup[3] wiping _collections
+# destroy _collections
+# cleanup[3] wiping operator
+# cleanup[3] wiping _operator
+# destroy _operator
+# cleanup[3] wiping itertools
+# cleanup[3] wiping _heapq
+# cleanup[3] wiping enum
+# cleanup[3] wiping types
+# cleanup[3] wiping warnings
+# cleanup[3] wiping _locale
+# destroy _locale
+# cleanup[3] wiping os
+# destroy posixpath
+# cleanup[3] wiping genericpath
+# cleanup[3] wiping _collections_abc
+# cleanup[3] wiping stat
+# cleanup[3] wiping _stat
+# destroy _stat
+# cleanup[3] wiping io
+# destroy abc
+# cleanup[3] wiping _abc
+# cleanup[3] wiping encodings.latin_1
+# cleanup[3] wiping _signal
+# cleanup[3] wiping encodings.utf_8
+# cleanup[3] wiping encodings.aliases
+# cleanup[3] wiping codecs
+# cleanup[3] wiping _codecs
+# cleanup[3] wiping time
+# cleanup[3] wiping _frozen_importlib_external
+# cleanup[3] wiping posix
+# cleanup[3] wiping marshal
+# cleanup[3] wiping _io
+# cleanup[3] wiping _weakref
+# cleanup[3] wiping _warnings
+# cleanup[3] wiping _thread
+# cleanup[3] wiping _imp
+# cleanup[3] wiping _frozen_importlib
+# destroy _frozen_importlib_external
+# destroy _imp
+# cleanup[3] wiping sys
+# cleanup[3] wiping builtins
+# destroy _posixsubprocess
+# destroy grp
+# destroy pwd
+# destroy _datetime
+# destroy marshal
+# destroy io
+# destroy numpy._core._exceptions
+# destroy numpy._core.multiarray
+# destroy numpy._core.umath
+# destroy numpy._core._string_helpers
+# destroy numpy._core._type_aliases
+# destroy numpy._core._dtype
+# destroy numpy._core.numerictypes
+# destroy numpy._core._ufunc_config
+# destroy numpy._core._methods
+# destroy numpy._core.fromnumeric
+# destroy numpy._core.shape_base
+# destroy numpy._core.arrayprint
+# destroy numpy._core._asarray
+# destroy numpy._core.records
+# destroy numpy._core.function_base
+# destroy numpy._core._machar
+# destroy numpy._core.getlimits
+# destroy numpy._core.einsumfunc
+# destroy numpy._core._multiarray_tests
+# destroy numpy._core._add_newdocs
+# destroy numpy._core._add_newdocs_scalars
+# destroy numpy._core._dtype_ctypes
+# destroy numpy._core._internal
+# destroy _collections_abc
+# destroy io
+# destroy _compat_pickle
+# destroy _pickle
+# destroy numpy
+# destroy _weakref
+# destroy _sre
+# destroy sre_parse
+# destroy numpy._typing._nested_sequence
+# destroy numpy._typing._nbit
+# destroy numpy._typing._char_codes
+# destroy numpy._typing._scalars
+# destroy numpy._typing._shape
+# destroy numpy._typing._dtype_like
+# destroy numpy._typing._array_like
+# destroy numpy.lib._array_utils_impl
+# destroy numpy.lib.array_utils
+# destroy numpy.lib.introspect
+# destroy numpy.lib.mixins
+# destroy numpy.lib._utils_impl
+# destroy numpy.lib.format
+# destroy numpy.lib._datasource
+# destroy numpy.lib._iotools
+# destroy numpy.lib._npyio_impl
+# destroy numpy.lib.npyio
+# destroy numpy.lib._ufunclike_impl
+# destroy numpy.lib._type_check_impl
+# destroy numpy.lib._scimath_impl
+# destroy numpy.lib.scimath
+# destroy numpy.lib._stride_tricks_impl
+# destroy numpy.lib.stride_tricks
+# destroy numpy.lib._twodim_base_impl
+# destroy numpy.lib._histograms_impl
+# destroy numpy.lib._function_base_impl
+# destroy numpy.lib._index_tricks_impl
+# destroy numpy.lib._nanfunctions_impl
+# destroy numpy.lib._shape_base_impl
+# destroy numpy.lib._arraysetops_impl
+# destroy numpy.lib._polynomial_impl
+# destroy numpy.lib._arrayterator_impl
+# destroy numpy.lib._arraypad_impl
+# destroy numpy.lib._version
+# destroy ast
+# destroy numpy._core.numeric
+# destroy stat
+# destroy genericpath
+# destroy _heapq
+# destroy subprocess
+# destroy itertools
+# destroy _warnings
+# destroy posix
+# destroy _signal
+# destroy math
+# destroy select
+# destroy _frozen_importlib
+# clear sys.audit hooks
