@@ -4,14 +4,16 @@ process parse_headers {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*${out}$/) "reports/$filename"}
 	
 	input:
-		tuple val(name), file(reads)
+		tuple val(name), path(reads)
 		val prefix
 		val method
 		val act
 		val args
+		val ready
 
 	output:
-		tuple val(name), file("*${out}"), emit: output
+		tuple val(name), path("*${out}"), emit: output
+		val(true), emit: ready
 
 	script:
 		outname = prefix + "_" + name

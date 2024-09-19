@@ -3,11 +3,12 @@
 process cluster_sets {
 
 	input:
-		tuple val(name),file(reads)
+		tuple val(name),path(reads)
+		val ready
 
 	output:
-		tuple val(name),file("*_cluster-pass.fastq"), emit: output
-		tuple val(name),file("*_cluster-fail.fastq") optional true
+		tuple val(name),path("*_cluster-pass.fastq"), emit: output
+		tuple val(name),path("*_cluster-fail.fastq") optional true
 
 	script:
 		method = params.cluster_sets.method

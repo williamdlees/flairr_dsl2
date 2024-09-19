@@ -24,10 +24,10 @@ include { define_clones } from '../modules/define_clones'
 include { single_clone_representative } from '../modules/single_clone_representative'
 
 workflow {
-	make_blast_db_v(params.v_ref)
-	make_blast_db_d(params.d_ref)
-	make_blast_db_j(params.j_ref)
-	make_blast_db_c(params.c_ref)
+	make_blast_db_v(params.v_ref, true)
+	make_blast_db_d(params.d_ref, make_blast_db_v.out.ready)
+	make_blast_db_j(params.j_ref, make_blast_db_d.out.ready)
+	make_blast_db_c(params.c_ref, make_blast_db_j.out.ready)
 	
 	seqs = channel.fromPath(params.reads)
 	igblast(seqs, make_blast_db_v.out.blastdb, make_blast_db_d.out.blastdb, make_blast_db_j.out.blastdb, make_blast_db_c.out.blastdb, params.aux, params.ndm)

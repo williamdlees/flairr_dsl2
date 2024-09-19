@@ -4,6 +4,7 @@ process split_seq {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_atleast-.*.fast.*$/) "reads/$filename"}
 	input:
 		tuple val(name),file(reads)
+		val ready
 
 	output:
 		tuple val(name), file("*_atleast-*.fast*"), emit: output

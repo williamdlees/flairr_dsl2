@@ -6,16 +6,17 @@ process MaskPrimers {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MP_.*$/) "reports/$filename"}
 
 	input:
-		tuple val(name), file(reads)
+		tuple val(name), path(reads)
 		val mask_params
 		path R1_primers
 		path R2_primers
+		val ready
 
 	output:
-		tuple val(name), file("*_primers-pass.fastq"), emit: output
-		tuple val(name), file("*_primers-fail.fastq") optional true
-		tuple val(name), file("MP_*"), emit: log_file						// to parse_log
-		tuple val(name), file("out*")
+		tuple val(name), path("*_primers-pass.fastq"), emit: output
+		tuple val(name), path("*_primers-fail.fastq") optional true
+		tuple val(name), path("MP_*"), emit: log_file						// to parse_log
+		tuple val(name), path("out*")
 
 	script:
 		mate = mask_params.mate

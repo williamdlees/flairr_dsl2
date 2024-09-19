@@ -3,9 +3,11 @@ process make_blast_db {
 
 	input:
 		path(germlineFile)
+		val(ready)
 
 	output:
 		path("*.db"), emit: blastdb
+		val(true), emit: ready
 
 	script:
 		gdb = germlineFile.getBaseName() + '.fasta'

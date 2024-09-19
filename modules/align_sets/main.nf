@@ -6,13 +6,14 @@ process align_sets {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /AS_.*$/) "reports/$filename"}
 
 	input:
-		tuple val(name),file(reads)
+		tuple val(name),path(reads)
+		val ready
 
 	output:
-		tuple val(name), file("*_align-pass.fastq"), emit: output
-		tuple val(name), file("AS_*"), emit: log_file
-		tuple val(name), file("*_align-fail.fastq") optional true
-		tuple val(name), file("out*") optional true
+		tuple val(name), path("*_align-pass.fastq"), emit: output
+		tuple val(name), path("AS_*"), emit: log_file
+		tuple val(name), path("*_align-fail.fastq") optional true
+		tuple val(name), path("out*") optional true
 
 	script:
 		method = params.align_sets.method

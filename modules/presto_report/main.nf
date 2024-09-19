@@ -5,7 +5,7 @@ process presto_report {
 	
 	input:
 		path(script)
-		tuple val(name), file(headers)
+		tuple val(name), path(headers)
 
 	output:
 		path("*.pdf")

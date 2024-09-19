@@ -5,12 +5,13 @@ process filter_seq_quality
     publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /FS_.*$/) "reports/$filename"}
     input:
         tuple val(name), path(reads)
+		val(ready)
 
     output:
-        tuple val(name), file("${reads.getBaseName()}_${method}-pass.fast*"), emit: output       // reads passed to next stage
-        tuple val(name), file("FS_*"), emit: log_file                     // log file passed to parse_log 
-        tuple val(name), file("*_${method}-fail.fast*") optional true     // failed reads
-        tuple val(name), file("out*") optional true                       // FilterSeq output
+        tuple val(name), path("${reads.getBaseName()}_${method}-pass.fast*"), emit: output       // reads passed to next stage
+        tuple val(name), path("FS_*"), emit: log_file                     // log file passed to parse_log 
+        tuple val(name), path("*_${method}-fail.fast*") optional true     // failed reads
+        tuple val(name), path("out*") optional true                       // FilterSeq output
 
     script:
         method = params.filter_seq_quality.method

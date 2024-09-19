@@ -8,7 +8,8 @@ process FastQC {
 		tuple val(name), file(reads)
 
 	output:
-		file '*.{html,zip}'
+		path '*.{html,zip}'
+		val(true), emit: ready
 
 	errorStrategy 'retry'
 	maxRetries 5

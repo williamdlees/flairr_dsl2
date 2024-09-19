@@ -10,7 +10,8 @@ process parse_log {
 		 val args		// column args to pass to ParseLog
 	 
 	output:
-		tuple val(name), file("*table.tab")
+		tuple val(name), path("*table.tab")
+		val(true), emit: ready
 
 	script:
 		readArray = log_file.toString()

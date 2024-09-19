@@ -6,8 +6,12 @@
 process check_for_seqs {
 
 	input:
-		tuple val(name), file(reads)
+		tuple val(name), path(reads)
 		path primers_file
+		val ready
+		
+	output:
+		val(true), emit: ready	
 
 	script:
 		outfq = reads.toString() - '.fastq' + '_cat.fastq'
