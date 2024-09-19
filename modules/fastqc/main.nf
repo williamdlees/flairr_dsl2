@@ -5,7 +5,7 @@ process FastQC {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html|zip)$/) "reports/$filename"}
 	
 	input:
-		tuple val(name), file(reads)
+		tuple val(name), path(reads)
 
 	output:
 		path '*.{html,zip}'

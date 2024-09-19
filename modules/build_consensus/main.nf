@@ -5,12 +5,12 @@ process build_consensus {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "failed_reads/$filename"}
 	
 	input:
-		tuple val(name), file(reads)
+		tuple val(name), path(reads)
 
 	output:
-		tuple val(name), file("*_consensus-pass.fastq"), emit: output
-		tuple val(name), file("BC*"), emit: log_file
-		tuple val(name), file("*_consensus-fail.fastq") optional true
+		tuple val(name), path("*_consensus-pass.fastq"), emit: output
+		tuple val(name), path("BC*"), emit: log_file
+		tuple val(name), path("*_consensus-fail.fastq") optional true
 
 	script:
 		mate = params.mate
