@@ -43,6 +43,12 @@ process makedb {
 		outname = igblastOut.getBaseName() + '_' + alignment_suffix
 
 		"""
+		env >diagnostics.txt
+		python3 -V >>diagnostics.txt
+		python3 -v -c 'import numpy.core.multiarray' 2>>diagnostics.txt
+		pip config list -v >>diagnostics.txt
+		pip freeze >>diagnostics.txt
+
 		cat ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} > ${reference_set}
 		
 		MakeDb.py igblast \

@@ -14,10 +14,10 @@ nextflow ../../preprocess/main.nf --reads /mnt/f/clareo/kinnex_samples/m84248_24
 # cd is needed to avoid a Java bug - probably wsl specific
 cd ..
 cd $sample-kinnex
-nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*collapse-unique_atleast-2.fasta --outdir $(pwd)/results
+#nextflow ../../annotate/main.nf --reads $(pwd)/results/reads/*collapse-unique_atleast-2.fasta --outdir $(pwd)/results -resume
 cd ..
-docker run -v "$(pwd)/..":/scratch williamlees/flairr_dsl2 /scratch/processed_samples/presto_r.sh $sample-kinnex
+#docker run -v "$(pwd)/..":/scratch williamlees/flairr_dsl2 /scratch/processed_samples/presto_r.sh $sample-kinnex
 done
 
 cd ..
-docker run -i --cpus 60.0 -v $(pwd):/data -w /data my_immcantation_suite:4.4.0 /data/processed_samples/run_summaries.sh
+#docker run -i --cpus 60.0 -v $(pwd):/data -w /data my_immcantation_suite:4.4.0 /data/processed_samples/run_summaries.sh
