@@ -52,7 +52,7 @@ library(prestor)
 
 # Function to get file to process, using the toml config
 
-file_config = read.config("../processed_samples/flairr_logs.toml")
+file_config = read.config(file.path(params$data, "../flairr_logs.toml"))
 
 get_log_file <- function(phase, config) {
   for (element in file_config$sample_files) {
@@ -96,6 +96,3 @@ log_file_atleast2 = get_log_file('unique_atleast2', file_config)
 
 ```{r, length, child="Presto-Output.Rmd", log_file_total=log_file_total, log_file_unique=log_file_unique, log_file_atleast2=log_file_atleast2, eval=!is.null(log_file_atleast2)}
 ```
-
-
-
