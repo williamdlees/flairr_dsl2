@@ -18,6 +18,8 @@ Date: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`
 
 Sample: `r params$sample`
 
+Read File: `r params$data`
+
 
 ```{r, echo=FALSE, results="hide", eval=FALSE}
 bib_file <- system.file("reports/references.bib", package="prestor")

@@ -3,7 +3,7 @@
 process igblast {
 
 	input:
-		path fastaFile
+		path(fastaFile)
 		path(db_v_path)
 		path(db_d_path)
 		path(db_j_path,)
@@ -12,7 +12,7 @@ process igblast {
 		path custom_internal_data
 
 	output:
-		path outfile, emit: output
+		path('*.out'), emit: output
 
 	script:
 		num_threads = params.igblast.num_threads
