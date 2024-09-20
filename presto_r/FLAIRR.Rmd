@@ -15,7 +15,7 @@ output:
 params:
     title: "pRESTO FLAIRR Report"
     sample: "Sample"
-    data: "../processed_samples/1001-667/results/reports"
+    data: ""
 
 title: "`r params$title`"
 ---
@@ -52,12 +52,13 @@ library(prestor)
 
 # Function to get file to process, using the toml config
 
-file_config = read.config("../processed_samples/flairr_logs.toml")
+file_config = read.config(file.path(params$data, "../flairr_logs.toml"))
 
 get_log_file <- function(phase, config) {
   for (element in file_config$sample_files) {
     if (element[1] == phase) {
-      matched_files <- Sys.glob(file.path("../processed_samples/1001-667", element[2]))
+	  file.path("$data", element[2])
+      matched_files <- Sys.glob(file.path(params$data, element[2]))
       if (length(matched_files) == 1) {
         return(matched_files[1])
       } else {
