@@ -5,6 +5,7 @@ params.reads = "${baseDir}/../preprocess/results/reads/986-bc1003_1000_consensus
 params.species = "Homo_sapiens"
 params.locus = "IGH"
 params.germline_ref_dir = "$baseDir/../../reference"
+params.outdir = "$baseDir/../results"
 
 // these derived params should not need modifying
 params.germline_ref = "${params.germline_ref_dir}/${params.species}_${params.locus}"

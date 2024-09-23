@@ -4,6 +4,7 @@ process makedb {
 
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/$filename"}
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MD.*$/) "reports/$filename"}	
 	
 	input:
 		path(fastaFile)
@@ -18,6 +19,7 @@ process makedb {
 		path("*_db-pass.tsv"), emit: annotations
 		path("${reference_set}"), emit: consolidated_ref
 		path("*_db-fail.tsv") optional true 
+		path("MD*"), emit: log_file		
 
 	script:
 		failed = params.MakeDb.failed
@@ -43,12 +45,6 @@ process makedb {
 		outname = igblastOut.getBaseName() + '_' + alignment_suffix
 
 		"""
-		env >diagnostics.txt
-		python3 -V >>diagnostics.txt
-		python3 -v -c 'import numpy.core.multiarray' 2>>diagnostics.txt
-		pip config list -v >>diagnostics.txt
-		pip freeze >>diagnostics.txt
-
 		cat ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} > ${reference_set}
 		
 		MakeDb.py igblast \

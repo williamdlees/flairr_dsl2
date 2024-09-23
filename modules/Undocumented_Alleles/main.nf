@@ -7,8 +7,8 @@ process Undocumented_Alleles {
 		path(v_germline_file)
 
 	output:
-		path(".tsv"), emit: output optional true
-		path("${out_novel_germline}"), emit: novel_germline optional true
+		path("*.tsv"), emit: output optional true
+		path("${out_novel_germline}.*"), emit: novel_germline optional true
 
 	script:
 		chain = params.Undocumented_Alleles.chain
@@ -139,12 +139,11 @@ process Undocumented_Alleles {
 				novel_v_germline <- setNames(gsub('-', '.', novel[['novel_imgt']], fixed = T), novel[['polymorphism_call']])
 				tigger::writeFasta(c(vgerm, novel_v_germline), paste0('${out_novel_germline}','.fasta'))
 			}else{
-				## write fake file
-				file.create(paste0('${out_novel_germline}','.txt'))
+				tigger::writeFasta(vgerm, paste0('${out_novel_germline}','.fasta'))
 				
 			}
 		}else{
-			file.create(paste0('${out_novel_germline}','.txt'))
+			tigger::writeFasta(vgerm, paste0('${out_novel_germline}','.fasta'))
 		}
 		"""
 

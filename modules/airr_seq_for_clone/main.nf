@@ -8,8 +8,8 @@ process airr_seq_for_clone {
 		path(v_novel_germline_file)
 
 	output:
-		path(airrSeqClone)
-		path(germlineClone)
+		path(airrSeqClone), emit: airrSeqClone
+		path(germlineClone), emit: germlineClone
 
 	script: 
 		airrSeq = airrSeq.ifEmpty("")

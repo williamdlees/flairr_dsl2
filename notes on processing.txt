@@ -1,0 +1,87 @@
+
+Key steps in the preprocessing pipeline are:
+
+align_sets
+- align all sequences within each UMI
+cluster_sets
+- cluster sequences within each UMI (to account for possible re-use of UMIs)
+build_consensus
+- build a consensus sequence for each cluster within each UMI. creates CONSCOUNT to count sequences supporting the consensus
+collapse_seq
+- remove duplicate sequences. creates DUPCOUNT to count the duplicates, and consolidates their CONSCOUNTs
+split_seq
+split sequences into two files: those that have a CONSCOUNT of at least 2, and those that don't
+
+The result of this is that reads are consolidated into a set of unique sequences in a fasta file. In the 
+headers, CONSCOUNT gives the number of original reads that contributed to the sequence consensus, and DUPCOUNT
+gives the number of UMIs that contributed to the sequence.
+
+In the annotation pipeline, collapse_annotations is a step that runs after changeo makedb. Its main purpose is to
+consolidate records with the same VDJ sequence. It carries out a few other actions. CONSCOUNT and DUPCOUNT are
+updated. The file results/collapsed/collapsed_annotations.log summarises results:
+
+2 Sequences had N count over 10
+0 Sequences had a duplicated sequence id
+2754 Sequences were collapsed
+327 Sequences were declared non functional or lacked a J assignment
+Going forward with 3361 sequences
+
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# grep "Submitted process" .nextflow.log.2
+Sep-19 09:23:53.185 [Task submitter] INFO  nextflow.Session - [62/dffbfc] Submitted process > filter_seq_quality (1)
+Sep-19 09:52:24.428 [Task submitter] INFO  nextflow.Session - [0d/22c709] Submitted process > parse_log_FSQ (1)
+Sep-19 09:52:24.511 [Task submitter] INFO  nextflow.Session - [6a/a1135c] Submitted process > filter_seq_length (1)
+Sep-19 10:15:17.825 [Task submitter] INFO  nextflow.Session - [8f/6b7cc6] Submitted process > parse_log_FSL (1)
+Sep-19 10:15:17.860 [Task submitter] INFO  nextflow.Session - [ad/0dfd57] Submitted process > MaskPrimers_CPRIMERS (1)
+Sep-19 10:41:20.240 [Task submitter] INFO  nextflow.Session - [ef/3eec5f] Submitted process > parse_log_MPC (1)
+Sep-19 10:41:20.276 [Task submitter] INFO  nextflow.Session - [dd/f7e0b3] Submitted process > MaskPrimers_VPRIMERS (1)
+Sep-19 11:07:22.266 [Task submitter] INFO  nextflow.Session - [b6/5f682b] Submitted process > parse_log_MPV (1)
+Sep-19 11:07:22.293 [Task submitter] INFO  nextflow.Session - [83/96694a] Submitted process > MaskPrimers_EPRIMERS (1)
+Sep-19 11:33:11.984 [Task submitter] INFO  nextflow.Session - [e2/f0c41d] Submitted process > parse_log_MPE (1)
+Sep-19 11:33:11.998 [Task submitter] INFO  nextflow.Session - [d4/f4970d] Submitted process > check_for_seqs (1)
+Sep-19 11:33:12.069 [Task submitter] INFO  nextflow.Session - [5a/b87308] Submitted process > align_sets (1)
+Sep-19 17:28:40.421 [Task submitter] INFO  nextflow.Session - [a2/6386a5] Submitted process > parse_log_AS (1)
+Sep-19 17:28:41.220 [Task submitter] INFO  nextflow.Session - [57/8d7064] Submitted process > cluster_sets (1)
+Sep-19 20:03:41.080 [Task submitter] INFO  nextflow.Session - [02/d2325a] Submitted process > parse_headers_copy (1)
+Sep-19 20:27:24.233 [Task submitter] INFO  nextflow.Session - [40/6ed874] Submitted process > build_consensus (1)
+Sep-19 21:10:47.564 [Task submitter] INFO  nextflow.Session - [eb/ab8b81] Submitted process > parse_log_BC (1)
+Sep-19 21:10:47.633 [Task submitter] INFO  nextflow.Session - [1f/818754] Submitted process > parse_headers_consensus (1)
+Sep-19 21:10:47.825 [Task submitter] INFO  nextflow.Session - [86/556664] Submitted process > collapse_seq (1)
+Sep-19 21:13:20.546 [Task submitter] INFO  nextflow.Session - [8f/1d4a18] Submitted process > parse_headers_collapse (1)
+Sep-19 21:13:20.613 [Task submitter] INFO  nextflow.Session - [30/af43fb] Submitted process > split_seq (1)
+Sep-19 21:13:37.720 [Task submitter] INFO  nextflow.Session - [d2/606e00] Submitted process > parse_headers_split (1)
+Sep-19 21:13:47.090 [Task submitter] INFO  nextflow.Session - [80/d11b65] Submitted process > presto_report (1)
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# cat work/5a/b8*/.command.sh
+#!/bin/bash -ue
+AlignSets.py muscle -s m84248_240915_090555_s3.hifi_reads.RACE_TSO_5p--bc1001.hifi_reads_quality-pass_length-pass_primers-pass_primers-pass_primers-pass.fastq --bf BARCODE --exec /usr/local/bin/muscle        --log AS_m84248_240915_090555_s3.log --nproc 10 >> out_m84248_240915_090555_s3.hifi_reads.RACE_TSO_5p--bc1001.hifi_reads_quality-pass_length-pass_primers-pass_primers-pass_primers-pass.fastq_AS.log
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# cat work/57/8d*/.command.sh
+#!/bin/bash -ue
+ClusterSets.py set  -k CLUSTER --ident 0.9 --length 0  --cluster usearch --exec /usr/local/bin/usearch -f BARCODE --start 0   -s m84248_240915_090555_s3.hifi_reads.RACE_TSO_5p--bc1001.hifi_reads_quality-pass_length-pass_primers-pass_primers-pass_primers-pass_align-pass.fastq --nproc 10
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# cat work/40/6e*/.command.sh
+#!/bin/bash -ue
+BuildConsensus.py -s CS_m84248_240915_090555_s3_reheader.fastq --bf CLUSTER --pf CPRIMER   -n 1 -q 0 --freq 0.6 --maxerror 0.1 --prcons 0.6 --maxgap 0.5   --outname m84248_240915_090555_s3 --log BC_m84248_240915_090555_s3.log --failed --nproc 10
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# cat work/86/55*/.command.sh
+#!/bin/bash -ue
+CollapseSeq.py -s m84248_240915_090555_s3_consensus-pass.fastq -n 20 --fasta --inner --uf CREGION --cf CONSCOUNT --act sum --log CS_m84248_240915_090555_s3.log --failed
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex#
+SplitSeq.py group -s m84248_240915_090555_s3_consensus-pass_collapse-unique.fasta -f CONSCOUNT  --num 2 --fasta
+
+
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# grep "Submitted process" .nextflow.log
+Sep-20 09:50:45.916 [Task submitter] INFO  nextflow.Session - [21/740171] Submitted process > make_blast_db_v
+Sep-20 09:51:05.449 [Task submitter] INFO  nextflow.Session - [5c/291e03] Submitted process > make_blast_db_d
+Sep-20 09:51:13.775 [Task submitter] INFO  nextflow.Session - [c3/b5b19c] Submitted process > make_blast_db_j
+Sep-20 09:51:21.433 [Task submitter] INFO  nextflow.Session - [17/8f1f67] Submitted process > make_blast_db_c
+Sep-20 09:51:28.619 [Task submitter] INFO  nextflow.Session - [2f/a9c9ff] Submitted process > igblast (1)
+Sep-20 09:52:26.605 [Task submitter] INFO  nextflow.Session - [31/b1da6e] Submitted process > makedb (1)
+Sep-20 09:53:00.760 [Task submitter] INFO  nextflow.Session - [53/3eb8e5] Submitted process > collapse_annotations (1)
+Sep-20 09:53:08.628 [Task submitter] INFO  nextflow.Session - [44/9d1e86] Submitted process > create_germlines_pass1 (1)
+Sep-20 09:53:28.157 [Task submitter] INFO  nextflow.Session - [50/6fb43d] Submitted process > define_clones (1)
+Sep-20 09:53:53.318 [Task submitter] INFO  nextflow.Session - [d7/65e124] Submitted process > create_germlines_pass2 (1)
+Sep-20 09:54:11.617 [Task submitter] INFO  nextflow.Session - [44/e2236f] Submitted process > single_clone_representative (1)
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex# cat work/53/3e*/.command.out
+2 Sequences had N count over 10
+0 Sequences had a duplicated sequence id
+2754 Sequences were collapsed
+327 Sequences were declared non functional or lacked a J assignment
+Going forward with 3361 sequences
+(base) root@Raven:/mnt/f/clareo/flairr_dsl2/processed_samples/1001-kinnex#
