@@ -15,7 +15,7 @@ d_germline_db <- if("${d_germline}"!="") readIgFasta("${d_germline}") else NA
 
 
 binom_del <-
-	   rabhit::deletionsByBinom(data, chain = "IGH")
+	   rabhit::deletionsByBinom(data, chain = "${locus}")
 	   
 # write deletion report
 
@@ -27,20 +27,21 @@ write.table(binom_del, file = outfile_del, sep = '\t', row.names = F, quote = T)
 
 outfile_haplotype = "${outname}_gene-"
 
-genes_haplotype <- c('IGHJ6', 'IGHD2-21', 'IGHD2-8')
+genes_haplotype <- unlist(strsplit("${haplotype_genes}", ","))
 
 for (gene in genes_haplotype) {
 	CALL = paste0(tolower(substr(gene, 4, 4)), "_call")
 	
-	if (gene == 'IGHJ6') {
+	if (CALL == "j") {
 	  CALL = 'j_call'
 	  toHap_GERM = c(v_germline_db, d_germline_db)
-	  toHap_col = c('v_call', 'd_call')
+	  
+	  if (chain == 'IGH' || chain == 'TRB') {
+		toHap_col = c('v_call', 'd_call')
+	  } else {
+	    toHap_col = c('v_call')
+	  }
 	}else{
-		if ("${d_haplotyping}" == "false") {
-			next
-		}		
-		
 		toHap_GERM = c(v_germline_db)
 		toHap_col = c('v_call')
 	}
@@ -51,34 +52,7 @@ for (gene in genes_haplotype) {
 	bool <- sum(table(allele_fractions) / length(allele_fractions) >= 0.3) == 2 && length(names(table(allele_fractions))) >= 2
 
 	if (bool) {
-	cat('bool is true\n')
-
-	  print(allele_fractions)
-	  names_ <- names(table(allele_fractions)[table(allele_fractions) / length(allele_fractions) >= 0.3])
-	  cat('done names\n')
-	  print(names_)
-	  
-	  
 	  alleles <- paste0(sapply(names_, function(x) strsplit(x, '[*]')[[1]][2]), collapse = '_')
-	  cat('done alleles\n')
-	
-	  cat('alleles\n')
-	  print(alleles)
-
-	  cat('toHap_col\n')
-	  print(toHap_col)
-
-	  cat('CALL\n')
-	  print(CALL)
-
-	  cat('gene\n')
-	  print(gene)
-
-	  cat('toHap_GERM\n')
-	  print(length(toHap_GERM))
-
-	  cat('binom_del\n')
-	  print(length(binom_del))
 	  
 	  haplo <- rabhit::createFullHaplotype(
 		data,
@@ -87,7 +61,7 @@ for (gene in genes_haplotype) {
 		hapBy = gene,
 		toHap_GERM = toHap_GERM,
 		deleted_genes = binom_del,
-		chain = "IGH"
+		chain = chain
 	  )
 	  
 	  cat('back from createFullHaplotype')

@@ -5,6 +5,9 @@ params.reads = "${baseDir}/../preprocess/results/reads/986-bc1003_1000_consensus
 params.sample_name = "986-bc1003_1000"
 params.species = "Homo_sapiens"
 params.locus = "IGH"
+//params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
+params.haplotype_genes = "IGHJ6"
+
 params.germline_ref_dir = "$baseDir/../../reference"
 params.outdir = "$baseDir/../results"
 
@@ -31,6 +34,8 @@ include { define_clones } from '../modules/define_clones'
 include { single_clone_representative } from '../modules/single_clone_representative'
 include { TIgGER_bayesian_genotype_Inference as tigger_j_call; TIgGER_bayesian_genotype_Inference as tigger_d_call; TIgGER_bayesian_genotype_Inference as tigger_v_call } from '../modules/tigger_bayesian_genotype_inference'
 include { haplotype_inference_report } from '../modules/haplotype_inference_report'
+include { ogrdbstats_report } from '../modules/ogrdbstats_report'
+include { vdjbase_genotype_report } from '../modules/vdjbase_genotype_report'
 
 
 workflow {
@@ -60,21 +65,17 @@ workflow {
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.j_ref, "true")
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.d_ref, tigger_j_call.out.ready)	
 	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.v_ref, tigger_d_call.out.ready)	
+	
 	make_blast_db_third_v(tigger_v_call.out.personal_reference, tigger_v_call.out.ready)
 	make_blast_db_third_d(tigger_d_call.out.personal_reference, make_blast_db_third_v.out.ready)
 	make_blast_db_third_j(tigger_j_call.out.personal_reference, make_blast_db_third_d.out.ready)
 	
 	igblast_third(seqs, make_blast_db_third_v.out.blastdb, make_blast_db_third_d.out.blastdb, make_blast_db_third_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
 	makedb_third(seqs, igblast_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'v-personalised-1')
+
 	collapse_annotations_third(makedb_third.out.annotations, "final")	
 	
-	haplotype_inference_report(collapse_annotations_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, "false", "true")
-	
-
-/*
-	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true")
-	ogrdbstats_report(makedb_first, )
-	vdjbase_genotype_report(Undocumented_Alleles.out.novel_germline, )
-
-*/
+	haplotype_inference_report(collapse_annotations_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, "true")
+	ogrdbstats_report(collapse_annotations_third.out.output, makedb_first.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)
+	vdjbase_genotype_report(collapse_annotations_second.out.output, collapse_annotations_third.out.output, tigger_v_call.out.genotype_report, tigger_d_call.out.genotype_report, tigger_j_call.out.genotype_report, haplotype_inference_report.out.deletions, "true")
 }
