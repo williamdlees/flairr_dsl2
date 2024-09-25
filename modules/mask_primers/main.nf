@@ -19,6 +19,7 @@ process MaskPrimers {
 		tuple val(name), path("out*")
 
 	script:
+		name = params.sample_name
 		mate = mask_params.mate
 		method = mask_params.method
 		barcode_field = mask_params.barcode_field

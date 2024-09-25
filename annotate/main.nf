@@ -1,7 +1,10 @@
 // FLAIRR-seq workflow
 
+// these two params must be specified on the command line
+params.reads = ""			// FASTA file containing the reads
+params.sample_name = ""		// Sample name, to be used in reports and report filenames
+
 // modify these params to meet your requirements
-params.reads = "${baseDir}/../preprocess/results/reads/986-bc1003_1000_consensus-pass_reheader_collapse-unique_atleast-2.fasta"
 params.species = "Homo_sapiens"
 params.locus = "IGH"
 params.germline_ref_dir = "$baseDir/../../reference"
@@ -33,9 +36,9 @@ workflow {
 	seqs = channel.fromPath(params.reads)
 	igblast(seqs, make_blast_db_v.out.blastdb, make_blast_db_d.out.blastdb, make_blast_db_j.out.blastdb, make_blast_db_c.out.blastdb, params.aux, params.ndm)
 	makedb(seqs, igblast.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
-	collapse_annotations(makedb.out.annotations, "")
-	create_germlines_pass1(collapse_annotations.out.output, params.v_ref, params.d_ref, params.j_ref, "false")
+	collapse_annotations(makedb.out.annotations, "pass-1")
+	create_germlines_pass1(collapse_annotations.out.output, params.v_ref, params.d_ref, params.j_ref, "false", "pass-1")
 	define_clones(create_germlines_pass1.out.output)
-	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true")
+	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true", "pass-2")
 	single_clone_representative(create_germlines_pass2.out.output)
 }

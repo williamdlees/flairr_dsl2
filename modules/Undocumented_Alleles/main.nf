@@ -1,6 +1,6 @@
 process Undocumented_Alleles {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.tsv$/) "novel_report/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.tsv$/) "novel_report/novel_alleles_${name}.tsv"}
 
 	input:
 		path(airr_file)
@@ -11,6 +11,7 @@ process Undocumented_Alleles {
 		path("${out_novel_germline}.*"), emit: novel_germline optional true
 
 	script:
+		name = params.sample_name
 		chain = params.Undocumented_Alleles.chain
 		num_threads = params.Undocumented_Alleles.num_threads
 		germline_min = params.Undocumented_Alleles.germline_min

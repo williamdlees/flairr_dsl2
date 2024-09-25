@@ -52,13 +52,16 @@ library(prestor)
 
 # Function to get file to process, using the toml config
 
-file_config = read.config(file.path(params$data, "../flairr_logs.toml"))
+file_config = read.config(file.path(params$data, "flairr_logs.toml"))
 
-get_log_file <- function(phase, config) {
+str(file_config)
+
+get_log_file <- function(phase, config, sample) {
   for (element in file_config$sample_files) {
     if (element[1] == phase) {
-	  file.path("$data", element[2])
-      matched_files <- Sys.glob(file.path(params$data, element[2]))
+	  template = stri_replace_all_fixed(element[2], "{sample}", sample)
+      matched_files <- Sys.glob(file.path(params$data, config$sample_dir, template))
+	  
       if (length(matched_files) == 1) {
         return(matched_files[1])
       } else {
@@ -69,14 +72,14 @@ get_log_file <- function(phase, config) {
   return(NULL)  # Return NULL if the input_name is not found
 }
 
-quality_log_file = get_log_file('filterSeq_quality', file_config)
-length_log_file = get_log_file('filterSeq_length', file_config)
-primer_log_file_1 = get_log_file('maskPrimer_C', file_config)
-primer_log_file_2 = get_log_file('maskPrimer_V', file_config)
-align_log_file = get_log_file('alignSets', file_config)
-log_file_total = get_log_file('total', file_config)
-log_file_unique = get_log_file('unique', file_config)
-log_file_atleast2 = get_log_file('unique_atleast2', file_config)
+quality_log_file = get_log_file('filterSeq_quality', file_config, params$sample)
+length_log_file = get_log_file('filterSeq_length', file_config, params$sample)
+primer_log_file_1 = get_log_file('maskPrimer_C', file_config, params$sample)
+primer_log_file_2 = get_log_file('maskPrimer_V', file_config, params$sample)
+align_log_file = get_log_file('alignSets', file_config, params$sample)
+log_file_total = get_log_file('total', file_config, params$sample)
+log_file_unique = get_log_file('unique', file_config, params$sample)
+log_file_atleast2 = get_log_file('unique_atleast2', file_config, params$sample)
 ```
 
 ```{r, front, child="Front.Rmd", eval=TRUE}

@@ -9,6 +9,7 @@ process define_clones {
 		path("*_clone-pass.tsv"), emit: output
 
 	script:
+		name = params.sample_name
 		failed = params.define_clones.failed
 		format = params.define_clones.format
 		seq_field = params.define_clones.seq_field
@@ -59,6 +60,6 @@ process define_clones {
 			${sym} \
 			${link} \
 			--maxmiss ${maxmiss} \
-			--log DF_.log  
+			--log DF_${name}.log  
 		"""
 }

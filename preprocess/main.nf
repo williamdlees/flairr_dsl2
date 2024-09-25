@@ -1,7 +1,12 @@
 // FLAIRR-seq workflow
 
-params.reads = "../../easton_short_samples/986-bc1003_1000.fastq"
+
+// these two params must be specified on the command line
+params.reads = ""			// FASTQ file containing the reads
+params.sample_name = ""		// Sample name, to be used in reports and report filenames
+
 params.outdir = "$baseDir/../results"
+
 
 include { filter_seq_quality } from '../modules/filter_seq_quality'
 include { parse_log as parse_log_FSQ; parse_log as parse_log_FSL; parse_log as parse_log_MPC; parse_log as parse_log_MPV; parse_log as parse_log_MPE; parse_log as parse_log_AS; parse_log as parse_log_BC } from '../modules/parse_log'

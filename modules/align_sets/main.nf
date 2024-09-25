@@ -16,6 +16,7 @@ process align_sets {
 		tuple val(name), path("out*") optional true
 
 	script:
+		name = params.sample_name
 		method = params.align_sets.method
 		bf = params.align_sets.bf
 		div = params.align_sets.div

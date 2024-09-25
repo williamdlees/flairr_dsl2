@@ -11,6 +11,7 @@ process cluster_sets {
 		tuple val(name),path("*_cluster-fail.fastq") optional true
 
 	script:
+		name = params.sample_name
 		method = params.cluster_sets.method
 		failed = params.cluster_sets.failed
 		nproc = params.cluster_sets.nproc

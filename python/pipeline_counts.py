@@ -5,6 +5,8 @@ import glob
 import os
 import argparse
 import csv
+import re
+import fnmatch
 
 
 # find number of reads in a fastq file
@@ -51,6 +53,20 @@ def write_csv(file: str, rows: list, delimiter: str = None, scan_all: bool = Fal
             writer.writerow(row)
 
 
+def find_samples(dirs, config):
+    samples = []
+    for _, file_template in config['sample_files']:
+        lh, rh = file_template.split('{sample}')
+        file_template = file_template.replace('{sample}', '*')
+        for file in glob.glob(os.path.join(config['sample_dir'], file_template)):
+            # find the value of {sample} in the matched template     
+            file = file.replace('\\', '/')  
+            sample = file.split(lh)[1].split(rh)[0]
+            if sample not in samples:
+                samples.append(sample)
+ 
+    return sorted(samples)
+
 
 args = argparse.ArgumentParser(description='Summarise read counts at each pipeline stage for each sample')
 args.add_argument('config_file', help='Path to the config file')
@@ -62,19 +78,21 @@ config = toml.load(args.config_file)
 results = []
 results_perc = []
 
-print('Processing samples from directories matching', config['sample_dirs'])
-for sample_dir in glob.glob(config['sample_dirs']):
-    if not os.path.isdir(sample_dir):
-        continue
 
-    print(f'Processing {sample_dir}...')
-    rec = {'sample': os.path.basename(sample_dir)}
-    rec_perc = {'sample': os.path.basename(sample_dir)}
-    sample_name = os.path.basename(sample_dir)
+print('Processing samples from directory ', config['sample_dir'])
+sample_dir = config['sample_dir']
+
+samples = find_samples(sample_dir, config)
+
+print(f'Processing {sample_dir}...')
+
+for sample_name in samples:
+    rec = {'sample': sample_name}
+    rec_perc = {'sample': sample_name}
     first_count = -1
 
     for stage, stage_filespec in config['sample_files']:
-        stage_filename_glob = glob.glob(os.path.join(sample_dir, stage_filespec))
+        stage_filename_glob = glob.glob(os.path.join(sample_dir, stage_filespec).replace('{sample}', sample_name))
 
         if len(stage_filename_glob) == 0:
             rec[stage] = 0

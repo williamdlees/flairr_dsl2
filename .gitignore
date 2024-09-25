@@ -7,5 +7,6 @@ Rplots.pdf
 *_reads.fastq
 work/
 results/
+results_with_inference/
 inferred_results/
 blast_db/

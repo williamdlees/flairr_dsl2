@@ -2,8 +2,8 @@
 
 process makedb {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/makedb_pass_${alignment_suffix}_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/makedb_fail_${alignment_suffix}_${name}.tsv"}
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MD.*$/) "reports/$filename"}	
 	
 	input:
@@ -22,6 +22,7 @@ process makedb {
 		path("MD*"), emit: log_file		
 
 	script:
+		name = params.sample_name
 		failed = params.MakeDb.failed
 		format = params.MakeDb.format
 		regions = params.MakeDb.regions
@@ -51,8 +52,8 @@ process makedb {
 			-s ${fastaFile} \
 			-i ${igblastOut} \
 			-r ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} \
-			--log MD_${outname}.log \
-			--outname ${outname}\
+			--log MD_${name}.log \
+			--outname ${name}\
 			${extended} \
 			${failed} \
 			${format} \

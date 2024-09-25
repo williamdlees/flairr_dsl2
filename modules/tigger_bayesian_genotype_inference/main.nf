@@ -1,6 +1,6 @@
 process TIgGER_bayesian_genotype_Inference {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_genotype_report.tsv/) "genotype_report/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_personal_reference.fasta/) "genotype_report/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_genotype_report.tsv/) "genotype_report/genotype_report_${call}_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_personal_reference.fasta/) "genotype_report/personal_reference_${call}_${name}.fasta"}
 	
 	input:
 		val(call)				// column in data with allele calls. Default is "v_call
@@ -19,6 +19,7 @@ process TIgGER_bayesian_genotype_Inference {
 	script:
 		// general params
 
+		name = params.sample_name
 		germline_file = germline_file.name.startsWith('NO_FILE') ? "" : "${germline_file}"
 
 

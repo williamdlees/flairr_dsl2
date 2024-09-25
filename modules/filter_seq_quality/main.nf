@@ -14,6 +14,7 @@ process filter_seq_quality
         tuple val(name), path("out*") optional true                       // FilterSeq output
 
     script:
+		name = params.sample_name
         method = params.filter_seq_quality.method
         readArray = reads.toString().split(' ')
 		method = params.filter_seq_quality.method

@@ -1,8 +1,10 @@
 // FLAIRR-seq annotation workflow, with genotyping and novel allele inference, using Tigger and Piglet
 
+// these two params must be specified on the command line
+params.reads = ""			// FASTA file containing the reads
+params.sample_name = ""		// Sample name, to be used in reports and report filenames
+
 // modify these params to meet your requirements
-params.reads = "${baseDir}/../preprocess/results/reads/986-bc1003_1000_consensus-pass_reheader_collapse-unique_atleast-2.fasta"
-params.sample_name = "986-bc1003_1000"
 params.species = "Homo_sapiens"
 params.locus = "IGH"
 //params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
@@ -49,17 +51,17 @@ workflow {
 	igblast_first(seqs, make_blast_db_first_v.out.blastdb, make_blast_db_first_d.out.blastdb, make_blast_db_first_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
 	makedb_first(seqs, igblast_first.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
 
-	collapse_annotations_first(makedb_first.out.annotations, "")
+	collapse_annotations_first(makedb_first.out.annotations, "non-personalized")
 	Undocumented_Alleles(collapse_annotations_first.out.output, params.v_ref)
 	make_blast_db_second_v(Undocumented_Alleles.out.novel_germline, true)	
 
 	igblast_second(seqs, make_blast_db_second_v.out.blastdb, make_blast_db_first_d.out.blastdb, make_blast_db_first_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
 	makedb_second(seqs, igblast_second.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, params.c_ref, 'v-personalised-1')
 
-	collapse_annotations_second(makedb_second.out.annotations, "")	
-	create_germlines_first(collapse_annotations_second.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "false")
+	collapse_annotations_second(makedb_second.out.annotations, "v-personalised-1")	
+	create_germlines_first(collapse_annotations_second.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "false", 'v-personalised-1')
 	define_clones(create_germlines_first.out.output)
-	create_germlines_second(define_clones.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "true")
+	create_germlines_second(define_clones.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "true", 'v-personalised-2')
 	single_clone_representative(create_germlines_second.out.output)
 
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.j_ref, "true")
@@ -71,7 +73,7 @@ workflow {
 	make_blast_db_third_j(tigger_j_call.out.personal_reference, make_blast_db_third_d.out.ready)
 	
 	igblast_third(seqs, make_blast_db_third_v.out.blastdb, make_blast_db_third_d.out.blastdb, make_blast_db_third_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
-	makedb_third(seqs, igblast_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'v-personalised-1')
+	makedb_third(seqs, igblast_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'final')
 
 	collapse_annotations_third(makedb_third.out.annotations, "final")	
 	

@@ -3,8 +3,8 @@ process haplotype_inference_report {
 	// means that there aren't any single-assigned records in the set that can be genotyped with the siigned gene
 	// to avoid this problem, don't do D haplotying with small test datasets
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "genotype_report/haplotype.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "genotype_report/binomDel.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "genotype_report/haplotype_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "genotype_report/binomDel_${name}.tsv"}
 	
 	input:
 		path(airrFile)
@@ -20,6 +20,7 @@ process haplotype_inference_report {
 		val(true), emit: ready		
 
 	script:
+		name = params.sample_name
 		v_germline = v_germline.name.startsWith('NO_FILE') ? "" : "${v_germline}"
 		d_germline = d_germline.name.startsWith('NO_FILE') ? "" : "${d_germline}"
 		outname = airrFile.name.toString().substring(0, airrFile.name.toString().indexOf("_db-pass"))

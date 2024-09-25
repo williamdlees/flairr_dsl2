@@ -2,8 +2,8 @@
 
 process single_clone_representative {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_rep-passed.tsv.*$/) "clones/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*txt$/) "logs/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_rep-passed.tsv.*$/) "clones/clone_rep-passed_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*txt$/) "clones/clone_report_${name}.tsv"}
 	
 	input:
 		path(airrFile)
@@ -13,6 +13,7 @@ process single_clone_representative {
 		path("*txt")
 
 	script:
+		name = params.sample_name
 		outname = airrFile.toString() - '.tsv' +"_clone_rep-passed"
 		outfile = outname + ".tsv"
 

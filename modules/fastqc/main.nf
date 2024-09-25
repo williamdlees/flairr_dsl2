@@ -2,7 +2,7 @@
 
 process FastQC {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html|zip)$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html)$/) "reports/FastQC_${name}.html"}
 	
 	input:
 		tuple val(name), path(reads)
@@ -15,6 +15,7 @@ process FastQC {
 	maxRetries 5
 
 	script:
+		name = params.sample_name
 		nameAll = reads.toString()
 		if (nameAll.contains('.gz')) {
 			file =  nameAll - '.gz' - '.gz'

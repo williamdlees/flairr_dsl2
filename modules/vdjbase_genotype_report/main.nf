@@ -1,6 +1,6 @@
 process vdjbase_genotype_report {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outname}_genotype.tsv$/) "genotype_report/combined_genotype.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outname}_genotype.tsv$/) "genotype_report/combined_genotype_${name}.tsv"}
 
 	input:
 		path(initial_run)
@@ -17,6 +17,7 @@ process vdjbase_genotype_report {
 
 	script:
 
+		name = params.sample_name
 		d_genotype = ""
 		if ("$params.locus" == "IGH" || "$params.locus" == "TRB") {
 			d_genotype = "${d_genotype}"

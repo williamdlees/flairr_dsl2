@@ -15,6 +15,7 @@ process filter_seq_length {
 		tuple val(name), path("out*") optional true							// script output
 
 	script:
+		name = params.sample_name
 		method = params.filter_seq_length.method
 		readArray = reads.toString().split(' ')	
 		nproc = params.filter_seq_length.nproc

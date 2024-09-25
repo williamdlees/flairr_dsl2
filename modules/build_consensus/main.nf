@@ -13,6 +13,7 @@ process build_consensus {
 		tuple val(name), path("*_consensus-fail.fastq") optional true
 
 	script:
+		name = params.sample_name
 		mate = params.mate
 		failed = params.build_consensus.failed
 		nproc = params.build_consensus.nproc
