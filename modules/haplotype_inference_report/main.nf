@@ -3,8 +3,8 @@ process haplotype_inference_report {
 	// means that there aren't any single-assigned records in the set that can be genotyped with the siigned gene
 	// to avoid this problem, don't do D haplotying with small test datasets
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "genotype_report/haplotype_${name}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "genotype_report/binomDel_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "genotype_report/${name}_haplotype.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "genotype_report/${name}_binomDel.tsv"}
 	
 	input:
 		path(airrFile)

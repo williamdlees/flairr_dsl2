@@ -2,7 +2,7 @@
 
 process FastQC {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html)$/) "reports/FastQC_${name}.html"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html)$/) "reports/${name}_FastQC.html"}
 	
 	input:
 		tuple val(name), path(reads)

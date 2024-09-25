@@ -2,9 +2,9 @@
 
 process makedb {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/makedb_pass_${alignment_suffix}_${name}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/makedb_fail_${alignment_suffix}_${name}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MD.*$/) "reports/$filename"}	
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/${name}_makedb_pass_${alignment_suffix}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/${name}_makedb_fail_${alignment_suffix}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_MD.*$/) "reports/$filename"}	
 	
 	input:
 		path(fastaFile)
@@ -19,7 +19,7 @@ process makedb {
 		path("*_db-pass.tsv"), emit: annotations
 		path("${reference_set}"), emit: consolidated_ref
 		path("*_db-fail.tsv") optional true 
-		path("MD*"), emit: log_file		
+		path("${name}_MD*"), emit: log_file		
 
 	script:
 		name = params.sample_name
@@ -52,7 +52,7 @@ process makedb {
 			-s ${fastaFile} \
 			-i ${igblastOut} \
 			-r ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} \
-			--log MD_${name}.log \
+			--log ${name}_MD.log \
 			--outname ${name}\
 			${extended} \
 			${failed} \

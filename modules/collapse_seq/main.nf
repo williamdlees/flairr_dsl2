@@ -1,7 +1,7 @@
 
 
 process collapse_seq {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "reads/collapsed_unique_${name}.fasta"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "reads/${name}_collapsed_unique.fasta"}
 	input:
 		tuple val(name), path(reads)
 

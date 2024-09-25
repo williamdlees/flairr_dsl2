@@ -61,7 +61,13 @@ def find_samples(dirs, config):
         for file in glob.glob(os.path.join(config['sample_dir'], file_template)):
             # find the value of {sample} in the matched template     
             file = file.replace('\\', '/')  
-            sample = file.split(lh)[1].split(rh)[0]
+            sample = file
+            sample = sample.replace(config['sample_dir'], '')
+            if lh:
+                sample = lh.join(sample.split(lh)[1:])
+            if rh:
+                sample = sample.split(rh)[0]
+
             if sample not in samples:
                 samples.append(sample)
  

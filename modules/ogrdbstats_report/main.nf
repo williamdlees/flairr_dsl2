@@ -1,7 +1,7 @@
 process ogrdbstats_report {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*pdf$/) "genotype_report/ogrdb_plots_${name}.pdf"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*csv$/) "genotype_report/ogrdb_stats_${name}.csv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*pdf$/) "genotype_report/${name}_ogrdb_plots.pdf"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*csv$/) "genotype_report/${name}_ogrdb_stats.csv"}
 
 	input:
 		path(airrFile)

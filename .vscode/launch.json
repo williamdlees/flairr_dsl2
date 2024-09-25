@@ -9,8 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/python/pipeline_counts.py",
-            "args": ["f:/clareo/flairr_dsl2/processed_samples/flairr_logs.toml", "f:/clareo/flairr_dsl2/processed_samples/pipeline_counts.csv"],
-            "cwd": "f:/clareo/flairr_dsl2/processed_samples",
+            "args": ["flairr_logs.toml", "pipeline_counts.csv"],
+            "cwd": "f:/clareo/full_kinnex",
             "console": "integratedTerminal",
             "justMyCode": false
         },

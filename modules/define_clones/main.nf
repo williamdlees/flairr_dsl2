@@ -60,6 +60,6 @@ process define_clones {
 			${sym} \
 			${link} \
 			--maxmiss ${maxmiss} \
-			--log DF_${name}.log  
+			--log ${name}_DF.log  
 		"""
 }

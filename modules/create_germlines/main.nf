@@ -2,7 +2,7 @@
 
 process create_germlines {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /CG.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /$name_CG.*$/) "reports/$filename"}
 
 	input:
 		path(airrFile)
@@ -14,6 +14,7 @@ process create_germlines {
 
 	output:
 		path("*_germ-pass.tsv"), emit: output
+		path("${name}_CG*")
 
 	script:
 		name = params.sample_name
@@ -50,7 +51,7 @@ process create_germlines {
 			${j_field} \
 			${seq_field} \
 			${clone_field} \
-			--log CG_${alignment_suffix}_${name}.log 
+			--log ${name}_CG_${alignment_suffix}.log 
 
 		"""
 }

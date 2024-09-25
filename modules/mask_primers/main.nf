@@ -3,7 +3,7 @@
 process MaskPrimers {
 
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_primers-fail.fastq$/) "failed_reads/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /MP_.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_MP.*$/) "reports/$filename"}
 
 	input:
 		tuple val(name), path(reads)
@@ -15,7 +15,7 @@ process MaskPrimers {
 	output:
 		tuple val(name), path("*_primers-pass.fastq"), emit: output
 		tuple val(name), path("*_primers-fail.fastq") optional true
-		tuple val(name), path("MP_*"), emit: log_file						// to parse_log
+		tuple val(name), path("${name}_MP*"), emit: log_file						// to parse_log
 		tuple val(name), path("out*")
 
 	script:
@@ -100,8 +100,8 @@ process MaskPrimers {
 			
 			"""
 			
-			MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log MP_R1_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
-			MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log MP_R2_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log ${name}_MP_R1.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log ${name}_MP_R2.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 			"""
 		}else{
 			args_1 = args_values[0]
@@ -113,7 +113,7 @@ process MaskPrimers {
 			"""
 			echo -e "Assuming inputs for R1\n"
 			
-			MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log MP_${name}.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log ${name}_MP.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 			"""
 		}
 

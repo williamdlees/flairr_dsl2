@@ -1,6 +1,6 @@
 process vdjbase_genotype_report {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outname}_genotype.tsv$/) "genotype_report/combined_genotype_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outname}_genotype.tsv$/) "genotype_report/${name}_combined_genotype.tsv"}
 
 	input:
 		path(initial_run)

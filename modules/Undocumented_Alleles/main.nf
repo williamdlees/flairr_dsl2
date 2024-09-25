@@ -1,6 +1,6 @@
 process Undocumented_Alleles {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.tsv$/) "novel_report/novel_alleles_${name}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.tsv$/) "novel_report/${name}_novel_alleles.tsv"}
 
 	input:
 		path(airr_file)

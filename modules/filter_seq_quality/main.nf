@@ -2,14 +2,14 @@
 
 process filter_seq_quality 
 {
-    publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /FS_.*$/) "reports/$filename"}
+    publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_FS.*log$/) "reports/$filename"}
     input:
         tuple val(name), path(reads)
 		val(ready)
 
     output:
         tuple val(name), path("${reads.getBaseName()}_${method}-pass.fast*"), emit: output       // reads passed to next stage
-        tuple val(name), path("FS_*"), emit: log_file                     // log file passed to parse_log 
+        tuple val(name), path("${name}_FS*.log"), emit: log_file                     // log file passed to parse_log 
         tuple val(name), path("*_${method}-fail.fast*") optional true     // failed reads
         tuple val(name), path("out*") optional true                       // FilterSeq output
 
@@ -46,13 +46,13 @@ process filter_seq_quality
 			R1 = readArray[0]
 			R2 = readArray[1]
 			"""
-			FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R1_${name}.log --failed ${fasta} >> out_${R1}_FS.log
-			FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_R2_${name}.log --failed ${fasta} >> out_${R1}_FS.log
+			FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log ${name}_FS_R1.log --failed ${fasta} >> out_${R1}_FS.log
+			FilterSeq.py ${method} -s $R2 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log ${name}_FS_R2.log --failed ${fasta} >> out_${R1}_FS.log
 			"""
         }else{
 			R1 = readArray[0]
 			"""
-			FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log FS_${name}.log --failed ${fasta} >> out_${R1}_FS.log
+			FilterSeq.py ${method} -s $R1 ${q} ${n_length} ${n_missing} --nproc ${nproc} --log ${name}_FS.log --failed ${fasta} >> out_${R1}_FS.log
 			"""
 		}
 }

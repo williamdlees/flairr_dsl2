@@ -2,9 +2,9 @@
 
 process collapse_annotations {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outfile}+passed.tsv$/) "collapsed/collapsed_passed_${alignment_suffix}_${name}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outfile}+failed.*$/) "collapsed/collapsed_failed_${alignment_suffix}_${name}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename == ".command.out") "collapsed/collapsed_${alignment_suffix}_${name}.log"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outfile}+passed.tsv$/) "collapsed/${name}_collapsed_passed_${alignment_suffix}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${outfile}+failed.*$/) "collapsed/${name}_collapsed_failed_${alignment_suffix}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename == ".command.out") "collapsed/${name}_collapsed_${alignment_suffix}.log"}
 	
 	input:
 		path airrFile

@@ -1,7 +1,7 @@
 
 
 process build_consensus {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /BC.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_BC.*$/) "reports/$filename"}
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "failed_reads/$filename"}
 	
 	input:
@@ -9,7 +9,7 @@ process build_consensus {
 
 	output:
 		tuple val(name), path("*_consensus-pass.fastq"), emit: output
-		tuple val(name), path("BC*"), emit: log_file
+		tuple val(name), path("${name}_BC*"), emit: log_file
 		tuple val(name), path("*_consensus-fail.fastq") optional true
 
 	script:
@@ -52,12 +52,12 @@ process build_consensus {
 			R2 = readArray.grep(~/.*R2.*/)[0]
 			
 			"""
-			BuildConsensus.py -s $R1 ${args_1} --outname ${name}_R1 --log BC_${name}_R1.log ${failed} --nproc ${nproc}
-			BuildConsensus.py -s $R2 ${args_2} --outname ${name}_R2 --log BC_${name}_R2.log ${failed} --nproc ${nproc}
+			BuildConsensus.py -s $R1 ${args_1} --outname ${name}_R1 --log ${name}_BC_R1.log ${failed} --nproc ${nproc}
+			BuildConsensus.py -s $R2 ${args_2} --outname ${name}_R2 --log ${name}_BC_R2.log ${failed} --nproc ${nproc}
 			"""
 		}else{
 			"""
-			BuildConsensus.py -s $reads ${args_1} --outname ${name} --log BC_${name}.log ${failed} --nproc ${nproc}
+			BuildConsensus.py -s $reads ${args_1} --outname ${name} --log ${name}_BC.log ${failed} --nproc ${nproc}
 			"""
 		}
 }

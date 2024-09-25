@@ -3,7 +3,7 @@
 
 process align_sets {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /AS_.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_AS.*$/) "reports/$filename"}
 
 	input:
 		tuple val(name),path(reads)
@@ -11,7 +11,7 @@ process align_sets {
 
 	output:
 		tuple val(name), path("*_align-pass.fastq"), emit: output
-		tuple val(name), path("AS_*"), emit: log_file
+		tuple val(name), path("${name}_AS*"), emit: log_file
 		tuple val(name), path("*_align-fail.fastq") optional true
 		tuple val(name), path("out*") optional true
 
@@ -64,14 +64,14 @@ process align_sets {
 			
 			
 			"""
-			AlignSets.py ${method} -s ${R1} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log AS_R1_${name}.log --nproc ${nproc} >> out_${R1}_AS.log
-			AlignSets.py ${method} -s ${R2} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log AS_R2_${name}.log --nproc ${nproc} >> out_${R1}_AS.log
+			AlignSets.py ${method} -s ${R1} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log ${name}_AS_R1.log --nproc ${nproc} >> out_${R1}_AS.log
+			AlignSets.py ${method} -s ${R2} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log ${name}_AS_R2.log --nproc ${nproc} >> out_${R1}_AS.log
 			"""
 			
 		}else{
 			R1 = readArray[0]
 			"""
-			AlignSets.py ${method} -s ${R1} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log AS_${name}.log --nproc ${nproc} >> out_${R1}_AS.log
+			AlignSets.py ${method} -s ${R1} ${bf} ${muscle_exec_argv} ${div_arg} ${reverse_arg} ${failed_arg} ${pf} ${offset_table_argv} ${mode} ${primer_file_argv} --log ${name}_AS.log --nproc ${nproc} >> out_${R1}_AS.log
 			"""
 		}
 

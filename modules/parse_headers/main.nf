@@ -16,7 +16,7 @@ process parse_headers {
 		val(true), emit: ready
 
 	script:
-		outname = prefix + "_" + params.sample_name
+		outname = params.sample_name + "_" + prefix
 		if(method=="collapse" || method=="copy" || method=="rename" || method=="merge"){
 			out="_reheader.fastq"
 			act = (act=="none") ? "" : "--act ${act}"
