@@ -11,12 +11,13 @@ process presto_report {
 		path("*.pdf")
 
 	script:
+		name = params.sample_name
 		flairr_script = script.toRealPath()
 		output_file = name + '.pdf'
 
 		"""
 		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}/..', sample='$name'), output_file='\${PWD}/${output_file}')"
-		rm ${params.outdir}/reports/*.log
+		rm ${params.outdir}/reports/*${name}*.log
 		"""
 }
 
