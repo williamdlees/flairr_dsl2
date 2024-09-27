@@ -11,6 +11,7 @@ process single_clone_representative {
 	output:
 		path("*_clone_rep-passed.tsv*"), emit: output
 		path("*txt")
+		val(true), emit: ready
 
 	script:
 		name = params.sample_name

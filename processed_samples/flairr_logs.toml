@@ -11,6 +11,7 @@ sample_files = [
 	["total", "reports/{sample}_BC_TOTAL_headers.tab"],
     ["unique", "reports/{sample}_BC_UNIQUE_headers.tab"],
     ["unique_atleast2", "reports/{sample}_BC_ATLEAST2_headers.tab"],
-    ["makedb_db-pass", "alignment/{sample}_makedb_pass_non-personalized.tsv"],
+    ["makedb_db-pass1", "alignment/{sample}_makedb_pass_non-personalized.tsv"],
+    ["makedb_db-pass2", "alignment/{sample}_makedb_pass_personalized.tsv"],
     ["clone_rep_passed", "clones/{sample}_clone_rep-passed.tsv"],
 ]

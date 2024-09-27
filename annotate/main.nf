@@ -9,6 +9,8 @@ params.species = "Homo_sapiens"
 params.locus = "IGH"
 params.germline_ref_dir = "$baseDir/../../reference"
 params.outdir = "$baseDir/../results"
+//params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
+params.haplotype_genes = "IGHJ6"
 
 // these derived params should not need modifying
 params.germline_ref = "${params.germline_ref_dir}/${params.species}_${params.locus}"
@@ -20,25 +22,36 @@ params.aux = "${params.germline_ref}.aux"
 params.ndm = "${params.germline_ref}.ndm"
 
 include { make_blast_db as make_blast_db_v; make_blast_db as make_blast_db_d; make_blast_db as make_blast_db_j; make_blast_db as make_blast_db_c } from '../modules/make_blast_db'
-include { igblast } from '../modules/igblast'
-include { makedb } from '../modules/makedb'
-include { collapse_annotations } from '../modules/collapse_annotations'
-include { create_germlines as create_germlines_pass1; create_germlines as create_germlines_pass2 } from '../modules/create_germlines'
+include { igblast_combo as igblast_combo1; igblast_combo as igblast_combo2 } from '../modules/igblast_combo'
+include { makedb as makedb1; makedb as makedb2 } from '../modules/makedb'
+include { collapse_annotations as collapse_annotations1; collapse_annotations as collapse_annotations2 } from '../modules/collapse_annotations'
+include { TIgGER_bayesian_genotype_Inference as tigger_j_call; TIgGER_bayesian_genotype_Inference as tigger_d_call; TIgGER_bayesian_genotype_Inference as tigger_v_call } from '../modules/tigger_bayesian_genotype_inference'
+include { create_germlines as create_germlines1; create_germlines as create_germlines2 } from '../modules/create_germlines'
 include { define_clones } from '../modules/define_clones'
 include { single_clone_representative } from '../modules/single_clone_representative'
+include { haplotype_inference_report } from '../modules/haplotype_inference_report'
+include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
-	make_blast_db_v(params.v_ref, true)
-	make_blast_db_d(params.d_ref, make_blast_db_v.out.ready)
-	make_blast_db_j(params.j_ref, make_blast_db_d.out.ready)
-	make_blast_db_c(params.c_ref, make_blast_db_j.out.ready)
-	
 	seqs = channel.fromPath(params.reads)
-	igblast(seqs, make_blast_db_v.out.blastdb, make_blast_db_d.out.blastdb, make_blast_db_j.out.blastdb, make_blast_db_c.out.blastdb, params.aux, params.ndm)
-	makedb(seqs, igblast.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
-	collapse_annotations(makedb.out.annotations, "pass-1")
-	create_germlines_pass1(collapse_annotations.out.output, params.v_ref, params.d_ref, params.j_ref, "false", "pass-1")
-	define_clones(create_germlines_pass1.out.output)
-	create_germlines_pass2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true", "pass-2")
-	single_clone_representative(create_germlines_pass2.out.output)
+	
+	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
+	makedb1(seqs, igblast_combo1.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
+	collapse_annotations1(makedb1.out.annotations, "pass-1")
+
+	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', collapse_annotations1.out.output, params.j_ref, "true")
+	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', collapse_annotations1.out.output, params.d_ref, tigger_j_call.out.ready)	
+	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', collapse_annotations1.out.output, params.v_ref, tigger_d_call.out.ready)	
+
+	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
+	makedb2(seqs, igblast_combo2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'personalized')
+	collapse_annotations2(makedb2.out.annotations, "pass-2")
+
+	create_germlines1(collapse_annotations2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, "false", "pass-1")
+	define_clones(create_germlines1.out.output)
+	create_germlines2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true", "pass-2")
+	single_clone_representative(create_germlines2.out.output)
+
+	haplotype_inference_report(collapse_annotations2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
+	ogrdbstats_report(collapse_annotations2.out.output, makedb1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)	
 }

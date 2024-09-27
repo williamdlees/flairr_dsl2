@@ -2,6 +2,8 @@
 
 process define_clones {
 
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_pass.tsv.*$/) "clones/${name}_clone_pass.tsv"}
+
 	input:
 		path(airrFile)
 

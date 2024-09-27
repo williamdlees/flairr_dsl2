@@ -14,5 +14,15 @@
             "console": "integratedTerminal",
             "justMyCode": false
         },
+        {
+            "name": "barcode_alignments",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/barcode_alignments.py",
+            "args": ["flairr_logs.toml", "barcode_alignments.html"],
+            "cwd": "f:/clareo/flairr_dsl2/processed_samples",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
     ]
 }

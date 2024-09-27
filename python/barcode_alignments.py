@@ -32,7 +32,6 @@ args = args.parse_args()
 
 config = toml.load(args.config_file)
 
-print('Processing samples from directories matching', config['sample_dirs'])
 results = []
 
 as_log = ''
@@ -44,26 +43,12 @@ if as_log == '':
     print('Error: alignSets not found in config file')
     exit(1)
 
-print(config['sample_dirs'])
-print(glob.glob(config['sample_dirs']))
+for log_file in glob.glob(os.path.join(config['sample_dir'], as_log.replace('{sample}', '*'))):
+    sample_name = os.path.basename(log_file).split(as_log.split('{sample}')[1])[0]
 
-for sample_dir in glob.glob(config['sample_dirs']):
-    if not os.path.isdir(sample_dir):
-        continue
-
-    print(f'Processing {sample_dir}...')
-    sample_name = os.path.basename(sample_dir)
-    counts = {}
-    log_file = glob.glob(os.path.join(sample_dir, as_log))
-
-    if len(log_file) == 0 or len(log_file) > 1:
-        print(f"Couldn't find alignsets log file for {sample_name}")
-        continue
-
-    log_file = log_file[0]
-        
     data = read_csv(os.path.join(log_file), delimiter='\t')
 
+    counts = {}
     for row in data:
         count = int(row['SEQCOUNT'])
         if count not in counts:

@@ -26,6 +26,7 @@ write.table(binom_del, file = outfile_del, sep = '\t', row.names = F, quote = T)
 # haplotype inference
 
 outfile_haplotype = "${outname}_gene-"
+chain = "${locus}"
 
 genes_haplotype <- unlist(strsplit("${haplotype_genes}", ","))
 
@@ -52,7 +53,7 @@ for (gene in genes_haplotype) {
 	bool <- sum(table(allele_fractions) / length(allele_fractions) >= 0.3) == 2 && length(names(table(allele_fractions))) >= 2
 
 	if (bool) {
-	  alleles <- paste0(sapply(names_, function(x) strsplit(x, '[*]')[[1]][2]), collapse = '_')
+	  alleles <- paste0(sapply(names(table(allele_fractions)), function(x) strsplit(x, '[*]')[[1]][2]), collapse = '_')
 	  
 	  haplo <- rabhit::createFullHaplotype(
 		data,
