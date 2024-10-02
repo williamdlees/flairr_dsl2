@@ -48,7 +48,7 @@ workflow {
 	collapse_annotations2(makedb2.out.annotations, "pass-2")
 
 	create_germlines1(collapse_annotations2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, "false", "pass-1")
-	define_clones(create_germlines1.out.output)
+	define_clones(create_germlines1.out.output, "$baseDir/../python/clonality_threshold.R")
 	create_germlines2(define_clones.out.output, params.v_ref, params.d_ref, params.j_ref, "true", "pass-2")
 	single_clone_representative(create_germlines2.out.output)
 

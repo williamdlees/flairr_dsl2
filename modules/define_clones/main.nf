@@ -2,10 +2,11 @@
 
 process define_clones {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_pass.tsv.*$/) "clones/${name}_clone_pass.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone-pass.tsv.*$/) "clones/${name}_clone_pass.tsv"}
 
 	input:
 		path(airrFile)
+		path(thresholdScript)
 
 	output:
 		path("*_clone-pass.tsv"), emit: output
@@ -57,7 +58,7 @@ process define_clones {
 			${mode} \
 			${act} \
 			${model} \
-			--dist ${dist} \
+			--dist `Rscript ${thresholdScript} ${airrFile}` \
 			${norm} \
 			${sym} \
 			${link} \
