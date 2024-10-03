@@ -12,7 +12,7 @@ process TIgGER_bayesian_genotype_Inference {
 		val(ready)
 		
 	output:
-		path("*${call}_genotype_report.tsv"), emit: genotype_report
+		path("*${call}_genotype_report.tsv"), emit: genotype_report, optional: true
 		path("*${call}_personal_reference.fasta"), emit: personal_reference
 		val(true), emit: ready		
 
@@ -20,77 +20,82 @@ process TIgGER_bayesian_genotype_Inference {
 		// general params
 
 		name = params.sample_name
-		germline_file = germline_file.name.startsWith('NO_FILE') ? "" : "${germline_file}"
-
-
-		"""
-		#!/usr/bin/env Rscript
-
-		library(tigger)
-		library(data.table)
 		
-		## get genotyped alleles
-		GENOTYPED_ALLELES <- function(y) {
-		  m <- which.max(as.numeric(y[2:5]))
-		  paste0(unlist(strsplit((y[1]), ','))[1:m], collapse = ",")
-		}
+		if (!germline_file.exists()) {
+		"""
+			touch "${call}_personal_reference.fasta"
+		"""
+		} else {
+		
+			"""
+			#!/usr/bin/env Rscript
 
-		# read data
-		data <- fread("${airrFile}", data.table=FALSE)
-		find_unmutated_ <- "${find_unmutated}"=="true"
-		germline_db <- if("${germline_file}"!="") readIgFasta("${germline_file}") else NA
+			library(tigger)
+			library(data.table)
+			
+			## get genotyped alleles
+			GENOTYPED_ALLELES <- function(y) {
+			  m <- which.max(as.numeric(y[2:5]))
+			  paste0(unlist(strsplit((y[1]), ','))[1:m], collapse = ",")
+			}
 
-		# get the params based on the call column
+			# read data
+			data <- fread("${airrFile}", data.table=FALSE)
+			find_unmutated_ <- "${find_unmutated}"=="true"
+			germline_db <- if("${germline_file}"!="") readIgFasta("${germline_file}") else NA
 
-		params <- list("v_call" = c(0.6, 0.4, 0.4, 0.35, 0.25, 0.25, 0.25, 0.25, 0.25),
-					   "d_call" = c(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0),
-					   "j_call" = c(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0))
+			# get the params based on the call column
 
-		if("${single_assignments}"=="true"){
-			data <- data[!grepl(pattern = ',', data[["${call}"]]),]
-		}
+			params <- list("v_call" = c(0.6, 0.4, 0.4, 0.35, 0.25, 0.25, 0.25, 0.25, 0.25),
+						   "d_call" = c(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0),
+						   "j_call" = c(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0))
 
-		# remove rows where there are missing values in the call column
+			if("${single_assignments}"=="true"){
+				data <- data[!grepl(pattern = ',', data[["${call}"]]),]
+			}
 
-		data <- data[!is.na(data[["${call}"]]),]
+			# remove rows where there are missing values in the call column
 
-		# infer the genotype using tigger
-		geno <-
-			  tigger::inferGenotypeBayesian(
-				data,
-				find_unmutated = find_unmutated_,
-				germline_db = germline_db,
-				v_call = "${call}",
-				seq = "${seq}",
-				priors = params[["${call}"]]
-			  )
+			data <- data[!is.na(data[["${call}"]]),]
 
-		print(geno)
+			# infer the genotype using tigger
+			geno <-
+				  tigger::inferGenotypeBayesian(
+					data,
+					find_unmutated = find_unmutated_,
+					germline_db = germline_db,
+					v_call = "${call}",
+					seq = "${seq}",
+					priors = params[["${call}"]]
+				  )
 
-		geno[["genotyped_alleles"]] <-
-		  apply(geno[, c(2, 6:9)], 1, function(y) {
-			GENOTYPED_ALLELES(y)
-		  })
+			print(geno)
 
-		# write the report
-		write.table(geno, file = paste0("${call}","_genotype_report.tsv"), row.names = F, sep = "\t")
+			geno[["genotyped_alleles"]] <-
+			  apply(geno[, c(2, 6:9)], 1, function(y) {
+				GENOTYPED_ALLELES(y)
+			  })
 
-		# create the personal reference set
-		NOTGENO.IND <- !(sapply(strsplit(names(germline_db), '*', fixed = T), '[', 1) %in%  geno[["gene"]])
-		germline_db_new <- germline_db[NOTGENO.IND]
+			# write the report
+			write.table(geno, file = paste0("${call}","_genotype_report.tsv"), row.names = F, sep = "\t")
+			
+			# create the personal reference set
+			NOTGENO.IND <- !(sapply(strsplit(names(germline_db), '*', fixed = T), '[', 1) %in%  geno[["gene"]])
 
-		for (i in 1:nrow(geno)) {
-		  gene <- geno[i, "gene"]
-		  alleles <- geno[i, "genotyped_alleles"]
-		  if(alleles=="") alleles <- geno[i, "alleles"]
-		  alleles <- unlist(strsplit(alleles, ','))
-		  IND <- names(germline_db) %in%  paste(gene, alleles, sep = '*')
-		  germline_db_new <- c(germline_db_new, germline_db[IND])
-		}
+			germline_db_new <- germline_db[NOTGENO.IND]
 
-		# writing imgt gapped fasta reference
-		writeFasta(germline_db_new, file = paste0("${call}","_personal_reference.fasta"))
+			for (i in 1:nrow(geno)) {
+			  gene <- geno[i, "gene"]
+			  alleles <- geno[i, "genotyped_alleles"]
+			  if(alleles=="") alleles <- geno[i, "alleles"]
+			  alleles <- unlist(strsplit(alleles, ','))
+			  IND <- names(germline_db) %in%  paste(gene, alleles, sep = '*')
+			  germline_db_new <- c(germline_db_new, germline_db[IND])
+			}
+
+			# writing imgt gapped fasta reference
+			writeFasta(germline_db_new, file = paste0("${call}","_personal_reference.fasta"))
 
 		"""
-
+	}
 }

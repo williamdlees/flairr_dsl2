@@ -1,4 +1,5 @@
-
+/* Removed from the FLAIRR pipeline for the time being because we don't want to collapse sequences with different constant regions.
+   */
 
 process collapse_annotations {
 

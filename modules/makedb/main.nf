@@ -46,21 +46,41 @@ process makedb {
 		outname = igblastOut.getBaseName() + '_' + alignment_suffix
 
 		"""
-		cat ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} > ${reference_set}
+		if [[ -f "${d_germline_file}" ]]; then
+			cat ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} > ${reference_set};
+
+			MakeDb.py igblast \
+				-s ${fastaFile} \
+				-i ${igblastOut} \
+				-r ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} \
+				--log ${name}_MD.log \
+				--outname ${name}\
+				${extended} \
+				${failed} \
+				${format} \
+				${regions} \
+				${asisid} \
+				${asiscalls} \
+				${inferjunction} \
+				${partial}
+		else
+			cat ${v_germline_file} ${j_germline_file} ${c_germline_file} > ${reference_set};
+
+			MakeDb.py igblast \
+				-s ${fastaFile} \
+				-i ${igblastOut} \
+				-r ${v_germline_file} ${j_germline_file} ${c_germline_file} \
+				--log ${name}_MD.log \
+				--outname ${name}\
+				${extended} \
+				${failed} \
+				${format} \
+				${regions} \
+				${asisid} \
+				${asiscalls} \
+				${inferjunction} \
+				${partial}
+		fi
 		
-		MakeDb.py igblast \
-			-s ${fastaFile} \
-			-i ${igblastOut} \
-			-r ${v_germline_file} ${d_germline_file} ${j_germline_file} ${c_germline_file} \
-			--log ${name}_MD.log \
-			--outname ${name}\
-			${extended} \
-			${failed} \
-			${format} \
-			${regions} \
-			${asisid} \
-			${asiscalls} \
-			${inferjunction} \
-			${partial}
 		"""
 }

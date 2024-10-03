@@ -44,12 +44,19 @@ process igblast_combo {
 		db_list=()
 
 		# Loop through each item in the paths array
-		for item in "\${paths[@]}"; do
+		for item in "\${paths[@]}"; do		
 			# Get the file extension in lowercase
 			extension="\${item##*.}"
 			extension="\${extension,,}"
 
 			if [[ "\$extension" == "fasta" ]]; then
+				# create a dummy file if it does not exist
+				if [[ ! -f "\$item" || ! -s "\$item" ]]; then
+					item="\${item##*/}"
+					rm "\$item"			# remove symbolic link to nonexistent item
+					echo -e ">XXX\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n" > "\$item"
+				fi
+
 				# Get the base name and append .db
 				simple="\${item##*/}"
 				base_name="\${simple%.*}"

@@ -50,6 +50,10 @@ workflow {
 	
 	igblast_first(seqs, make_blast_db_first_v.out.blastdb, make_blast_db_first_d.out.blastdb, make_blast_db_first_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
 	makedb_first(seqs, igblast_first.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
+	
+	// TODO: collapse_annotations only collapses vdj, and makes 'sequence' the vdj sequence, so we lose the constant region
+	// what is the impact on inference of removing it? We could just add the C region sequence to the 'collapse' part. Have some concerns about collapsing CONSCOUNT and DUPCOUNT, though, 
+	// because it changes what they mean. Maybe we should just retain the simpler functions, i.e. N removal, non-functional and non-J removal
 
 	collapse_annotations_first(makedb_first.out.annotations, "non-personalized")
 	Undocumented_Alleles(collapse_annotations_first.out.output, params.v_ref)

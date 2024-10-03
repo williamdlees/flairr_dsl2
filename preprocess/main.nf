@@ -1,4 +1,4 @@
-// FLAIRR-seq workflow
+// FLAIRR-seq preprocessing workflow
 
 
 // these two params must be specified on the command line

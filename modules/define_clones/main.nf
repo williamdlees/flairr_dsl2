@@ -47,6 +47,11 @@ process define_clones {
 		link = (link=="single") ? "" : " --link ${link}"
 			
 		"""
+		echo 1
+		thresh=`Rscript ${thresholdScript} ${airrFile}`
+		echo 2
+		echo \$thresh
+		echo 3
 		DefineClones.py -d ${airrFile} \
 			${failed} \
 			${format} \
@@ -58,7 +63,7 @@ process define_clones {
 			${mode} \
 			${act} \
 			${model} \
-			--dist `Rscript ${thresholdScript} ${airrFile}` \
+			--dist  \$thresh\
 			${norm} \
 			${sym} \
 			${link} \

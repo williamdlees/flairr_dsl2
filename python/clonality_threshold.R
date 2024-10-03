@@ -14,7 +14,7 @@ tryCatch({
 	}
 }, error=function(e) {
 	# Use default threshold if Hamming distance calculation fails
-	write(e, stderr())
+	# write(e, stderr())
 	write("threshold calculation failed: using default", stderr())
 })
 

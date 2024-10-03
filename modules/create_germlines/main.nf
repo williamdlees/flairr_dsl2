@@ -26,6 +26,9 @@ process create_germlines {
 		d_field = params.create_germlines.d_field
 		j_field = params.create_germlines.j_field
 		clone_field = params.create_germlines.clone_field
+		
+		d_field = d_germline_file.exists() ? params.create_germlines.d_field : ""
+		d_germline_file = d_germline_file.exists() ? d_germline_file : ""
 
 
 		failed = (failed=="true") ? "--failed" : ""
