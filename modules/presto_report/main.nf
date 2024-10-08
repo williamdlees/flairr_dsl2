@@ -16,7 +16,7 @@ process presto_report {
 		output_file = name + '.pdf'
 
 		"""
-		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}/..', sample='$name'), output_file='\${PWD}/${output_file}')"
+		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}', sample='$name'), output_file='\${PWD}/${output_file}')"
 		rm ${params.outdir}/reports/*${name}*.log
 		"""
 
