@@ -1,0 +1,4 @@
+biopython >= 1.84
+pandas
+plotly >= 5.24.1
+receptor-utils
