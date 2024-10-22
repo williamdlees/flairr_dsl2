@@ -40,21 +40,12 @@ process ogrdbstats_report {
 
 		IFS='\t' read -a var < ${airrFile}
 
-		airrfile=${airrFile}
-
-		if [[ ! "\${var[*]}" =~ "v_call_genotyped" ]]; then
-			awk -F'\t' '{col=\$5;gsub("call", "call_genotyped", col); print \$0 "\t" col}' ${airrFile} > ${outname}_genotyped.tsv
-			airrfile=${outname}_genotyped.tsv
-		fi
-
 		germline_file_path=\$(realpath ${germline_file})
 
-		airrFile_path=\$(realpath \$airrfile)
-
-		run_ogrdbstats \
-			\$germline_file_path \
+		Rscript /usr/local/bin/ogrdbstats.R \
+			${germline_file} \
 			${species} \
-			\$airrFile_path \
+			${airrFile} \
 			${chain}V \
 			${haplotype} \
 			\$novel 
