@@ -1,12 +1,10 @@
 FROM python:3.11-bookworm
 
-MAINTAINER William Lees william@lees.org.uk
-
 RUN mkdir /app
 
 COPY app/* /app/
 
-ENV R_BASE_VERSION 4.2.2
+ENV R_BASE_VERSION=4.2.2
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -17,4 +15,5 @@ RUN apt-get update && \
 				r-cran-devtools \
 				texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra lmodern
 
-RUN Rscript /app/install_r_packages
+RUN Rscript /app/install_r_packages && \
+    pip install -r /app/requirements.txt

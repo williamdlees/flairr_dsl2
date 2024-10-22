@@ -24,5 +24,15 @@
             "console": "integratedTerminal",
             "justMyCode": false
         },
+        {
+            "name": "annot_const",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/annot_const.py",
+            "args": ["bc2002_makedb_pass_non-personalized.tsv", "f:/clareo/reference/Homo_sapiens_TRBC.fasta", "bc2002_makedb_pass_non-personalized_inc_const.tsv"],
+            "cwd": "f:/clareo/flairr_dsl2/processed_samples/results/TRB/alignment",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
     ]
 }

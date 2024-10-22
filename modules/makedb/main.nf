@@ -2,8 +2,6 @@
 
 process makedb {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass.tsv$/) "alignment/${name}_makedb_pass_${alignment_suffix}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail.tsv$/) "alignment/${name}_makedb_fail_${alignment_suffix}.tsv"}
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_MD.*$/) "reports/$filename"}	
 	
 	input:
@@ -18,7 +16,7 @@ process makedb {
 	output:
 		path("*_db-pass.tsv"), emit: annotations
 		path("${reference_set}"), emit: consolidated_ref
-		path("*_db-fail.tsv") optional true 
+		path("*_db-fail.tsv"), emit: failed
 		path("${name}_MD*"), emit: log_file		
 
 	script:
