@@ -24,7 +24,7 @@ process igblast_combo {
 		num_alignments_V = params.igblast.num_alignments_V
 		domain_system = params.igblast.domain_system
 		
-		outfile = (outfmt=="MakeDb") ? fastaFile +".out" : fastaFile +"_"+randomString+".tsv"
+		outfile = (outfmt=="MakeDb") ? fastaFile +".out" : fastaFile + ".tsv"
 		outfmt = (outfmt=="MakeDb") ? "'7 std qseq sseq btop'" : outfmt
 		
 		db_v_path = ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'

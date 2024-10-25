@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/python/pipeline_counts.py",
             "args": ["flairr_logs.toml", "pipeline_counts.csv"],
-            "cwd": "f:/clareo/full_kinnex",
+            "cwd": "f:/clareo/flairr_dsl2/processed_samples",
             "console": "integratedTerminal",
             "justMyCode": false
         },

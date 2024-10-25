@@ -15,7 +15,10 @@ output:
 params:
     title: "pRESTO FLAIRR Report"
     sample: "Sample"
+    locus: "Locus"
     data: ""
+    config_file: ""
+
 
 title: "`r params$title`"
 ---
@@ -51,14 +54,14 @@ library(prestor)
 
 # Function to get file to process, using the toml config
 
-file_config = read.config(file.path(params$data, "../..", "flairr_logs.toml"))
+file_config = read.config(file.path(params$config_file))
 
 str(file_config)
 
 get_log_file <- function(phase, config, sample) {
   for (element in file_config$sample_files) {
     if (element[1] == phase) {
-	  template = stri_replace_all_fixed(element[2], "{sample}", sample)
+      template = stri_replace_all_fixed(element[2], "{sample}", sample)
       matched_files <- Sys.glob(file.path(params$data, template))
 	  
       if (length(matched_files) == 1) {
