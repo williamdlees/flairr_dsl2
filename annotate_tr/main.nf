@@ -21,6 +21,8 @@ params.c_ref = "${params.germline_ref}C.fasta"
 params.aux = "${params.germline_ref}.aux"
 params.ndm = "${params.germline_ref}.ndm"
 
+params.python_dir = "$baseDir/../python"
+
 include { igblast_combo as igblast_combo1; igblast_combo as igblast_combo2 } from '../modules/igblast_combo'
 include { makedb as makedb1; makedb as makedb2 } from '../modules/makedb'
 include { annot_const as annot_const1; annot_const as annot_const2 } from '../modules/annot_const'
@@ -36,7 +38,7 @@ workflow {
 	
 	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
 	makedb1(seqs, igblast_combo1.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
-	annot_const1(makedb1.out.annotations, makedb1.out.failed, params.c_ref, 'non-personalized')
+	annot_const1(makedb1.out.annotations, makedb1.out.failed, params.c_ref, 'non-personalized', params.python_dir)
 
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.j_ref, "true")
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
@@ -44,7 +46,7 @@ workflow {
 
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
 	makedb2(seqs, igblast_combo2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'personalized')
-	annot_const2(makedb2.out.annotations, makedb2.out.failed, params.c_ref, 'personalized')
+	annot_const2(makedb2.out.annotations, makedb2.out.failed, params.c_ref, 'personalized', params.python_dir)
 
 	ogrdbstats_report(annot_const2.out.annotations, makedb1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, "true")	
 }

@@ -9,6 +9,7 @@ process annot_const {
 		path(failFile)
 		path(c_germline_file)
 		val alignment_suffix
+		path(python_dir)
 
 	output:
 		path(outPassfile), emit: annotations
@@ -20,7 +21,7 @@ process annot_const {
         outFailFile = failFile.getBaseName() + "_with-const.tsv"
         
         """
-    	python3 ${baseDir}/../python/annot_const.py ${passFile} ${c_germline_file} ${outPassfile}
-    	python3 ${baseDir}/../python/annot_const.py ${failFile} ${c_germline_file} ${outFailFile}
+    	python3 ${python_dir}/annot_const.py ${passFile} ${c_germline_file} ${outPassfile}
+    	python3 ${python_dir}/annot_const.py ${failFile} ${c_germline_file} ${outFailFile}
         """
 }
