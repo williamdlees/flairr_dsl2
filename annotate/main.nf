@@ -32,12 +32,14 @@ include { single_clone_representative } from '../modules/single_clone_representa
 include { haplotype_inference_report } from '../modules/haplotype_inference_report'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
+params.python_dir = "$baseDir/../python"
+
 workflow {
 	seqs = channel.fromPath(params.reads)
 	
 	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
 	makedb1(seqs, igblast_combo1.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
-	annot_const1(makedb1.out.annotations, makedb1.out.failed, params.c_ref, 'non-personalized')
+	annot_const1(makedb1.out.annotations, makedb1.out.failed, params.c_ref, 'non-personalized', params.python_dir)
 
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.j_ref, "true")
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
@@ -45,7 +47,7 @@ workflow {
 
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
 	makedb2(seqs, igblast_combo2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'personalized')
-	annot_const2(makedb2.out.annotations, makedb2.out.failed, params.c_ref, 'personalized')
+	annot_const2(makedb2.out.annotations, makedb2.out.failed, params.c_ref, 'personalized', params.python_dir)
 
 	create_germlines1(annot_const2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, "false", "pass-1")
 	define_clones(create_germlines1.out.output, "$baseDir/../python/clonality_threshold.R")
