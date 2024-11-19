@@ -39,7 +39,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/python/annot_v.py",
-            "args": ["test_atleast-2.fasta.tsv", "consolidated_ref.fasta", "out.tsv"],
+            "args": ["full.tsv", "consolidated_ref.fasta", "out.tsv"],
             "cwd": "${workspaceFolder}/modules/annot_v",
             "console": "integratedTerminal",
             "justMyCode": false

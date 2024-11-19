@@ -37,14 +37,14 @@ workflow {
 	seqs = channel.fromPath(params.reads)
 	
 	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
-	annot_v1(igblast_combo1.out.output, params.c_ref, 'non-personalized', "$baseDir/../python", params.python_dir)
+	annot_v1(igblast_combo1.out.output, params.v_ref, 'non-personalized', params.python_dir)
 
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', annot_v1.out.annotations, params.j_ref, "true")
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', annot_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
 	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', annot_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
 
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
-	annot_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', "$baseDir/../python", params.python_dir)
+	annot_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 
 	create_germlines1(annot_v2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, "false", "pass-1")
 	define_clones(create_germlines1.out.output, "$baseDir/../python/clonality_threshold.R")

@@ -6,9 +6,10 @@
 
 # Example using 'standard' reference sets. The locations are specified in processed_samples/FLAIRRSeq.config
 
-for sample in 1001 1002 1003 1004 1005 1006 1008 1012
+#for sample in 1001 1002 1003 1004 1005 1006 1008 1012
+for sample in 1001
 do
-nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*667*$sample*.fastq --outdir $(pwd)/results/IGH --sample_name $sample-667
+#nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*667*$sample*.fastq --outdir $(pwd)/results/IGH --sample_name $sample-667
 # cd is needed to avoid a Java bug - probably wsl specific
 cd .
 nextflow ../annotate/main.nf --reads $(pwd)/results/IGH/reads/${sample}-667_atleast-2.fasta --outdir $(pwd)/results/IGH  --sample_name $sample-667
@@ -20,7 +21,7 @@ done
 
 for sample in 1001 1003
 do
-nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*986*$sample*.fastq --outdir $(pwd)/results/IGH --sample_name $sample-986
+#nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_samples/*986*$sample*.fastq --outdir $(pwd)/results/IGH --sample_name $sample-986
 # cd is needed to avoid a Java bug - probably wsl specific
 cd .
 #nextflow ../annotate/main.nf --reads $(pwd)/results/IGH/reads/${sample}-986_atleast-2.fasta --outdir $(pwd)/results/IGH --sample_name $sample-986

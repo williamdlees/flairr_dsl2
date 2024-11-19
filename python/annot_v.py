@@ -8,12 +8,13 @@ from receptor_utils import simple_bio_seq as simple
 
 def aligned_diff(novel_seq: str, ref_seq: str):
     aligner = Align.PairwiseAligner()
-    aligner.mode = 'local'
+    aligner.mode = 'global'
     aligner.open_gap_score = -2
     aligner.extend_gap_score = -1
     aligner.match_score = 1
     aligner.mismatch_score = 0
-    aligner.target_end_gap_score = 0
+    aligner.query_right_open_gap_score = 1
+    aligner.target_right_open_gap_score = 1
 
     return aligner.align(novel_seq, ref_seq)[0]
 
@@ -52,11 +53,11 @@ def main(infile, outfile, germline_ref):
         if not rec['v_call']:
             continue
 
+        if rec['sequence_id'] == '1TATATTAGAATGGACTCTTGGG|PRCONS=IGG_CH3_PCR-primer|PRFREQ=1.0|CONSCOUNT=7|DUPCOUNT=1':
+            print('debug')
+            
         # In the processing below, we rely on the fact that the alignment spacer is -, while the IMT gap is .
         # Once processing is complete, we change all spacers to .
-
-        if rec['sequence_id'] == '1TTTTCTTATGTTAGATCTTGGG|PRCONS=IGG_CH3_PCR-primer|PRFREQ=1.0|CONSCOUNT=2|DUPCOUNT=1':
-            print('debug')
 
         v_call = rec['v_call'].split(',')[0]
         if v_call not in germlines:
@@ -78,6 +79,14 @@ def main(infile, outfile, germline_ref):
         # thread any insertions in the aligned_ref into the ref_gapped
 
         aligned_ref_ungapped = alignment._get_row(0)
+        aligned_v_ungapped = alignment._get_row(1)
+
+        # trim reference alignment to the length of the v_sequence_alignment
+
+        while aligned_v_ungapped[-1] == '-':
+            aligned_v_ungapped = aligned_v_ungapped[:-1]
+            aligned_ref_ungapped = aligned_ref_ungapped[:-1]
+
         aligned_ref_ungapped_i = iter(aligned_ref_ungapped)
         aligned_ref_gapped = ''
         for b in ref_gapped:
@@ -95,7 +104,6 @@ def main(infile, outfile, germline_ref):
             except StopIteration:
                 break
 
-        aligned_v_ungapped = alignment._get_row(1)
         aligned_v_ungapped_i = iter(aligned_v_ungapped)
         aligned_v_gapped = ''
         for b in aligned_ref_gapped:
@@ -121,6 +129,12 @@ def main(infile, outfile, germline_ref):
 
         seq_coords = []
         i = 0
+
+        # handle the case where the sequence_alignment starts with a gap
+
+        while rec['sequence_alignment'][i] == '-' or rec['sequence_alignment'][i] == '.':
+            i = i + 1
+
         for b in original_sequence_alignment:
             while rec['sequence_alignment'][i] == '.':
                 i = i + 1
@@ -129,6 +143,10 @@ def main(infile, outfile, germline_ref):
 
         germline_coords = []
         i = 0
+
+        while rec['sequence_alignment'][i] == '-' or rec['sequence_alignment'][i] == '.':
+            i = i + 1
+
         for b in original_germline_alignment:
             while rec['germline_alignment'][i] == '.':
                 i = i + 1
@@ -152,16 +170,50 @@ def main(infile, outfile, germline_ref):
                 rec[field] = find_coord(int(rec[field])-1, seq_coords) + 1
 
         for field in ('cdr1', 'cdr2'):
-            unaligned_pos = original_sequence_alignment.index(rec[field])
+            unaligned_pos = original_sequence_alignment.find(rec[field])
             if unaligned_pos < 0:
-                print(f"{rec['sequence_id']} {field} not found in sequence_alignment")
-                continue
+                unaligned_pos = original_sequence_alignment.replace('-', '').find(rec[field])
+                if unaligned_pos < 0:
+                    print(f"{rec['sequence_id']} {field} not found in sequence_alignment")
+                    continue
+
+                # adjust for gaps before the start of the field
+                gap_count = 0
+                for i in range(unaligned_pos):
+                    if original_sequence_alignment[i] == '-':
+                        gap_count = gap_count + 1
+
+                unaligned_pos = unaligned_pos + gap_count
+
+                unaligned_end = unaligned_pos + len(rec[field])
+                while len(original_sequence_alignment[unaligned_pos:unaligned_end].replace('-', '')) < len(rec[field]):
+                    unaligned_end = unaligned_end + 1
+
+                seq_including_gaps = original_sequence_alignment[unaligned_pos:unaligned_end]
+                unaligned_pos = original_sequence_alignment.find(seq_including_gaps)
+
+                if unaligned_pos < 0:
+                    print(f"Error: {rec['sequence_id']} could not find {field} in sequence")
+                    continue
+
+                unaligned_end = unaligned_pos + len(seq_including_gaps)
+            else:
+                unaligned_end = unaligned_pos + len(rec[field])
 
             rec[field + '_aligned_start'] = find_coord(unaligned_pos, seq_coords) + 1
-            rec[field + '_aligned_end'] = find_coord(unaligned_pos + len(rec[field]), seq_coords)
+            rec[field + '_aligned_end'] = find_coord(unaligned_end, seq_coords)
+
             aligned_seq = rec['sequence_alignment'][rec[field + '_aligned_start']-1:rec[field + '_aligned_end']]
-            if aligned_seq.replace('.', '') != rec[field]:
-                print(f"Error: {rec['sequence_id']} {field} changed from {rec[field]} to non-matching {aligned_seq}")
+            if aligned_seq.replace('.', '').replace('-', '') != rec[field]:
+                # adjust for additional gaps in the aligned sequence compared to the original sequence alignment
+
+                while len(aligned_seq.replace('.', '').replace('-', '')) < len(rec[field]):
+                    rec[field + '_aligned_end'] += 1
+                    aligned_seq = rec['sequence_alignment'][rec[field + '_aligned_start']-1:rec[field + '_aligned_end']]
+
+                if aligned_seq.replace('.', '').replace('-', '') != rec[field]:
+                    print(f"Error: {rec['sequence_id']} {field} changed from {rec[field]} to non-matching {aligned_seq}")
+
             rec[field] = aligned_seq
 
         rec['sequence_alignment'] = rec['sequence_alignment'].replace('-', '.')
@@ -173,8 +225,8 @@ def main(infile, outfile, germline_ref):
         if rec['sequence_alignment'].replace('.', '') != original_sequence_alignment.replace('.', '').replace('-', ''):
             print(f"Error: {rec['sequence_id']} revised sequence_alignment does not match original")
         
-        if rec['germline_alignment'].replace('.', '') != original_germline_alignment.replace('.', '').replace('-', ''):
-            print(f"Error: {rec['sequence_id']} revised germline_alignment does not match original")
+        if len(rec['germline_alignment']) != len(rec['sequence_alignment']):
+            print(f"Error: {rec['sequence_id']} revised germline_alignment and sequence alignments have different lengths")
         
         if rec['v_sequence_alignment'].replace('.', '') != original_v_sequence_alignment.replace('.', '').replace('-', ''):
             print(f"Error: {rec['sequence_id']} revised v_sequence_alignment does not match original")
