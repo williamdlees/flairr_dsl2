@@ -4,6 +4,7 @@
 // these two params must be specified on the command line
 params.reads = ""			// FASTQ file containing the reads
 params.sample_name = ""		// Sample name, to be used in reports and report filenames
+params.locus = "IGH"
 
 params.outdir = "$baseDir/../results"
 

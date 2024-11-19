@@ -12,17 +12,19 @@ process igblast_combo {
 		path custom_internal_data
 
 	output:
-		path('*.out'), emit: output
+		path(outfile), emit: output
 		path(db_v_path), emit: db_v
 		path(db_d_path), emit: db_d
 		path(db_j_path), emit: db_j
 		path(db_c_path), emit: db_c
+		path("${reference_set}"), emit: consolidated_ref
 
 	script:
 		num_threads = params.igblast.num_threads
 		outfmt = params.igblast.outfmt
 		num_alignments_V = params.igblast.num_alignments_V
 		domain_system = params.igblast.domain_system
+		reference_set = "consolidated_ref.fasta"
 		
 		outfile = (outfmt=="MakeDb") ? fastaFile +".out" : fastaFile + ".tsv"
 		outfmt = (outfmt=="MakeDb") ? "'7 std qseq sseq btop'" : outfmt
@@ -39,6 +41,12 @@ process igblast_combo {
 		
 		
 		"""
+		if [[ -f "${ref_d_path}" ]]; then
+			cat ${ref_v_path} ${ref_d_path} ${ref_j_path} ${ref_c_path} > ${reference_set};
+		else
+			cat ${ref_v_path} ${ref_j_path} ${ref_c_path} > ${reference_set};
+		fi
+
 		paths=("${ref_v_path}" "${ref_d_path}" "${ref_j_path}" "${ref_c_path}")
 		echo \$paths
 		db_list=()

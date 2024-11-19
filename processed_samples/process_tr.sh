@@ -9,7 +9,7 @@ locus=$2
 mkdir -p $(pwd)/results/$sample
 mkdir -p $(pwd)/results/$sample/$locus
 cd .
-# nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_tr/m84248_241011_111920_s3.hifi_reads.$sample.fastq --outdir $(pwd)/results/$sample/$locus --sample_name $sample --locus $locus --constant_region TR
+nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_tr/m84248_241011_111920_s3.hifi_reads.$sample.fastq --outdir $(pwd)/results/$sample/$locus --sample_name $sample --locus $locus --constant_region TR
 cd .
 nextflow ../annotate_tr/main.nf --reads $(pwd)/results/$sample/$locus/reads/${sample}_atleast-2.fasta --outdir $(pwd)/results/$sample/$locus --sample_name $sample --locus $locus
 done

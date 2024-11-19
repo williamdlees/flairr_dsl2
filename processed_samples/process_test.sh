@@ -1,5 +1,5 @@
 
-#nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_short_samples/*986*1003*.fastq --outdir $(pwd)/results/IGH --sample_name test
+#nextflow ../preprocess/main.nf --reads /mnt/f/clareo/easton_short_samples/*986*1003*.fastq --outdir $(pwd)/results/IGH --sample_name test --locus IGH
 cd .
 nextflow ../annotate/main.nf --sample_name test --reads /mnt/f/clareo/flairr_dsl2/processed_samples/results/IGH/reads/test_atleast-2.fasta --outdir $(pwd)/results/IGH -resume
 cd .
