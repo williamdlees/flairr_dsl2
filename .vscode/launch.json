@@ -38,9 +38,9 @@
             "name": "annot_v",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/python/annot_v.py",
-            "args": ["full.tsv", "consolidated_ref.fasta", "out.tsv"],
-            "cwd": "${workspaceFolder}/modules/annot_v",
+            "program": "${workspaceFolder}/python/align_v.py",
+            "args": ["full.tsv", "consolidated_ref.fasta", "out.tsv", "log.txt", "--condense_errors", "--echo_errors"],
+            "cwd": "${workspaceFolder}/modules/align_v",
             "console": "integratedTerminal",
             "justMyCode": false
         },

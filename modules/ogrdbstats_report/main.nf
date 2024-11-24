@@ -20,7 +20,7 @@ process ogrdbstats_report {
 	script:
 		// general params
 		name = params.sample_name
-		outname = airrFile.name.toString().substring(0, airrFile.name.toString().indexOf("_db-pass"))
+		outname = airrFile.getBaseName() + "_ogrdb_stats.csv"
 		
 		haplotype = ""
 		if (haplotype_genes.length() > 0) {
