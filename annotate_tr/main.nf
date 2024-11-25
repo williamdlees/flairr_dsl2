@@ -24,29 +24,22 @@ params.ndm = "${params.germline_ref}.ndm"
 params.python_dir = "$baseDir/../python"
 
 include { igblast_combo as igblast_combo1; igblast_combo as igblast_combo2 } from '../modules/igblast_combo'
-include { makedb as makedb1; makedb as makedb2 } from '../modules/makedb'
-include { annot_const as annot_const1; annot_const as annot_const2 } from '../modules/annot_const'
+include { align_v as align_v1; align_v as align_v2 } from '../modules/align_v'
 include { TIgGER_bayesian_genotype_Inference as tigger_j_call; TIgGER_bayesian_genotype_Inference as tigger_d_call; TIgGER_bayesian_genotype_Inference as tigger_v_call } from '../modules/tigger_bayesian_genotype_inference'
-include { create_germlines as create_germlines1; create_germlines as create_germlines2 } from '../modules/create_germlines'
-include { define_clones } from '../modules/define_clones'
-include { single_clone_representative } from '../modules/single_clone_representative'
-include { haplotype_inference_report } from '../modules/haplotype_inference_report'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
 	seqs = channel.fromPath(params.reads)
 	
 	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
-	makedb1(seqs, igblast_combo1.out.output, params.v_ref, params.d_ref, params.j_ref, params.c_ref, 'non-personalized')
-	annot_const1(makedb1.out.annotations, makedb1.out.failed, params.c_ref, 'non-personalized', params.python_dir)
+	align_v1(igblast_combo1.out.output, params.v_ref, 'non-personalized', params.python_dir)
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.j_ref, "true")
-	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
-	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', annot_const1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
+	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, "true")
+	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
+	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
 
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
-	makedb2(seqs, igblast_combo2.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'personalized')
-	annot_const2(makedb2.out.annotations, makedb2.out.failed, params.c_ref, 'personalized', params.python_dir)
+	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 
-	ogrdbstats_report(annot_const2.out.annotations, makedb1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, "true")	
+	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, "true")	
 }

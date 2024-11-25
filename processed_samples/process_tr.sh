@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#for tuple in "bc2001 TRA" "bc2002 TRB" "bc2003 TRD" "bc2004 TRG"
-for tuple in "bc2001 TRA"
+for tuple in "bc2001 TRA" "bc2002 TRB" "bc2003 TRD" "bc2004 TRG"
+#for tuple in "bc2001 TRA"
 do
 set -- $tuple
 sample=$1
