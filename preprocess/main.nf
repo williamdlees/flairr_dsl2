@@ -55,7 +55,7 @@ workflow {
 	parse_log_BC(build_consensus.out.log_file, "BC", "BARCODE SEQCOUNT CONSCOUNT PRCONS PRFREQ ERROR")
 	parse_headers_consensus(build_consensus.out.output, "BC_TOTAL", "table", "min", "-f ID PRCONS CONSCOUNT", parse_log_BC.out.ready)
 	
-	collapse_seq(build_consensus.out.output)
+	collapse_seq(build_consensus.out.output, parse_headers_consensus.out.ready)
 	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
 	
 	split_seq(collapse_seq.out.output, parse_headers_collapse.out.ready)
