@@ -7,6 +7,7 @@ params.sample_name = ""		// Sample name, to be used in reports and report filena
 params.locus = "IGH"
 
 params.outdir = "$baseDir/../results"
+params.python_dir = "$baseDir/../python"
 
 
 include { filter_seq_quality } from '../modules/filter_seq_quality'
@@ -14,6 +15,7 @@ include { parse_log as parse_log_FSQ; parse_log as parse_log_FSL; parse_log as p
 include { filter_seq_length } from '../modules/filter_seq_length'
 include { FastQC } from '../modules/fastqc'
 include { MaskPrimers as MaskPrimers_CPRIMERS; MaskPrimers as MaskPrimers_VPRIMERS; MaskPrimers as MaskPrimers_EPRIMERS; } from '../modules/mask_primers'
+include {filter_barcodes} from '../modules/filter_barcodes'
 include { check_for_seqs } from '../modules/check_for_seqs'
 include { align_sets } from '../modules/align_sets'
 include { cluster_sets } from '../modules/cluster_sets'
@@ -42,10 +44,12 @@ workflow {
 
 	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output, params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers, parse_log_FSL.out.ready)
 	parse_log_MPE(MaskPrimers_EPRIMERS.out.log_file, "MPE", "ID PRIMER BARCODE ERROR")
+
+	filter_barcodes(MaskPrimers_EPRIMERS.out.output, params.python_dir, parse_log_MPE.out.ready)
 	
-	check_for_seqs(MaskPrimers_EPRIMERS.out.output, params.V_R1_primers, parse_log_MPE.out.ready)
+	check_for_seqs(filter_barcodes.out.output, params.V_R1_primers, true)
 	
-	align_sets(MaskPrimers_EPRIMERS.out.output, check_for_seqs.out.ready)
+	align_sets(filter_barcodes.out.output, check_for_seqs.out.ready)
 	parse_log_AS(align_sets.out.log_file, "AS", "ID BARCODE SEQCOUNT ERROR")
 	
 	cluster_sets(align_sets.out.output, parse_log_AS.out.ready)

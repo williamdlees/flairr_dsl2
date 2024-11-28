@@ -44,5 +44,15 @@
             "console": "integratedTerminal",
             "justMyCode": false
         },
+        {
+            "name": "filter_barcodes",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/filter_barcodes.py",
+            "args": ["1001_m84248_241112_211045_s2.fastq", "1001_m84248_241112_211045_s2_filtered.fastq", "1001_m84248_241112_211045_s2_barcodes.pdf"],
+            "cwd": "${workspaceFolder}/modules/filter_barcodes",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
     ]
 }

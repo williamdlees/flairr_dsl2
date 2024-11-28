@@ -4,7 +4,7 @@
 .RData
 .Rhistory
 Rplots.pdf
-*_reads.fastq
+*.fastq
 work/
 results/
 results_with_inference/
