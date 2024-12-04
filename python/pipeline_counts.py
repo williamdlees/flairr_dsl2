@@ -73,7 +73,7 @@ for locus in loci:
         found_data_for_sample = False
 
         for stage, stage_filespec in config['sample_files']:
-            stage_filename_glob = glob.glob(os.path.join(root, stage_filespec).replace('{sample}', sample_name))
+            stage_filename_glob = glob.glob(os.path.join(root, stage_filespec).replace('{sample}', sample_name).replace('{locus}', locus))
 
             if len(stage_filename_glob) == 0:
                 rec[stage] = 'NA'
