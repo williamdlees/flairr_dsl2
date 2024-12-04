@@ -53,6 +53,16 @@
             "cwd": "${workspaceFolder}/modules/filter_barcodes",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "project_allele_table",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/project_allele_table.py",
+            "args": ["flairr_test", "results", "results/flairr_allele_usage_table.csv"],
+            "cwd": "${workspaceFolder}/processed_samples",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }
