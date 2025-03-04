@@ -26,6 +26,7 @@ params.python_dir = "$baseDir/../python"
 include { igblast_combo as igblast_combo1; igblast_combo as igblast_combo2 } from '../modules/igblast_combo'
 include { align_v as align_v1; align_v as align_v2 } from '../modules/align_v'
 include { TIgGER_bayesian_genotype_Inference as tigger_j_call; TIgGER_bayesian_genotype_Inference as tigger_d_call; TIgGER_bayesian_genotype_Inference as tigger_v_call } from '../modules/tigger_bayesian_genotype_inference'
+include { define_clones } from '../modules/define_clones'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
@@ -40,6 +41,7 @@ workflow {
 
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
+	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 
-	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, "true")	
+	ogrdbstats_report(define_clones.out.output, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, "true")	
 }

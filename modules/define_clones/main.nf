@@ -2,17 +2,27 @@
 
 process define_clones {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone-pass.tsv.*$/) "clones/${name}_clone_pass.tsv"}
+	publishDir params.outdir, 
+	mode: 'copy', 
+	saveAs: {
+		filename -> if (filename =~ /.*_clone-pass.tsv.*$/) {"clones/${name}_clone_pass.tsv"}
+			else if (filename =~ /.*.png$/) {"clones/${filename}"}
+			else if (filename =~ /.*.csv$/) {"clones/${filename}"}			
+	}
 
 	input:
 		path(airrFile)
 		path(thresholdScript)
+		path(cloneStatsScript)
 
 	output:
 		path("*_clone-pass.tsv"), emit: output
+		path("*.png")
+		path("*.csv")
 
 	script:
 		name = params.sample_name
+		locus = params.locus
 		failed = params.define_clones.failed
 		format = params.define_clones.format
 		seq_field = params.define_clones.seq_field
@@ -45,10 +55,17 @@ process define_clones {
 		model = (model=="ham") ? "" : "--model ${model}"
 		sym = (sym=="avg") ? "" : "--sym ${sym}"
 		link = (link=="single") ? "" : " --link ${link}"
+		clonepass = airrFile.getBaseName() + "_clone-pass.tsv"
 			
 		"""
+		locus=$locus
 		echo 1
-		thresh=`Rscript ${thresholdScript} ${airrFile}`
+		if [ "$locus" == "IGH" -o "$locus" == "IGK" -o "$locus" == "IGL" ]; then
+			thresh=`Rscript ${thresholdScript} ${airrFile}`
+		else
+			thresh=0
+		fi
+		
 		echo 2
 		echo \$thresh
 		echo 3
@@ -69,5 +86,6 @@ process define_clones {
 			${link} \
 			--maxmiss ${maxmiss} \
 			--log ${name}_DF.log  
-		"""
-}
+
+		Rscript ${cloneStatsScript}  ${clonepass} ${locus} ${name}
+		"""}

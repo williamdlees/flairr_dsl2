@@ -67,7 +67,7 @@ def main(infile, outfile, germline_ref, logfile, condense_errors, echo_errors, m
     reader = csv.DictReader(fi, delimiter='\t')
     fo = open(outfile, 'w', newline='')
     fieldnames = reader.fieldnames
-    fieldnames.extend(['cdr1_aligned_end', 'cdr1_aligned_start', 'cdr2_aligned_start', 'cdr2_aligned_end', 'fwr3_aligned_end', 'fwr4_aligned_start', 'fwr2_aligned_start', 'fwr4_aligned_end', 'fwr1_aligned_end', 'fwr2_aligned_end', 'fwr1_aligned_start', 'fwr3_aligned_start'])
+    fieldnames.extend(['cdr1_aligned_end', 'cdr1_aligned_start', 'cdr2_aligned_start', 'cdr2_aligned_end', 'fwr3_aligned_end', 'fwr4_aligned_start', 'fwr2_aligned_start', 'fwr4_aligned_end', 'fwr1_aligned_end', 'fwr2_aligned_end', 'fwr1_aligned_start', 'fwr3_aligned_start', 'consensus_count', 'duplicate_count'])
     writer = csv.DictWriter(fo, fieldnames, delimiter='\t')
     writer.writeheader()
     reported_fields = []
@@ -76,6 +76,17 @@ def main(infile, outfile, germline_ref, logfile, condense_errors, echo_errors, m
 
     for rec in reader:
         rowcount += 1
+
+        for h_c in rec['sequence_id'].split('|'):
+            if 'DUPCOUNT=' in h_c:
+                rec['duplicate_count'] = h_c.split('=')[1]
+            elif 'CONSCOUNT=' in h_c:
+                rec['consensus_count'] = h_c.split('=')[1]
+
+        for f in ['stop_codon', 'vj_in_frame', 'v_frameshift', 'productive']:
+            if rec[f] == '':
+                rec[f] = 'F'
+
         if not rec['v_call']:
             reporter.report(f"Warning: {rec['sequence_id']}: no v_call. No V-alignment added.")
             continue

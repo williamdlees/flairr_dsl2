@@ -45,7 +45,7 @@ workflow {
 	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 
-	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R")
+	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	single_clone_representative(define_clones.out.output)
 
 	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, single_clone_representative.out.ready)

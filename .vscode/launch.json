@@ -35,11 +35,11 @@
             "justMyCode": false
         },
         {
-            "name": "annot_v",
+            "name": "align_v",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/python/align_v.py",
-            "args": ["full.tsv", "consolidated_ref.fasta", "out.tsv", "log.txt", "--condense_errors", "--echo_errors"],
+            "args": ["test_atleast-2.fasta.tsv", "consolidated_ref.fasta", "out.tsv", "log.txt", "--condense_errors", "--echo_errors"],
             "cwd": "${workspaceFolder}/modules/align_v",
             "console": "integratedTerminal",
             "justMyCode": false
@@ -63,6 +63,17 @@
             "cwd": "${workspaceFolder}/processed_samples",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "make_project_alignments_file",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/make_project_alignments_file.py",
+            "args": [],
+            "cwd": "${workspaceFolder}/processed_samples/results",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
+
     ]
 }
