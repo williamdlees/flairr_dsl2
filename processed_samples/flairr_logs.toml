@@ -13,5 +13,5 @@ sample_files = [
     ["unique_atleast2", "reports/{sample}_BC_ATLEAST2_headers.tab"],
     ["align", "alignment/{sample}_v_align_non-personalized.tsv"],
     ["align_personalized", "alignment/{sample}_v_align_non-personalized.tsv"],
-    ["clone_rep_passed", "clones/{sample}_clone_rep-passed.tsv"],
+    ["clones", "clones/{sample}_clone_freqs.csv"],
 ]

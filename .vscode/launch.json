@@ -73,6 +73,16 @@
             "cwd": "${workspaceFolder}/processed_samples/results",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "make_project_summary",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/make_project_summary.py",
+            "args": [],
+            "cwd": "${workspaceFolder}/processed_samples/results",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
 
     ]

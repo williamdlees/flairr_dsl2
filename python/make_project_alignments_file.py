@@ -28,25 +28,36 @@ def find_alignment_file(sample, locus):
 def concatenate_files(samples):
     all_data = []
     columns = set()
+    header = []
 
     for sample, loci in samples.items():
         print(f"Processing sample '{sample}' with loci: {', '.join(loci)}")
         for locus in loci:
             alignment_file = find_alignment_file(sample, locus)
             if alignment_file:
+                columns = []
                 with open(alignment_file, newline='') as csvfile:
                     reader = csv.DictReader(csvfile, delimiter='\t')
                     for row in reader:
-                        row['Sample'] = sample
-                        row['Locus'] = locus
+                        if not columns:
+                            columns = list(row.keys())
+                        row['sample'] = sample
+                        row['locus'] = locus
                         all_data.append(row)
-                        columns.update(row.keys())
             else:
                 print(f"Warning: No alignment file found for sample '{sample}', locus '{locus}'")
 
+            if not header:
+                header = ['sample', 'locus']
+                header.extend(columns)
+            else:
+                d = set(header) - set(columns)
+                if d:
+                    header.extend(list(d))
+
     if all_data:
         with open('project_alignments.csv', 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=columns, extrasaction='ignore')
+            writer = csv.DictWriter(csvfile, fieldnames=header, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(all_data)
     else:
