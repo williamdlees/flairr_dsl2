@@ -78,7 +78,7 @@ for sample in samples.keys():
             samples[sample][locus][isotype] = count
 
 header = ['sample', 'locus', 'reads', 'sequences', 'clones', 'shannon', 'simpson', 'cdr3s', 'IGG1', 'IGG2', 'IGG3', 'IGG4', 'IGA', 'IGM', 'IGE', 'IGD']
-with open('project_summary.csv', 'w', newline='') as csvfile:
+with open('flairr_project_summary.csv', 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=header)
     writer.writeheader()
     for sample in samples.keys():
