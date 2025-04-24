@@ -4,14 +4,16 @@ library(airr)
 
 parse_args <- function() {
   args <- commandArgs(trailingOnly=TRUE)
-  if (length(args)!=3) 
+  if (length(args)!=3) {
     stop("Three arguments are required: input_filename, locus, output_prefix")
+  }
   input_filename <- args[1]
   locus <- args[2]
   prefix <- args[3]
   valid_loci <- c("IGH","IGK","IGL","TRA","TRB","TRD","TRG","TR")
-  if (!(locus %in% valid_loci)) 
+  if (!(locus %in% valid_loci)) {
     stop("Locus must be one of IGH, IGK, IGL, TRA, TRB, TRD, TRG or TR")
+    }
   list(input_filename=input_filename, locus=locus, prefix=prefix)
 }
 
@@ -23,8 +25,9 @@ lociToProcess <- if (args$locus=="TR") c("TRA","TRB","TRD","TRG") else args$locu
 for (locus in lociToProcess) {
   message("Processing ", locus, " ...")
   data <- dataFull[dataFull$locus==locus,]
-  if (nrow(data)==0) 
+  if (nrow(data)==0) {
     { message("  No data for ", locus, ", skipping."); next }
+  }
   tryCatch({
     if (locus=="IGH") {
       # split by isotype. calculate abundance by sequence.
