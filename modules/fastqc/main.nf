@@ -25,7 +25,7 @@ process FastQC {
 			runGzip = ''
 		}
 		"""
-		if [ "${params.run_FastQC}" == "yes" ] && { [[ "$file" == *.fasta ]] || [[ "$file" == *.fa ]]; } then
+		if [ "${params.run_FastQC}" == "yes" ] && { [[ "$file" == *.fastq* ]] || [[ "$file" == *.fq* ]]; } then
 			${runGzip}
 			fastqc ${file} 
 		else
