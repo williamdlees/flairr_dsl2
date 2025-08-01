@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "pipeline_counts",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/pipeline_counts.py",
             "args": ["flairr_logs.toml", "pipeline_counts.csv"],
@@ -16,7 +16,7 @@
         },
         {
             "name": "barcode_alignments",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/barcode_alignments.py",
             "args": ["flairr_logs.toml", "barcode_alignments.html"],
@@ -26,7 +26,7 @@
         },
         {
             "name": "annot_const",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/annot_const.py",
             "args": ["bc2002_makedb_pass_non-personalized.tsv", "f:/clareo/reference/Homo_sapiens_TRBC.fasta", "bc2002_makedb_pass_non-personalized_inc_const.tsv"],
@@ -36,7 +36,7 @@
         },
         {
             "name": "align_v",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/align_v.py",
             "args": ["test_atleast-2.fasta.tsv", "consolidated_ref.fasta", "out.tsv", "log.txt", "--condense_errors", "--echo_errors"],
@@ -46,7 +46,7 @@
         },
         {
             "name": "filter_barcodes",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/filter_barcodes.py",
             "args": ["1001_m84248_241112_211045_s2.fastq", "1001_m84248_241112_211045_s2_filtered.fastq", "1001_m84248_241112_211045_s2_barcodes.pdf"],
@@ -56,7 +56,7 @@
         },
         {
             "name": "project_allele_table",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/project_allele_table.py",
             "args": ["flairr_test", "results", "results/flairr_allele_usage_table.csv"],
@@ -66,7 +66,7 @@
         },
         {
             "name": "make_project_alignments_file",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/make_project_alignments_file.py",
             "args": [],
@@ -76,7 +76,7 @@
         },
         {
             "name": "make_project_summary",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/python/make_project_summary.py",
             "args": [],
@@ -84,6 +84,5 @@
             "console": "integratedTerminal",
             "justMyCode": false
         }
-
     ]
 }

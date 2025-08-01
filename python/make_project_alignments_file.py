@@ -39,8 +39,7 @@ def find_alignment_file(input_dir, sample, locus):
 
 def concatenate_files(samples, input_dir, output_file):
     all_data = []
-    columns = set()
-    header = []
+    header = set()
 
     for sample, loci in samples.items():
         print(f"Processing sample '{sample}' with loci: {', '.join(loci)}")
@@ -53,19 +52,14 @@ def concatenate_files(samples, input_dir, output_file):
                     for row in reader:
                         if not columns:
                             columns = list(row.keys())
+                            columns.extend(['sample', 'locus'])
+                            header.update(columns)
                         row['sample'] = sample
                         row['locus'] = locus
                         all_data.append(row)
             else:
                 print(f"Warning: No alignment file found for sample '{sample}', locus '{locus}'")
-
-            if not header:
-                header = ['sample', 'locus']
-                header.extend(columns)
-            else:
-                d = set(header) - set(columns)
-                if d:
-                    header.extend(list(d))
+                continue
 
     if all_data:
         with open(output_file, 'w', newline='') as csvfile:
