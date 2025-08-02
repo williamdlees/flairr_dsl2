@@ -19,7 +19,7 @@ process presto_report {
 
 		"""
 		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}', sample='$name', locus='${params.locus}', config_file='${config_file}'), output_file='\${PWD}/${output_file}')"
-		rm ${params.outdir}/reports/*${name}*.log
+		# rm ${params.outdir}/reports/*${name}*.log
 		"""
 
 }
