@@ -27,7 +27,7 @@ def count_tab_reads(file):
         return sum(1 for line in f) - 1
 
 
-loci = ['IGH', 'IGK', 'IGL', 'TRA', 'TRB', 'TRD', 'TRG']
+loci = ['IGH', 'IGK', 'IGL', 'IGM', 'IGG', 'IGA', 'IGD', 'IGE', 'TRA', 'TRB', 'TRD', 'TRG']
 
 
 def find_samples(template):
