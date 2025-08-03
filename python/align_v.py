@@ -8,6 +8,7 @@ import csv
 from Bio import Align
 from receptor_utils import simple_bio_seq as simple
 
+csv.field_size_limit(1024*1024*1024)
 
 def aligned_diff(novel_seq: str, ref_seq: str):
     aligner = Align.PairwiseAligner()

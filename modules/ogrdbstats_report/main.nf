@@ -28,11 +28,13 @@ process ogrdbstats_report {
 			haplotype = "--hap $hap"
 		}
 		
-		"""
-
-		novel=""
+		
+                """
+		novel="   "
+                HOME="./"
 
 		if grep -q "_[A-Z][0-9]" ${v_germline_file}; then
+                        echo "novel sequences found"
 			grep -A 6 "_[A-Z][0-9]" ${v_germline_file} > novel_sequences.fasta
 			novel=\$(realpath novel_sequences.fasta)
 			novel="--inf_file \$novel"
