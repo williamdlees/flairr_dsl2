@@ -1,6 +1,5 @@
 sample_dir = "results/{sample}/{locus}"
 sample_files = [
-    ["input", "reads/{sample}_hifi_reads.fastq"],
     ["filterSeq_quality", "reports/{sample}_FS_FSQ_table.tab"],
     ["filterSeq_length", "reports//{sample}_FS_FSL_table.tab"],
 	["maskPrimer_C", "reports/{sample}_MP_MPC_table.tab"],
@@ -13,5 +12,5 @@ sample_files = [
     ["unique_atleast2", "reports/{sample}_BC_ATLEAST2_headers.tab"],
     ["align", "alignment/{sample}_v_align_non-personalized.tsv"],
     ["align_personalized", "alignment/{sample}_v_align_non-personalized.tsv"],
-    ["clones", "clones/{sample}_clone_freqs.csv"],
+    ["clones", "clones/{sample}_{locus}_clone_freqs.csv"],
 ]
