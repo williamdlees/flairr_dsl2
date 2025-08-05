@@ -1,9 +1,10 @@
 #!/bin/bash
 # process_slurm.sh
-# Usage: ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime>
+# Usage: ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]
 # <command> must be preprocess or annotate
 # <input_fofn> should consist of lines of the form <sample_name>\t<fastq_path_name>
 # <container_runtime> must be docker or singularity
+# [additional_nextflow_parameters...] will be passed directly to nextflow
 # slurm log files are written to the subdirectory slog
 
 set -euo pipefail
@@ -21,11 +22,17 @@ readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_tr/main.nf"
 mkdir -p slog
 mkdir -p results
 
-command="${1:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime>}"
-input_file="${2:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime>}"
-locus="${3:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime>}"
-max_jobs="${4:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime>}"
-runtime="${5:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime>}"
+command="${1:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+input_file="${2:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+locus="${3:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+max_jobs="${4:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+runtime="${5:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+
+# Shift the first 5 mandatory parameters
+shift 5
+
+# Any remaining parameters will be passed to nextflow
+additional_params="$@"
 
 # Check if command has a valid value
 valid_commands=("preprocess" "annotate")
@@ -140,7 +147,7 @@ while IFS=$'\t' read -r sample pathToReads; do
 #SBATCH --cpus-per-task=12
 #SBATCH --oversubscribe
 
-# skip Nextflow’s internet/version check
+# skip Nextflow's internet/version check
 export NXF_OFFLINE=1
 module load nextflow   # if you need a module; otherwise remove
 
@@ -151,7 +158,8 @@ echo nextflow run ${NXF_SCRIPT} -offline \
   --outdir            "./results/${sample}/IGH" \
   --locus             $locus \
   --species           Homo_sapiens \
-  --germline_ref_dir  "/home/zmvanw01/ogr-ref"
+  --germline_ref_dir  "/home/zmvanw01/ogr-ref" \
+  $additional_params
 #EOF
 
 done < "$input_file"
