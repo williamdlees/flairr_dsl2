@@ -132,7 +132,7 @@ while IFS=$'\t' read -r sample pathToReads; do
   
 
   # submit a little batch script via heredoc to avoid any nested-quoting issues
- sbatch <<EOF
+#sbatch <<EOF
 #!/usr/bin/env bash
 #SBATCH -p compute
 #SBATCH -J ${sample}_${command}
@@ -144,7 +144,7 @@ while IFS=$'\t' read -r sample pathToReads; do
 export NXF_OFFLINE=1
 module load nextflow   # if you need a module; otherwise remove
 
-nextflow run ${NXF_SCRIPT} -offline \
+echo nextflow run ${NXF_SCRIPT} -offline \
   -profile            "$runtime" \
   --sample_name       "$sample" \
   --reads             "$pathToReads" \
@@ -152,6 +152,6 @@ nextflow run ${NXF_SCRIPT} -offline \
   --locus             $locus \
   --species           Homo_sapiens \
   --germline_ref_dir  "/home/zmvanw01/ogr-ref"
-EOF
+#EOF
 
 done < "$input_file"
