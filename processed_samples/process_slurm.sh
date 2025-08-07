@@ -27,12 +27,13 @@ OPTIONS:
   -p <partition>        Slurm partition to use (default: bioinfo)
   --process.cpus <n>    Number of CPUs to request per job (default: 12)
                         This is also passed to Nextflow for process configuration
-  
+  --echo                Echo commands instead of executing them
   -help, --help         Display this help message
 
 EXAMPLES:
   ./process_slurm.sh preprocess input_samples.txt IGH 5 docker
   ./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16
+  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker --echo
 
 OUTPUT:
   - Results are stored in the './results/<sample>/' directory
@@ -67,6 +68,8 @@ mkdir -p results
 partition="bioinfo"
 # Default CPU count
 cpus_per_task=12
+# Default echo mode
+echo_only=false
 
 # Process parameters
 USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]. Use $0 --help for help."
@@ -96,6 +99,10 @@ while [[ $# -gt 0 ]]; do
                 echo "Error: --process.cpus requires a numeric argument"
                 exit 1
             fi
+            ;;
+        --echo)
+            echo_only=true
+            shift
             ;;
         *)
             additional_params+="$1 "
@@ -206,9 +213,8 @@ while IFS=$'\t' read -r sample pathToReads; do
     sleep 1
   done
   
-  # submit a little batch script via heredoc to avoid any nested-quoting issues
-#sbatch <<EOF
-#!/usr/bin/env bash
+  # Create batch script content
+  batch_script="#!/usr/bin/env bash
 #SBATCH -p ${partition}
 #SBATCH -J ${sample}_${command}
 #SBATCH -o slog/${sample}_${command}.slog
@@ -219,15 +225,24 @@ while IFS=$'\t' read -r sample pathToReads; do
 export NXF_OFFLINE=1
 module load nextflow   # if you need a module; otherwise remove
 
-echo nextflow run ${NXF_SCRIPT} -offline \
-  -profile            "$runtime" \
-  --sample_name       "$sample" \
-  --reads             "$pathToReads" \
-  --outdir            "./results/${sample}/IGH" \
-  --locus             $locus \
-  --species           Homo_sapiens \
-  --germline_ref_dir  "/home/zmvanw01/ogr-ref" \
-  $additional_params
-#EOF
+nextflow run ${NXF_SCRIPT} -offline \\
+  -profile            \"$runtime\" \\
+  --sample_name       \"$sample\" \\
+  --reads             \"$pathToReads\" \\
+  --outdir            \"./results/${sample}/IGH\" \\
+  --locus             $locus \\
+  --species           Homo_sapiens \\
+  --germline_ref_dir  \"/home/zmvanw01/ogr-ref\" \\
+  $additional_params"
+
+  # If echo mode, print the commands
+  if [[ "$echo_only" == true ]]; then
+    echo "Would submit the following batch script for sample $sample:"
+    echo "$batch_script"
+    echo "---"
+  else
+    # submit the batch script via heredoc
+    sbatch <<< "$batch_script"
+  fi
 
 done < "$input_file"
