@@ -69,11 +69,12 @@ partition="bioinfo"
 cpus_per_task=12
 
 # Process parameters
-command="${1:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
-input_file="${2:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
-locus="${3:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
-max_jobs="${4:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
-runtime="${5:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
+USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]. Use $0 --help for help."
+command="${1:?{$USAGE}"
+input_file="${2:?{$USAGE}"
+locus="${3:?$USAGE}"
+max_jobs="${4:?$USAGE}"
+runtime="${5:?$USAGE}"
 
 # Shift the first 5 mandatory parameters
 shift 5
@@ -177,7 +178,7 @@ fi
 if command -v $runtime > /dev/null 2>&1; then
     echo " "
 else
-    echo "$runtime is not available"
+    echo "$runtime is not available. Maybe you need to load a module?"
     exit 1
 fi
 
