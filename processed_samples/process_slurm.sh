@@ -7,6 +7,47 @@
 # [additional_nextflow_parameters...] will be passed directly to nextflow
 # slurm log files are written to the subdirectory slog
 
+# Function to display help message
+show_help() {
+  cat << EOF
+USAGE:
+  ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime> [options] [additional_nextflow_parameters...]
+
+DESCRIPTION:
+  This script processes samples in batch through Nextflow pipelines using Slurm.
+  
+REQUIRED ARGUMENTS:
+  <command>             Must be either 'preprocess' or 'annotate'
+  <input_fofn>          Tab-separated file with <sample_name> and <fastq_path_name> on each line
+  <locus>               Target locus: IGH, IGK, IGL, TRA, TRB, TRD, or TRG
+  <max_jobs>            Maximum number of jobs to run in parallel
+  <container_runtime>   Container runtime to use: 'docker' or 'singularity'
+
+OPTIONS:
+  -p <partition>        Slurm partition to use (default: bioinfo)
+  --process.cpus <n>    Number of CPUs to request per job (default: 12)
+                        This is also passed to Nextflow for process configuration
+  
+  -help, --help         Display this help message
+
+EXAMPLES:
+  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker
+  ./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16
+
+OUTPUT:
+  - Results are stored in the './results/<sample>/' directory
+  - Slurm logs are written to the './slog/' directory
+EOF
+  exit 0
+}
+
+# Check for help flags first
+for arg in "$@"; do
+  if [[ "$arg" == "-help" || "$arg" == "--help" ]]; then
+    show_help
+  fi
+done
+
 set -euo pipefail
 
 # setup paths to nextflow scripts
@@ -22,17 +63,45 @@ readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_tr/main.nf"
 mkdir -p slog
 mkdir -p results
 
-command="${1:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
-input_file="${2:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
-locus="${3:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
-max_jobs="${4:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
-runtime="${5:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]}"
+# Default partition
+partition="bioinfo"
+# Default CPU count
+cpus_per_task=12
+
+# Process parameters
+command="${1:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
+input_file="${2:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
+locus="${3:?Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
+max_jobs="${4:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
+runtime="${5:?Usage: $0 <command> <input_tsv>  <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]}"
 
 # Shift the first 5 mandatory parameters
 shift 5
 
-# Any remaining parameters will be passed to nextflow
-additional_params="$@"
+# Check for partition option and process.cpus
+additional_params=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -p)
+            partition="$2"
+            shift 2
+            ;;
+        --process.cpus)
+            if [[ $2 =~ ^[0-9]+$ ]]; then
+                cpus_per_task="$2"
+                additional_params+="$1 $2 "
+                shift 2
+            else
+                echo "Error: --process.cpus requires a numeric argument"
+                exit 1
+            fi
+            ;;
+        *)
+            additional_params+="$1 "
+            shift
+            ;;
+    esac
+done
 
 # Check if command has a valid value
 valid_commands=("preprocess" "annotate")
@@ -135,16 +204,14 @@ while IFS=$'\t' read -r sample pathToReads; do
   while [ "$(squeue -u "$USER" -h | wc -l)" -ge "$max_jobs" ]; do
     sleep 1
   done
-
   
-
   # submit a little batch script via heredoc to avoid any nested-quoting issues
 #sbatch <<EOF
 #!/usr/bin/env bash
-#SBATCH -p compute
+#SBATCH -p ${partition}
 #SBATCH -J ${sample}_${command}
 #SBATCH -o slog/${sample}_${command}.slog
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=${cpus_per_task}
 #SBATCH --oversubscribe
 
 # skip Nextflow's internet/version check
