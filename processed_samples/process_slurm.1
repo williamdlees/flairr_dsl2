@@ -1,0 +1,152 @@
+.\" filepath: f:\clareo\flairr_dsl2\docs\process_slurm.1
+.TH PROCESS_SLURM 1 "2024" "FLAIRR DSL2" "User Commands"
+.SH NAME
+process_slurm.sh \- batch process samples through Nextflow pipelines using Slurm
+.SH SYNOPSIS
+.B process_slurm.sh
+.I command input_fofn locus max_jobs container_runtime
+.RI [ options ]
+.RI [ additional_nextflow_parameters... ]
+.SH DESCRIPTION
+.B process_slurm.sh
+is a wrapper script that processes biological samples in batch through Nextflow pipelines using the Slurm workload manager. The script supports both preprocessing and annotation workflows for immunoglobulin and T-cell receptor analysis.
+
+The script reads a tab-separated input file containing sample names and file paths, then submits individual Slurm jobs for each sample using the specified Nextflow pipeline.
+.SH ARGUMENTS
+.TP
+.I command
+The pipeline command to execute. Must be either:
+.RS
+.IP \[bu] 2
+.B preprocess
+\- Run the preprocessing pipeline
+.IP \[bu] 2
+.B annotate
+\- Run the annotation pipeline
+.RE
+.TP
+.I input_fofn
+Path to a tab-separated file where each line contains:
+.B sample_name<TAB>fastq_path_name
+.TP
+.I locus
+Target immunological locus. Valid values are:
+.B IGH, IGK, IGL, TRA, TRB, TRD, TRG
+.TP
+.I max_jobs
+Maximum number of concurrent Slurm jobs to run (positive integer)
+.TP
+.I container_runtime
+Container runtime to use for Nextflow execution. Must be either:
+.B docker
+or
+.B singularity
+.SH OPTIONS
+.TP
+.BI \-p " partition"
+Specify the Slurm partition to use for job submission.
+.br
+Default: bioinfo
+.TP
+.BI \-\-process.cpus " number"
+Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
+.br
+Default: 12
+.br
+This parameter is also forwarded to Nextflow.
+.TP
+.B \-\-echo
+Echo the sbatch and nextflow commands to the terminal instead of executing them. Useful for debugging and previewing commands.
+.TP
+.BR \-help ", " \-\-help
+Display comprehensive help message and exit.
+.SH FILES
+.TP
+.B slog/
+Directory where Slurm log files are written. Created automatically if it doesn't exist.
+.TP
+.B results/
+Directory where pipeline results are stored. Created automatically if it doesn't exist.
+.TP
+.B ../preprocess/main.nf
+Nextflow script for preprocessing pipeline
+.TP
+.B ../annotate/main.nf
+Nextflow script for immunoglobulin annotation pipeline
+.TP
+.B ../annotate_tr/main.nf
+Nextflow script for T-cell receptor annotation pipeline
+.SH EXAMPLES
+.TP
+Preprocess samples with default settings:
+.br
+.RS
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker\fR
+.RE
+.TP
+Annotate T-cell receptor samples with custom partition and CPU count:
+.br
+.RS
+\fB./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16\fR
+.RE
+.TP
+Preview commands without execution:
+.br
+.RS
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker --echo\fR
+.RE
+.TP
+Pass additional Nextflow parameters:
+.br
+.RS
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker --process.cpus 8 -resume\fR
+.RE
+.SH EXIT STATUS
+.TP
+.B 0
+Successful execution
+.TP
+.B 1
+Error in command-line arguments, file access, or validation
+.SH ENVIRONMENT
+.TP
+.B USER
+Used to query Slurm queue for job throttling
+.TP
+.B NXF_OFFLINE
+Set to 1 to skip Nextflow's internet/version check
+.SH DEPENDENCIES
+.TP
+.B nextflow
+Nextflow workflow management system (loaded via module)
+.TP
+.B squeue
+Slurm queue query command (for job throttling)
+.TP
+.B sbatch
+Slurm batch job submission command
+.TP
+.B docker/singularity
+Container runtime as specified in arguments
+.SH NOTES
+.IP \[bu] 2
+The script automatically throttles job submission to maintain the specified maximum number of concurrent jobs.
+.IP \[bu] 2
+Sample names are sanitized to replace slashes and spaces with underscores to prevent path issues.
+.IP \[bu] 2
+For annotation commands, the script automatically determines whether to use the immunoglobulin or T-cell receptor pipeline based on the locus.
+.IP \[bu] 2
+Log files are named using the pattern: 
+.B slog/${sample}_${command}.slog
+.SH AUTHOR
+Written for the FLAIRR DSL2 immunological analysis pipeline.
+.SH SEE ALSO
+.BR nextflow (1),
+.BR sbatch (1),
+.BR squeue (1),
+.BR docker (1),
+.BR singularity (1)
+.BR sbatch (1),
+.BR squeue (1),
+.BR docker (1),
+.BR singularity (1)
