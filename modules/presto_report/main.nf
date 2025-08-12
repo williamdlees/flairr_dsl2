@@ -15,7 +15,7 @@ process presto_report {
 		locus = params.locus
 		flairr_script = script.toRealPath()
 		output_file = name + '.pdf'
-		config_file = launchDir + "/flairr_logs.toml"
+		config_file = projectDir + "/flairr_logs.toml"
 
 		"""
 		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}', sample='$name', locus='${params.locus}', config_file='${config_file}'), output_file='\${PWD}/${output_file}')"
