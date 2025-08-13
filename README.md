@@ -1,10 +1,10 @@
 # FLAIRR DSL2 Pipeline
 
-A Nextflow-based pipeline for preprocessing and annotating immunoglobulin and T-cell receptor repertoires, designed for high-performance computing environments using Slurm workload management.
+A Nextflow-based pipeline for preprocessing and annotating immunoglobulin and T-cell FLAIRR-seq receptor repertoires, designed for high-performance computing environments using Slurm workload management.
 
 ## Overview
 
-The FLAIRR DSL2 pipeline provides a comprehensive workflow for analyzing adaptive immune receptor repertoires from high-throughput sequencing data. The pipeline supports both immunoglobulin (IGH, IGK, IGL) and T-cell receptor (TRA, TRB, TRD, TRG) loci, offering:
+The FLAIRR DSL2 pipeline provides a comprehensive workflow for analyzing adaptive immune receptor repertoires from high-throughput sequencing data produced by the FLAIRR-seq protocol. The pipeline supports both immunoglobulin (IGH, IGK, IGL) and T-cell receptor (TRA, TRB, TRD, TRG) loci, offering:
 
 - **Preprocessing**: Quality control, barcode processing, and read preparation
 - **Annotation**: V(D)J gene assignment, CDR3 identification, and repertoire analysis
@@ -78,7 +78,9 @@ This script produces:
 The pipeline uses pre-built Docker containers. Ensure Docker is available and properly configured on your system.
 
 ### Singularity
-For Singularity usage, convert the referenced Docker containers to `.sif` files. Note that the scripts expect these files to be in `~/sifs/`: if you need t store them somewhere else please link ~/sifs to that location. 
+For Singularity usage, convert the referenced Docker containers to `.sif` files. 
+
+**Note:** the scripts expect these files to be stored in the directory `~/sifs/`: if you need to keep them somewhere else, please link `~/sifs/` to that location. 
 
 ```bash
 # Example conversion
@@ -87,14 +89,16 @@ singularity build flairr_dsl2_latest.sif docker:~/sifs/flairr_dsl2:latest
 
 Refer to the [Singularity documentation](https://docs.sylabs.io/guides/latest/user-guide/) for detailed conversion procedures and best practices.
 
-**Note:** Update the singularity image path in `singularity_summaries.sh` to match your local `.sif` file location.
 
 ## Quick Start
 
-1. **Prepare Input**: Create a tab-separated file listing your samples and FASTQ paths
-2. **Preprocess**: Run `process_slurm.sh preprocess` to prepare your data
-3. **Annotate**: Run `process_slurm.sh annotate` to perform V(D)J assignment
-4. **Summarize**: Execute `singularity_summaries.sh` to generate project reports
+1. **Clone the Repository**: Use Git to clone the repository to your local machine.
+2. **Build the .sif files**: If using Singularity, convert the Docker images to Singularity .sif files.
+3. **Make an empty directory**: cd to it and call the shell scripts from this location.
+4. **Prepare Input**: Create a tab-separated file listing your samples and FASTQ paths
+5. **Preprocess**: Run `process_slurm.sh preprocess` to preprocess your data
+6. **Annotate**: Run `process_slurm.sh annotate` to perform V(D)J assignment
+7. **Summarize**: Execute `singularity_summaries.sh` to generate project reports
 
 ## Requirements
 
@@ -112,5 +116,8 @@ For detailed usage instructions and troubleshooting:
 
 ## Citation
 
-When using this pipeline, please cite the appropriate publications for the underlying tools and methodologies implemented in the FLAIRR framework.
+When using this pipeline, please cite the following publication.
+
+**FLAIRR-seq Method:**
+Ford EE, Tieri D, Rodriguez OL, Francoeur NJ, Soto J, Kos JT, Peres A, Gibson WS, Silver CA, Deikus G, et al. FLAIRR-Seq: A Method for Single-Molecule Resolution of Near Full-Length Antibody H Chain Repertoires. The Journal of Immunology (2023) 210:1607–1619. doi: [10.4049/jimmunol.2200825](https://doi.org/10.4049/jimmunol.2200825)
 
