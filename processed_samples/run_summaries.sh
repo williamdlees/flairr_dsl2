@@ -15,6 +15,10 @@ python3 /nf_root/python/project_allele_table.py flairr_test /data/results /data/
 
 echo "🔄 Running make_project_alignments_file.py..."
 cd /data/results
-#python3 /nf_root/python/make_project_alignments_file.py
+python3 /nf_root/python/make_project_alignments_file.py
+
+echo "🔄 Running make_project_summary.py..."
+cd /data/results
+python3 /nf_root/python/make_project_summary.py
 
 echo "✅ All summaries complete."
