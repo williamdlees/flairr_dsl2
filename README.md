@@ -31,6 +31,8 @@ The main entry point is the `process_slurm.sh` script, which orchestrates batch 
 # Annotate preprocessed samples  
 ./process_slurm.sh annotate sample_list.txt TRB 10 singularity -p bigmem
 ```
+(adjust the path to the script files appropriately for your setup)
+
 
 **Key Features:**
 - **Batch Processing**: Submits individual Slurm jobs for each sample
@@ -63,8 +65,10 @@ You can also view the processed man page as plain text: [process_slurm_man.txt](
 After all samples have been processed and annotated, generate project-wide summaries:
 
 ```bash
-./processed_samples/singularity_summaries.sh
+./singularity_summaries.sh
 ```
+
+This script should be run from the same directory that you ran process_slurm.sh. (adjust the path to singularity_summaries.sh appropriately).
 
 This script produces:
 - **Pipeline Statistics**: Processing counts and success rates

@@ -1,3 +1,4 @@
+# Run this command from the directory above your 'results' directoy, when all samples have been processed
 # setup paths to nextflow scripts
 SCRIPT_PATH="${BASH_SOURCE[0]}"
 # Convert to absolute path
