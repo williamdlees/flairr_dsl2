@@ -33,7 +33,7 @@ with open('pipeline_counts.csv', newline='') as csvfile:
 for sample in samples.keys():
     for locus in samples[sample].keys():
         samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
-        cd_path = f"{sample}/{locus}/clones/{sample}_clone_diversity.csv"
+        cd_path = f"{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
         if not os.path.exists(cd_path):
             print(f"Error: file {cd_path} not found")
             continue
