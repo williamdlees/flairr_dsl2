@@ -14,11 +14,12 @@ process presto_report {
 		name = params.sample_name
 		locus = params.locus
 		flairr_script = script.toRealPath()
+		config_file = projectDir.resolve("flairr_logs.toml")
 		output_file = name + '.pdf'
-		config_file = projectDir + "/flairr_logs.toml"
+		data_path = params.outdir.toRealPath()
 
 		"""
-		R -e "rmarkdown::render('$flairr_script', params=list(data='${params.outdir}', sample='$name', locus='${params.locus}', config_file='${config_file}'), output_file='\${PWD}/${output_file}')"
+		R -e "rmarkdown::render('$flairr_script', params=list(data='${data_path}', sample='$name', locus='${params.locus}', config_file='${config_file}'), output_file='\${PWD}/${output_file}')"
 		# rm ${params.outdir}/reports/*${name}*.log
 		"""
 
