@@ -166,13 +166,13 @@ for (phase_name in names(log_phases)) {
   
   if (result$found) {
     wrapped_path <- wrap_path(result$file)
-    cat(sprintf("**%s**: ✓ Found at `%s`\n\n", phase_name, wrapped_path))
+    cat(sprintf("**%s**: Found at `%s`\n\n", phase_name, wrapped_path))
   } else {
     if (result$phase_found) {
       wrapped_path <- wrap_path(result$template_path)
-      cat(sprintf("**%s**: ✗ Phase found in config but file not found at `%s`\n\n", phase_name, wrapped_path))
+      cat(sprintf("**%s**: Phase found in config but file not found at `%s`\n\n", phase_name, wrapped_path))
     } else {
-      cat(sprintf("**%s**: ✗ Phase not found in file_config\n\n", phase_name))
+      cat(sprintf("**%s**: Phase not found in file_config\n\n", phase_name))
     }
   }
 }
