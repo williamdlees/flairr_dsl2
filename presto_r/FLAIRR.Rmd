@@ -59,29 +59,77 @@ file_config = read.config(file.path(params$config_file))
 str(file_config)
 
 get_log_file <- function(phase, config, sample) {
+  phase_found <- FALSE
+  template_path <- NULL
+
   for (element in file_config$sample_files) {
     if (element[1] == phase) {
+      phase_found <- TRUE
       template = stri_replace_all_fixed(element[2], "{sample}", sample)
-      matched_files <- Sys.glob(file.path(params$data, template))
-	  
+      template_path <- file.path(params$data, template)
+      matched_files <- Sys.glob(template_path)
+
       if (length(matched_files) == 1) {
-        return(matched_files[1])
+        return(list(file = matched_files[1], phase_found = phase_found, template_path = template_path, found = TRUE))
       } else {
-        return(NULL)
+        return(list(file = NULL, phase_found = phase_found, template_path = template_path, found = FALSE))
       }
     }
   }
-  return(NULL)  # Return NULL if the input_name is not found
+  return(list(file = NULL, phase_found = phase_found, template_path = template_path, found = FALSE))
 }
 
-quality_log_file = get_log_file('filterSeq_quality', file_config, params$sample)
-length_log_file = get_log_file('filterSeq_length', file_config, params$sample)
-primer_log_file_1 = get_log_file('maskPrimer_C', file_config, params$sample)
-primer_log_file_2 = get_log_file('maskPrimer_V', file_config, params$sample)
-align_log_file = get_log_file('alignSets', file_config, params$sample)
-log_file_total = get_log_file('total', file_config, params$sample)
-log_file_unique = get_log_file('unique', file_config, params$sample)
-log_file_atleast2 = get_log_file('unique_atleast2', file_config, params$sample)
+# Get log files and their diagnostic information
+quality_result = get_log_file('filterSeq_quality', file_config, params$sample)
+length_result = get_log_file('filterSeq_length', file_config, params$sample)
+primer_result_1 = get_log_file('maskPrimer_C', file_config, params$sample)
+primer_result_2 = get_log_file('maskPrimer_V', file_config, params$sample)
+align_result = get_log_file('alignSets', file_config, params$sample)
+total_result = get_log_file('total', file_config, params$sample)
+unique_result = get_log_file('unique', file_config, params$sample)
+atleast2_result = get_log_file('unique_atleast2', file_config, params$sample)
+
+# Extract file paths for backward compatibility
+quality_log_file = quality_result$file
+length_log_file = length_result$file
+primer_log_file_1 = primer_result_1$file
+primer_log_file_2 = primer_result_2$file
+align_log_file = align_result$file
+log_file_total = total_result$file
+log_file_unique = unique_result$file
+log_file_atleast2 = atleast2_result$file
+
+# Create diagnostic output
+log_phases <- list(
+  "filterSeq_quality" = quality_result,
+  "filterSeq_length" = length_result,
+  "maskPrimer_C" = primer_result_1,
+  "maskPrimer_V" = primer_result_2,
+  "alignSets" = align_result,
+  "total" = total_result,
+  "unique" = unique_result,
+  "unique_atleast2" = atleast2_result
+)
+```
+
+## Log File Diagnostics
+
+```{r diagnostics, echo=FALSE, results="asis"}
+cat("### File Detection Results\n\n")
+
+for (phase_name in names(log_phases)) {
+  result <- log_phases[[phase_name]]
+  
+  if (result$found) {
+    cat(sprintf("**%s**: ✓ Found at `%s`\n\n", phase_name, result$file))
+  } else {
+    if (result$phase_found) {
+      cat(sprintf("**%s**: ✗ Phase found in config but file not found at `%s`\n\n", phase_name, result$template_path))
+    } else {
+      cat(sprintf("**%s**: ✗ Phase not found in file_config\n\n", phase_name))
+    }
+  }
+}
 ```
 
 ```{r, front, child="Front.Rmd", eval=TRUE}
