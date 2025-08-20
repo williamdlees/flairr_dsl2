@@ -112,19 +112,65 @@ log_phases <- list(
 )
 ```
 
+```{r, front, child="Front.Rmd", eval=TRUE}
+```
+
+\newpage
+
 ## Log File Diagnostics
 
 ```{r diagnostics, echo=FALSE, results="asis"}
 cat("### File Detection Results\n\n")
 
+# Function to wrap long paths with hyphens
+wrap_path <- function(path, max_length = 60) {
+  if (nchar(path) <= max_length) {
+    return(path)
+  }
+  
+  # Split path into components
+  parts <- strsplit(path, "/")[[1]]
+  result <- ""
+  current_line <- ""
+  
+  for (i in seq_along(parts)) {
+    part <- parts[i]
+    test_line <- if (current_line == "") part else paste0(current_line, "/", part)
+    
+    if (nchar(test_line) <= max_length) {
+      current_line <- test_line
+    } else {
+      if (current_line != "") {
+        result <- paste0(result, current_line, "-\n")
+        current_line <- part
+      } else {
+        # Single part is too long, break it
+        while (nchar(part) > max_length) {
+          result <- paste0(result, substr(part, 1, max_length), "-\n")
+          part <- substr(part, max_length + 1, nchar(part))
+        }
+        current_line <- part
+      }
+    }
+  }
+  
+  if (current_line != "") {
+    result <- paste0(result, current_line)
+  }
+  
+  return(result)
+}
+
 for (phase_name in names(log_phases)) {
   result <- log_phases[[phase_name]]
   
   if (result$found) {
-    cat(sprintf("**%s**: ✓ Found at `%s`\n\n", phase_name, result$file))
+    wrapped_path <- wrap_path(result$file)
+    cat(sprintf("**%s**: ✓ Found at `%s`\n\n", phase_name, wrapped_path))
   } else {
     if (result$phase_found) {
-      cat(sprintf("**%s**: ✗ Phase found in config but file not found at `%s`\n\n", phase_name, result$template_path))
+      wrapped_path <- wrap_path(result$template_path)
+      cat(sprintf("**%s**: ✗ Phase found in config but file not found at `%s`\n\n", phase_name, wrapped_path))
     } else {
       cat(sprintf("**%s**: ✗ Phase not found in file_config\n\n", phase_name))
     }
@@ -132,8 +178,7 @@ for (phase_name in names(log_phases)) {
 }
 ```
 
-```{r, front, child="Front.Rmd", eval=TRUE}
-```
+\newpage
 
 ```{r, quality, child="Single-Quality.Rmd", quality_log_file=quality_log_file, eval=!is.null(quality_log_file)}
 ```
