@@ -229,7 +229,7 @@ nextflow run ${NXF_SCRIPT} -offline \\
   -profile            \"$runtime\" \\
   --sample_name       \"$sample\" \\
   --reads             \"$pathToReads\" \\
-  --outdir            \"./results/${sample}/IGH\" \\
+  --outdir            \"./results/${sample}/${locus}\" \\
   --locus             $locus \\
   --species           Homo_sapiens \\
   --germline_ref_dir  \"/home/zmvanw01/ogr-ref\" \\
