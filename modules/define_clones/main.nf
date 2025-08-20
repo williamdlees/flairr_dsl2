@@ -17,8 +17,8 @@ process define_clones {
 
 	output:
 		path("*_clone-pass.tsv"), emit: output
-		path("*.png")
-		path("*.csv")
+		path("*.png"), optional: true
+		path("*.csv"), optional: true
 
 	script:
 		name = params.sample_name
