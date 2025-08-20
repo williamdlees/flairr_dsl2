@@ -33,17 +33,20 @@ for (locus in lociToProcess) {
       # split by isotype. calculate abundance by sequence.
       data$isotype=substr(data$c_call,1,4)
       clones=countClones(data,group="isotype",clone="clone_id")
+      write.csv(clones,paste(args$prefix,locus,"clone_freqs.csv",sep="_"),row.names=FALSE)
       acurve=estimateAbundance(data[!is.na(data$isotype),],group="isotype",ci=0.95,nboot=100,clone="clone_id")
       dcurve=alphaDiversity(acurve,min_q=0,max_q=4,step_q=0.1,ci=0.95)
     } else if (locus=="IGK"||locus=="IGL") {
       # calculate abundance by sequence
       clones=countClones(data,clone="clone_id")
+      write.csv(clones,paste(args$prefix,locus,"clone_freqs.csv",sep="_"),row.names=FALSE)
       acurve=estimateAbundance(data,ci=0.95,nboot=100,clone="clone_id")
       dcurve=alphaDiversity(acurve,min_q=0,max_q=4,step_q=0.1,ci=0.95,group=NULL)
     } else {
       # calculate abundance by DUPCOUNT
       print("counting clones")
       clones=countClones(data,clone="clone_id",copy="duplicate_count")
+      write.csv(clones,paste(args$prefix,locus,"clone_freqs.csv",sep="_"),row.names=FALSE)
       print("estimating abundance")
       acurve=estimateAbundance(data,ci=0.95,nboot=100,clone="clone_id",copy="duplicate_count")
       print("calculating diversity")
@@ -51,7 +54,6 @@ for (locus in lociToProcess) {
       print("finished calculation")
     }
 
-    write.csv(clones,paste(args$prefix,locus,"clone_freqs.csv",sep="_"),row.names=FALSE)
     write.csv(dcurve@diversity,paste(args$prefix,locus,"clone_diversity.csv",sep="_"),row.names=FALSE)
     png(paste(args$prefix,locus,"clone_abundance_plot.png",sep="_"));plot(acurve);dev.off()
     png(paste(args$prefix,locus,"clone_diversity_plot.png",sep="_"));plot(dcurve);dev.off()
