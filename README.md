@@ -22,7 +22,7 @@ All computational processes run within containers to ensure reproducibility and 
 
 ### 1. Sample Processing with `process_slurm.sh`
 
-The main entry point is the `process_slurm.sh` script, which orchestrates batch processing of repertoire samples:
+The main entry point is the `process_slurm.sh` script, which orchestrates batch processing of repertoire samples. 
 
 ```bash
 # Preprocess samples
@@ -31,8 +31,7 @@ The main entry point is the `process_slurm.sh` script, which orchestrates batch 
 # Annotate preprocessed samples  
 ./process_slurm.sh annotate sample_list.txt TRB 10 singularity -p bigmem
 ```
-(adjust the path to the script files appropriately for your setup)
-
+The output (results from processing and logs of the processing run) will be stored in the current working directory. The script itself is located in the `processed_samples/` directory of the repository. You can either call it from there or cd to some other preferred working directory and call it with a full or relative path. Best practice, if you intend to run multiple projects, is to make a new empty directory for each project and call the script from there.
 
 **Key Features:**
 - **Batch Processing**: Submits individual Slurm jobs for each sample
@@ -117,6 +116,43 @@ For detailed usage instructions and troubleshooting:
 - View the manual: `man -l processed_samples/process_slurm.1`
 - Check Slurm logs in `./slog/` directory
 - Review Nextflow logs within individual sample result directories
+
+## FAQs
+
+## Running slurm on a local system
+
+You can install and run slurm on a single machine. This is a useful and practical way to run jobs locally, with full management and tracking across multiple samples. Slurm is supported on most linux distributions and also runs on Windows via WSL2. Check the slurm documentation for MacOS support - there were issues at the time of writing this README. Notes on setting up slurm on a single machine can be found [here](https://drtailor.medium.com/how-to-setup-slurm-on-ubuntu-20-04-for-single-node-work-scheduling-6cc909574365).
+
+## Running the pipeline under Windows WSL2
+
+The installation of `muscle` in the Immcantation container uses static libraries not available under WSL2. Unless these are fixed, preprocessing will freeze at the AlignSets step. To resolve this, log in to the container and rebuild `muscle`, without the static flag.
+
+```bash
+docker run -it --cpus 1 immcantation/suite:4.4.0 /bin/bash
+mkdir muscledir
+cd muscledir
+wget https://www.drive5.com/muscle/muscle_src_3.8.1551.tar.gz
+tar xzvf muscle_src_3.8.1551.tar.gz
+make
+# the make will fail. Now run the last step again (the linker command which failed) without the -static option
+
+# test 
+muscle --help
+
+# move the new muscle binary to /usr/local/bin to override the existing one
+mv muscle /usr/local/bin
+cd ..
+rm -rf muscledir
+```
+
+At this point, use another command window to find the container id and commit the changes to a new image.
+
+```bash
+docker ps
+docker commit <container_id> immcantation/suite:4.4.0_wsl2
+```
+
+Now modify `./shared_configs/process.config` to use `immcantation/suite:4.4.0_wsl2` as the container image for the immcantation processes. You should now be able to run the pipeline under WSL2.
 
 ## Citation
 

@@ -1,19 +1,17 @@
-PROCESS_SLURM(1)                                    User Commands                                    PROCESS_SLURM(1)
+PROCESS_SLURM(1)                                                     User Commands                                                     PROCESS_SLURM(1)
 
 NAME
        process_slurm.sh - batch process samples through Nextflow pipelines using Slurm
 
 SYNOPSIS
-       process_slurm.sh  command  input_fofn  locus max_jobs container_runtime [options] [additional_nextflow_parame‐
-       ters...]
+       process_slurm.sh command input_fofn locus max_jobs container_runtime germline_ref_dir [options] [additional_nextflow_parameters...]
 
 DESCRIPTION
-       process_slurm.sh is a wrapper script that processes biological samples in batch through Nextflow pipelines us‐
-       ing  the  Slurm  workload  manager.  The  script  supports both preprocessing and annotation workflows for im‐
-       munoglobulin and T-cell receptor analysis.
+       process_slurm.sh is a wrapper script that processes biological samples in batch through Nextflow pipelines using the Slurm workload manager. The
+       script supports both preprocessing and annotation workflows for immunoglobulin and T-cell receptor analysis.
 
-       The script reads a tab-separated input file containing sample names and file paths,  then  submits  individual
-       Slurm jobs for each sample using the specified Nextflow pipeline.
+       The script reads a tab-separated input file containing sample names and file paths, then submits individual Slurm jobs for each sample using the
+       specified Nextflow pipeline.
 
 ARGUMENTS
        command
@@ -34,6 +32,9 @@ ARGUMENTS
        container_runtime
               Container runtime to use for Nextflow execution. Must be either: docker or singularity
 
+       germline_ref_dir
+              Path to the germline reference directory. This directory must exist and is passed to Nextflow via the --germline_ref_dir parameter.
+
 OPTIONS
        -p partition
               Specify the Slurm partition to use for job submission.
@@ -44,8 +45,7 @@ OPTIONS
               Default: 12
               This parameter is also forwarded to Nextflow.
 
-       --echo Echo  the  sbatch and nextflow commands to the terminal instead of executing them. Useful for debugging
-              and previewing commands.
+       --echo Echo the sbatch and nextflow commands to the terminal instead of executing them. Useful for debugging and previewing commands.
 
        -help, --help
               Display comprehensive help message and exit.
@@ -67,16 +67,16 @@ FILES
 
 EXAMPLES
        Preprocess samples with default settings:
-              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs
 
        Annotate T-cell receptor samples with custom partition and CPU count:
-              ./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16
+              ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs -p bigmem --process.cpus 16
 
        Preview commands without execution:
-              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker --echo
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
 
        Pass additional Nextflow parameters:
-              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker --process.cpus 8 -resume
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --process.cpus 8 -resume
 
 EXIT STATUS
        0      Successful execution
@@ -101,13 +101,11 @@ DEPENDENCIES
               Container runtime as specified in arguments
 
 NOTES
-       • The script automatically throttles job submission to maintain the specified  maximum  number  of  concurrent
-         jobs.
+       • The script automatically throttles job submission to maintain the specified maximum number of concurrent jobs.
 
        • Sample names are sanitized to replace slashes and spaces with underscores to prevent path issues.
 
-       • For annotation commands, the script automatically determines whether to use the immunoglobulin or T-cell re‐
-         ceptor pipeline based on the locus.
+       • For annotation commands, the script automatically determines whether to use the immunoglobulin or T-cell receptor pipeline based on the locus.
 
        • Log files are named using the pattern: slog/${sample}_${command}.slog
 
@@ -117,4 +115,4 @@ AUTHOR
 SEE ALSO
        nextflow(1), sbatch(1), squeue(1), docker(1), singularity(1) sbatch(1), squeue(1), docker(1), singularity(1)
 
-FLAIRR DSL2                                              2024                                        PROCESS_SLURM(1)
+FLAIRR DSL2                                                               2024                                                         PROCESS_SLURM(1)

@@ -11,7 +11,7 @@
 show_help() {
   cat << EOF
 USAGE:
-  ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime> [options] [additional_nextflow_parameters...]
+  ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime> <germline_ref_dir> [options] [additional_nextflow_parameters...]
 
 DESCRIPTION:
   This script processes samples in batch through Nextflow pipelines using Slurm.
@@ -22,6 +22,7 @@ REQUIRED ARGUMENTS:
   <locus>               Target locus: IGH, IGK, IGL, TRA, TRB, TRD, or TRG
   <max_jobs>            Maximum number of jobs to run in parallel
   <container_runtime>   Container runtime to use: 'docker' or 'singularity'
+  <germline_ref_dir>    Path to the germline reference directory
 
 OPTIONS:
   -p <partition>        Slurm partition to use (default: bioinfo)
@@ -31,9 +32,9 @@ OPTIONS:
   -help, --help         Display this help message
 
 EXAMPLES:
-  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker
-  ./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16
-  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker --echo
+  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs
+  ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs -p bigmem --process.cpus 16
+  ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
 
 OUTPUT:
   - Results are stored in the './results/<sample>/' directory
@@ -72,15 +73,16 @@ cpus_per_task=12
 echo_only=false
 
 # Process parameters
-USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> [additional_nextflow_parameters...]. Use $0 --help for help."
+USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> <germline_ref_dir> [additional_nextflow_parameters...]. Use $0 --help for help."
 command="${1:?{$USAGE}"
 input_file="${2:?{$USAGE}"
 locus="${3:?$USAGE}"
 max_jobs="${4:?$USAGE}"
 runtime="${5:?$USAGE}"
+germline_ref_dir="${6:?$USAGE}"
 
-# Shift the first 5 mandatory parameters
-shift 5
+# Shift the first 6 mandatory parameters
+shift 6
 
 # Check for partition option and process.cpus
 additional_params=""
@@ -145,6 +147,12 @@ done
 
 if [ "$valid_locus" = false ]; then
     echo "Error: Invalid locus '$locus'. Must be one of: IGH, IGK, IGL, TRA, TRB, TRD, TRG."
+    exit 1
+fi
+
+# Check if germline_ref_dir exists
+if [ ! -d "$germline_ref_dir" ]; then
+    echo "Error: Germline reference directory '$germline_ref_dir' does not exist."
     exit 1
 fi
 
@@ -232,7 +240,8 @@ nextflow run ${NXF_SCRIPT} -offline \\
   --outdir            \"./results/${sample}/${locus}\" \\
   --locus             $locus \\
   --species           Homo_sapiens \\
-  --germline_ref_dir  \"/home/zmvanw01/ogr-ref\" \\
+  --germline_ref_dir  \"$germline_ref_dir\" \\
+  -with-report        \"./results/${sample}/${locus}/${sample}_nextflow_${locus}_${command}.html\" \\
   $additional_params"
 
   # If echo mode, print the commands
@@ -241,6 +250,9 @@ nextflow run ${NXF_SCRIPT} -offline \\
     echo "$batch_script"
     echo "---"
   else
+    # the following cd addresses a weird java-related problem in WSL, which causes a failure with the error 
+    # sbatch: error: getcwd failed: No such file or directory
+    cd .
     # submit the batch script via heredoc
     sbatch <<< "$batch_script"
   fi

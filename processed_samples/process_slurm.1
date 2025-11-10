@@ -4,7 +4,7 @@
 process_slurm.sh \- batch process samples through Nextflow pipelines using Slurm
 .SH SYNOPSIS
 .B process_slurm.sh
-.I command input_fofn locus max_jobs container_runtime
+.I command input_fofn locus max_jobs container_runtime germline_ref_dir
 .RI [ options ]
 .RI [ additional_nextflow_parameters... ]
 .SH DESCRIPTION
@@ -41,6 +41,9 @@ Container runtime to use for Nextflow execution. Must be either:
 .B docker
 or
 .B singularity
+.TP
+.I germline_ref_dir
+Path to the germline reference directory. This directory must exist and is passed to Nextflow via the --germline_ref_dir parameter.
 .SH OPTIONS
 .TP
 .BI \-p " partition"
@@ -81,25 +84,25 @@ Nextflow script for T-cell receptor annotation pipeline
 Preprocess samples with default settings:
 .br
 .RS
-\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker\fR
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs\fR
 .RE
 .TP
 Annotate T-cell receptor samples with custom partition and CPU count:
 .br
 .RS
-\fB./process_slurm.sh annotate results.txt TRB 10 singularity -p bigmem --process.cpus 16\fR
+\fB./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs -p bigmem --process.cpus 16\fR
 .RE
 .TP
 Preview commands without execution:
 .br
 .RS
-\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker --echo\fR
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo\fR
 .RE
 .TP
 Pass additional Nextflow parameters:
 .br
 .RS
-\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker --process.cpus 8 -resume\fR
+\fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --process.cpus 8 -resume\fR
 .RE
 .SH EXIT STATUS
 .TP
