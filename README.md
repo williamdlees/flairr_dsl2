@@ -53,8 +53,8 @@ The output (results from processing and logs of the processing run) will be stor
 **Input Format:**
 Tab-separated file with sample names and FASTQ paths:
 ```
-sample_01	/path/to/sample_01.fastq.gz
-sample_02	/path/to/sample_02.fastq.gz
+sample_01	/path/to/sample_01.fastq
+sample_02	/path/to/sample_02.fastq
 ```
 
 **Output Directories:**
