@@ -31,6 +31,16 @@ The main entry point is the `process_slurm.sh` script, which orchestrates batch 
 # Annotate preprocessed samples  
 ./process_slurm.sh annotate sample_list.txt TRB 10 singularity -p bigmem
 ```
+
+**Documentation**
+
+Complete usage information for process_slurm.sh is available in the man page:
+```bash
+man -l processed_samples/process_slurm.1
+```
+
+You can also view the processed man page as plain text: [process_slurm_man.txt](processed_samples/process_slurm_man.txt)
+
 The output (results from processing and logs of the processing run) will be stored in the current working directory. The script itself is located in the `processed_samples/` directory of the repository. You can either call it from there or cd to some other preferred working directory and call it with a full or relative path. Best practice, if you intend to run multiple projects, is to make a new empty directory for each project and call the script from there.
 
 **Key Features:**
@@ -51,14 +61,6 @@ sample_02	/path/to/sample_02.fastq.gz
 - `./results/`: Pipeline results organized by sample and locus
 - `./slog/`: Slurm job logs for monitoring and debugging
 
-**Documentation:**
-Complete usage information is available in the man page:
-```bash
-man -l processed_samples/process_slurm.1
-```
-
-You can also view the processed man page as plain text: [process_slurm_man.txt](processed_samples/process_slurm_man.txt)
-
 ### 2. Project Summaries with `singularity_summaries.sh`
 
 After all samples have been processed and annotated, generate project-wide summaries:
@@ -66,6 +68,8 @@ After all samples have been processed and annotated, generate project-wide summa
 ```bash
 ./singularity_summaries.sh
 ```
+
+For Docker usage, the script run_summaries.sh can be run from within the flairr_dsl2 container, with suitable mount points to the results directory and the root of the repository.
 
 This script should be run from the same directory that you ran process_slurm.sh. (adjust the path to singularity_summaries.sh appropriately).
 
@@ -98,10 +102,11 @@ Refer to the [Singularity documentation](https://docs.sylabs.io/guides/latest/us
 1. **Clone the Repository**: Use Git to clone the repository to your local machine.
 2. **Build the .sif files**: If using Singularity, convert the Docker images to Singularity .sif files.
 3. **Make an empty directory**: cd to it and call the shell scripts from this location.
-4. **Prepare Input**: Create a tab-separated file listing your samples and FASTQ paths
-5. **Preprocess**: Run `process_slurm.sh preprocess` to preprocess your data
-6. **Annotate**: Run `process_slurm.sh annotate` to perform V(D)J assignment
-7. **Summarize**: Execute `singularity_summaries.sh` to generate project reports
+4. **Prepare Input**: Create a tab-separated file listing your samples and FASTQ paths.
+5. **Reference directory**: Make a reference directory containing the necessary files (See below).
+5. **Preprocess**: Run `process_slurm.sh preprocess` to preprocess your data.
+6. **Annotate**: Run `process_slurm.sh annotate` to perform V(D)J assignment.
+7. **Summarize**: Execute `singularity_summaries.sh` to generate project reports.
 
 ## Requirements
 
@@ -109,6 +114,18 @@ Refer to the [Singularity documentation](https://docs.sylabs.io/guides/latest/us
 - **Nextflow**: Workflow execution engine
 - **Container Runtime**: Docker or Singularity
 - **Python 3**: For summary script execution
+
+## Reference Directory
+
+For each locus, the reference directory should contain the following files:
+Homo_sapiens_<locus>V.fasta  
+Homo_sapiens_<locus>D.fasta (if applicable)
+Homo_sapiens_<locus>J.fasta
+Homo_sapiens_<locus>VDJ.fasta (concatentation of the above three files)
+Homo_sapiens_<locus>V_gapped.fasta - IMGT-aligned V germline sequences
+Homo_sapiens_<locus>C.fasta
+Homo_sapiens_<locus>.aux - IGBLAST-format aux file
+Homo_sapiens_<locus>.ndm - IGBLAST-format ndm file
 
 ## Support
 
