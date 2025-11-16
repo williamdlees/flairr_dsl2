@@ -83,6 +83,16 @@
             "cwd": "${workspaceFolder}/processed_samples/results",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "haplotype_const",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/python/haplotype_const.py",
+            "args": ["SRR23046730_v_align_personalized.tsv", "../../../flairr_germline_ref/Homo_sapiens_IGHVDJ.fasta", "allele_threshold_table_ogrdb.tsv", "haplotype_const_report.csv", "--plot"],
+            "cwd": "${workspaceFolder}/modules/haplotype_const_report",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }

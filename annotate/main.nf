@@ -18,6 +18,8 @@ params.v_ref = "${params.germline_ref}V_gapped.fasta"
 params.d_ref = "${params.germline_ref}D.fasta"
 params.j_ref = "${params.germline_ref}J.fasta"
 params.c_ref = "${params.germline_ref}C.fasta"
+params.vdj_ref = "${params.germline_ref}VDJ.fasta"
+params.allele_threshold_file = "${params.germline_ref}_allele_thresholds.tsv"
 params.aux = "${params.germline_ref}.aux"
 params.ndm = "${params.germline_ref}.ndm"
 
@@ -30,6 +32,7 @@ include { TIgGER_bayesian_genotype_Inference as tigger_j_call; TIgGER_bayesian_g
 include { define_clones } from '../modules/define_clones'
 include { single_clone_representative } from '../modules/single_clone_representative'
 include { haplotype_inference_report } from '../modules/haplotype_inference_report'
+include { haplotype_const_report } from '../modules/haplotype_const_report'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
@@ -49,5 +52,6 @@ workflow {
 	single_clone_representative(define_clones.out.output)
 
 	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
-	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)	
+	haplotype_const_report(align_v2.out.annotations, params.vdj_ref, params.python_dir, haplotype_inference_report.out.ready)
+	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_const_report.out.ready)	
 }
