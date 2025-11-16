@@ -118,14 +118,14 @@ Refer to the [Singularity documentation](https://docs.sylabs.io/guides/latest/us
 ## Reference Directory
 
 For each locus, the reference directory should contain the following files:
-Homo_sapiens_<locus>V.fasta  
-Homo_sapiens_<locus>D.fasta (if applicable)
-Homo_sapiens_<locus>J.fasta
-Homo_sapiens_<locus>VDJ.fasta (concatentation of the above three files)
-Homo_sapiens_<locus>V_gapped.fasta - IMGT-aligned V germline sequences
-Homo_sapiens_<locus>C.fasta
-Homo_sapiens_<locus>.aux - IGBLAST-format aux file
-Homo_sapiens_<locus>.ndm - IGBLAST-format ndm file
+- Homo_sapiens_<locus>V.fasta  
+- Homo_sapiens_<locus>D.fasta (if applicable)
+- Homo_sapiens_<locus>J.fasta
+- Homo_sapiens_<locus>VDJ.fasta (concatentation of the above three files)
+- Homo_sapiens_<locus>V_gapped.fasta - IMGT-aligned V germline sequences
+- Homo_sapiens_<locus>C.fasta
+- Homo_sapiens_<locus>.aux - IGBLAST-format aux file
+- Homo_sapiens_<locus>.ndm - IGBLAST-format ndm file
 
 ## Support
 
