@@ -69,7 +69,7 @@ After all samples have been processed and annotated, generate project-wide summa
 ./singularity_summaries.sh
 ```
 
-For Docker usage, the script run_summaries.sh can be run from within the flairr_dsl2 container, with suitable mount points to the results directory and the root of the repository.
+For Docker usage, the script `run_summaries.sh` can be run from within the flairr_dsl2 container, with suitable mount points to the results directory and the root of the repository.
 
 This script should be run from the same directory that you ran process_slurm.sh. (adjust the path to singularity_summaries.sh appropriately).
 
@@ -82,10 +82,10 @@ This script produces:
 ## Container Setup
 
 ### Docker
-The pipeline uses pre-built Docker containers. Ensure Docker is available and properly configured on your system.
+The pipeline uses pre-built Docker containers. Ensure Docker is available and properly configured on your system. Containers will be pulled automatically when the pipeline is executed.
 
 ### Singularity
-For Singularity usage, convert the referenced Docker containers to `.sif` files. 
+For Singularity usage, convert the referenced Docker containers to `.sif` files (see [shared_configs/process.config](shared_configs/process.config) for a list of containers). 
 
 **Note:** the scripts expect these files to be stored in the directory `~/sifs/`: if you need to keep them somewhere else, please link `~/sifs/` to that location. 
 
