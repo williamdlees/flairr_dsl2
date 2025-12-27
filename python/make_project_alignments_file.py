@@ -39,21 +39,20 @@ def find_alignment_file(input_dir, sample, locus):
 
 def concatenate_files(samples, input_dir, output_file):
     all_data = []
-    header = set()
+    header = None
 
     for sample, loci in samples.items():
         print(f"Processing sample '{sample}' with loci: {', '.join(loci)}")
         for locus in loci:
             alignment_file = find_alignment_file(input_dir, sample, locus)
             if alignment_file:
-                columns = []
                 with open(alignment_file, newline='') as csvfile:
                     reader = csv.DictReader(csvfile, delimiter='\t')
                     for row in reader:
-                        if not columns:
-                            columns = list(row.keys())
-                            columns.extend(['sample', 'locus'])
-                            header.update(columns)
+                        if header is None:
+                            # Preserve the original column order from the first file
+                            header = ['sample', 'locus']
+                            header.extend(list(row.keys()))
                         row['sample'] = sample
                         row['locus'] = locus
                         all_data.append(row)
