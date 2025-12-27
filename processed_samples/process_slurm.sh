@@ -227,11 +227,13 @@ while IFS=$'\t' read -r sample pathToReads; do
 #SBATCH -J ${sample}_${command}
 #SBATCH -o slog/${sample}_${command}.slog
 #SBATCH --cpus-per-task=${cpus_per_task}
-#SBATCH --oversubscribe
+#SBATCH --exclusive
 
 # skip Nextflow's internet/version check
 export NXF_OFFLINE=1
-module load nextflow   # if you need a module; otherwise remove
+export NXF_VER=22.10.6
+export NXF_OPTS="-XX:ActiveProcessorCount=\$SLURM_CPUS_PER_TASK"
+# module load nextflow   # if you need a module; otherwise remove
 
 nextflow run ${NXF_SCRIPT} -offline \\
   -profile            \"$runtime\" \\
