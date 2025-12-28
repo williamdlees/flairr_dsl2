@@ -1,12 +1,25 @@
 from math import log
 import os
 import csv
+import argparse
 
-if not os.path.isfile('pipeline_counts.csv'):
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Concatenate alignment files from multiple samples and loci.')
+    parser.add_argument('--input_dir', type=str, default=os.getcwd(),
+                        help='Input directory containing sample directories (default: current directory)')
+    parser.add_argument('--output_file_path', type=str, default='.',
+                        help='Output file path (default: .)')
+    return parser.parse_args()
+
+
+args = parse_arguments()
+
+if not os.path.isfile(os.path.join(args.output_file_path, 'pipeline_counts.csv')):
     print("Error: pipeline_counts.csv not found")
     exit(1)
 
-if not os.path.isfile('project_alignments.csv'):
+if not os.path.isfile(os.path.join(args.output_file_path, 'project_alignments.csv')):
     print("Error: project_alignments.csv not found")
     exit(1)
 
@@ -14,7 +27,7 @@ samples = {}
 project = None
 
 
-with open('pipeline_counts.csv', newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'pipeline_counts.csv'), newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
@@ -33,7 +46,7 @@ with open('pipeline_counts.csv', newline='') as csvfile:
 for sample in samples.keys():
     for locus in samples[sample].keys():
         samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
-        cd_path = f"{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
+        cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
         if not os.path.exists(cd_path):
             print(f"Error: file {cd_path} not found")
             continue
@@ -47,7 +60,7 @@ for sample in samples.keys():
                     samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)
 
 annots = {}
-with open('project_alignments.csv', newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
@@ -78,7 +91,7 @@ for sample in samples.keys():
             samples[sample][locus][isotype] = count
 
 header = ['sample', 'locus', 'reads', 'sequences', 'clones', 'shannon', 'simpson', 'cdr3s', 'IGG1', 'IGG2', 'IGG3', 'IGG4', 'IGA', 'IGM', 'IGE', 'IGD']
-with open('flairr_project_summary.csv', 'w', newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=header)
     writer.writeheader()
     for sample in samples.keys():
