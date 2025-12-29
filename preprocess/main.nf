@@ -45,23 +45,31 @@ workflow {
 	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output, params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers, parse_log_FSL.out.ready)
 	parse_log_MPE(MaskPrimers_EPRIMERS.out.log_file, "MPE", "ID PRIMER BARCODE ERROR")
 
+	// randomly subsample large barcode groups so that no barcode has >99 sequences associated with it
 	filter_barcodes(MaskPrimers_EPRIMERS.out.output, params.python_dir, parse_log_MPE.out.ready)
 	
+	// remove any reads that contain a primer sequence (we have already masked primers, so this should only happen if PCR amplification started at the wrong site)
 	check_for_seqs(filter_barcodes.out.output, params.V_R1_primers, true)
 	
+	// align reads for each barcode, bearing in mind the possibility that a barcode may be re-used if there is insufficient diversity
 	align_sets(filter_barcodes.out.output, check_for_seqs.out.ready)
 	parse_log_AS(align_sets.out.log_file, "AS", "ID BARCODE SEQCOUNT ERROR")
 	
+	// cluster the sequences together by barcode
 	cluster_sets(align_sets.out.output, parse_log_AS.out.ready)
 	parse_headers_copy(cluster_sets.out.output, "CS", "copy", "cat", "-f BARCODE -k CLUSTER", true)
 	
+	// build a consensus sequence for each barcode. Creates CONSCOUNT
 	build_consensus(parse_headers_copy.out.output)
 	parse_log_BC(build_consensus.out.log_file, "BC", "BARCODE SEQCOUNT CONSCOUNT PRCONS PRFREQ ERROR")
 	parse_headers_consensus(build_consensus.out.output, "BC_TOTAL", "table", "min", "-f ID PRCONS CONSCOUNT", parse_log_BC.out.ready)
 	
+	// collapse duplicate consensus sequences. Creates DUPCOUNT and aggregates CONSCOUNT when sequences are collapsed
 	collapse_seq(build_consensus.out.output, parse_headers_consensus.out.ready)
-	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
+	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "	", true)
 	
+	// split sequences into those with at least 2 reads contributing to the consensus vs those with only 1
+	// the criterion is CONSCOUNT>=2 (bearing in mind that CONSCOUNT has already been aggregated when collapsing)
 	split_seq(collapse_seq.out.output, parse_headers_collapse.out.ready)
 	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
 
