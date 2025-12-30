@@ -45,6 +45,7 @@ def find_samples(template):
             if match:
                 sample = match.group("sample")
                 samples.append(sample)
+                # print(sample)
 
     return sorted(list(set(samples)))
 
@@ -62,6 +63,10 @@ results_perc = []
 sample_dir = config['sample_dir']
 print('Processing samples from directory ', sample_dir)
 samples = find_samples(sample_dir)
+
+if not samples:
+    print("No samples found.")
+    exit(0)
 
 for locus in loci:
     for sample_name in samples:
