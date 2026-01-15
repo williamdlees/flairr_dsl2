@@ -66,7 +66,7 @@ workflow {
 	
 	// collapse duplicate consensus sequences. Creates DUPCOUNT and aggregates CONSCOUNT when sequences are collapsed
 	collapse_seq(build_consensus.out.output, parse_headers_consensus.out.ready)
-	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "	", true)
+	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
 	
 	// split sequences into those with at least 2 reads contributing to the consensus vs those with only 1
 	// the criterion is CONSCOUNT>=2 (bearing in mind that CONSCOUNT has already been aggregated when collapsing)
