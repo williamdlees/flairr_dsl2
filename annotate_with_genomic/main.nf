@@ -8,6 +8,7 @@ params.sample_name = ""		// Sample name, to be used in reports and report filena
 params.species = "Homo_sapiens"
 params.locus = "IGH"
 params.germline_ref_dir = "$baseDir/../../reference"
+params.standard_ref_dir = "$baseDir/../../standard_reference" // The standard allele references (e.g., IMGT/OGRdb)
 params.outdir = "$baseDir/../results"
 //params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
 params.haplotype_genes = "IGHJ6"
@@ -19,6 +20,13 @@ params.d_ref = "${params.germline_ref}D.fasta"
 params.j_ref = "${params.germline_ref}J.fasta"
 params.c_ref = "${params.germline_ref}C.fasta"
 params.vdj_ref = "${params.germline_ref}VDJ.fasta"
+
+params.standard_v_ref = "${params.standard_germline_ref}V_gapped.fasta"
+params.standard_d_ref = "${params.standard_germline_ref}D.fasta"
+params.standard_j_ref = "${params.standard_germline_ref}J.fasta"
+params.standard_c_ref = "${params.standard_germline_ref}C.fasta"
+params.standard_vdj_ref = "${params.standard_germline_ref}VDJ.fasta"
+
 params.allele_threshold_file = "${params.germline_ref}_allele_thresholds.tsv"
 params.aux = "${params.germline_ref}.aux"
 params.ndm = "${params.germline_ref}.ndm"
@@ -45,5 +53,5 @@ workflow {
 
 	haplotype_inference_report(align_v1.out.annotations, params.v_ref, params.d_ref, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
 	haplotype_const_report(align_v1.out.annotations, params.vdj_ref, params.python_dir, haplotype_inference_report.out.ready)
-	ogrdbstats_report(align_v1.out.annotations, igblast_combo1.out.consolidated_ref,  params.v_ref, params.locus, "", params.species, haplotype_const_report.out.ready)	
+	ogrdbstats_report(align_v1.out.annotations, params.standard_v_ref, params.v_ref, params.locus, params.haplotype_genes, params.species, haplotype_const_report.out.ready)
 }
