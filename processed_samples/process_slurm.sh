@@ -61,6 +61,7 @@ NF_ROOT="${SCRIPT_DIR%/*}"
 readonly NXF_PP_SCRIPT="$NF_ROOT/preprocess/main.nf"
 readonly NXF_IG_SCRIPT="$NF_ROOT/annotate/main.nf"
 readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_tr/main.nf"
+readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_with_genomic/main.nf"
 
 mkdir -p slog
 mkdir -p results
@@ -114,7 +115,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check if command has a valid value
-valid_commands=("preprocess" "annotate")
+valid_commands=("preprocess" "annotate" "annotate_with_genomic")
 valid_command=false
 for valid in "${valid_commands[@]}"; do
     if [ "$command" = "$valid" ]; then
@@ -125,7 +126,7 @@ done
 
 
 if [ "$valid_command" = false ]; then
-    echo "Error: Invalid locus '$command'. Must be one of: preprocess, annotate."
+    echo "Error: Invalid locus '$command'. Must be one of: preprocess, annotate, annotate_with_genomic"
     exit 1
 fi
 

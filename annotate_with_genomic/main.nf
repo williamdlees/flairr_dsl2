@@ -21,6 +21,7 @@ params.j_ref = "${params.germline_ref}J.fasta"
 params.c_ref = "${params.germline_ref}C.fasta"
 params.vdj_ref = "${params.germline_ref}VDJ.fasta"
 
+params.standard_germline_ref = "${params.standard_ref_dir}/${params.species}_${params.locus}"
 params.standard_v_ref = "${params.standard_germline_ref}V_gapped.fasta"
 params.standard_d_ref = "${params.standard_germline_ref}D.fasta"
 params.standard_j_ref = "${params.standard_germline_ref}J.fasta"
@@ -46,7 +47,7 @@ workflow {
 	seqs = channel.fromPath(params.reads)
 	
 	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
-	align_v1(igblast_combo1.out.output, params.v_ref, 'personalized', params.python_dir)
+	align_v1(igblast_combo1.out.output, params.v_ref, 'personalized-with-genomic-seq', params.python_dir)
 
 	define_clones(align_v1.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	single_clone_representative(define_clones.out.output)
