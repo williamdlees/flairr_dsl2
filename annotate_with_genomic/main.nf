@@ -31,6 +31,7 @@ params.standard_vdj_ref = "${params.standard_germline_ref}VDJ.fasta"
 params.allele_threshold_file = "${params.germline_ref}_allele_thresholds.tsv"
 params.aux = "${params.germline_ref}.aux"
 params.ndm = "${params.germline_ref}.ndm"
+// this might be an issue
 
 params.python_dir = "$baseDir/../python"
 
