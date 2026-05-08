@@ -26,6 +26,9 @@ REQUIRED ARGUMENTS:
 
 OPTIONS:
   -p <partition>        Slurm partition to use (default: bioinfo)
+  --directory_suffix <s>
+                        Optional suffix for locus output directory.
+                        Output path becomes './results/<sample>/<locus>_<s>'
   --process.cpus <n>    Number of CPUs to request per job (default: 12)
                         This is also passed to Nextflow for process configuration
   --echo                Echo commands instead of executing them
@@ -34,6 +37,7 @@ OPTIONS:
 EXAMPLES:
   ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs
   ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs -p bigmem --process.cpus 16
+  ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs --directory_suffix rerun1
   ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
 
 OUTPUT:
@@ -71,6 +75,8 @@ partition="bioinfo"
 cpus_per_task=12
 # Default echo mode
 echo_only=false
+# Optional directory suffix appended to locus in output paths
+directory_suffix=""
 
 # Process parameters
 USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> <germline_ref_dir> [additional_nextflow_parameters...]. Use $0 --help for help."
@@ -84,7 +90,7 @@ germline_ref_dir="${6:?$USAGE}"
 # Shift the first 6 mandatory parameters
 shift 6
 
-# Check for partition option and process.cpus
+# Check for optional flags
 additional_params=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -92,6 +98,14 @@ while [[ $# -gt 0 ]]; do
             partition="$2"
             shift 2
             ;;
+    --directory_suffix)
+      if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then
+        echo "Error: --directory_suffix requires a non-empty argument"
+        exit 1
+      fi
+      directory_suffix="$2"
+      shift 2
+      ;;
         --process.cpus)
             if [[ $2 =~ ^[0-9]+$ ]]; then
                 cpus_per_task="$2"
@@ -211,10 +225,18 @@ while IFS=$'\t' read -r sample pathToReads; do
 
   # sanitize sample name to prevent path issues (e.g., slashes)
   sample=$(echo "$sample" | tr '/ ' '__')
+
+  sample_locus_dir="$locus"
+  if [[ -n "$directory_suffix" ]]; then
+    sample_locus_dir="${locus}_${directory_suffix}"
+  fi
+  sample_output_dir="./results/${sample}/${sample_locus_dir}"
   
   if [[ "$command" == "annotate" ]]; then
-    pathToReads=$(pwd)/results/${sample}/${locus}/reads/${sample}_atleast-2.fasta
+    pathToReads=$(pwd)/results/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta
   fi
+
+  echo "Sample ${sample}: output directory -> ${sample_output_dir}"
 
   # throttle: wait if we already have $max_jobs running
   while [ "$(squeue -u "$USER" -h | wc -l)" -ge "$max_jobs" ]; do
@@ -239,11 +261,11 @@ nextflow run ${NXF_SCRIPT} -offline \\
   -profile            \"$runtime\" \\
   --sample_name       \"$sample\" \\
   --reads             \"$pathToReads\" \\
-  --outdir            \"./results/${sample}/${locus}\" \\
+  --outdir            \"${sample_output_dir}\" \\
   --locus             $locus \\
   --species           Homo_sapiens \\
   --germline_ref_dir  \"$germline_ref_dir\" \\
-  -with-report        \"./results/${sample}/${locus}/${sample}_nextflow_${locus}_${command}.html\" \\
+  -with-report        \"${sample_output_dir}/${sample}_nextflow_${locus}_${command}.html\" \\
   $additional_params"
 
   # If echo mode, print the commands

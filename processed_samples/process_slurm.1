@@ -51,6 +51,15 @@ Specify the Slurm partition to use for job submission.
 .br
 Default: bioinfo
 .TP
+.BI \-\-directory_suffix " suffix"
+Append a suffix to the locus directory used for per-sample output paths.
+.br
+When set, output is written to:
+.B ./results/${sample}/${locus}_${suffix}
+.br
+Default (when not set):
+.B ./results/${sample}/${locus}
+.TP
 .BI \-\-process.cpus " number"
 Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
 .br
@@ -99,6 +108,12 @@ Preview commands without execution:
 \fB./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo\fR
 .RE
 .TP
+Annotate with a custom output directory suffix:
+.br
+.RS
+\fB./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs --directory_suffix rerun1\fR
+.RE
+.TP
 Pass additional Nextflow parameters:
 .br
 .RS
@@ -138,6 +153,15 @@ The script automatically throttles job submission to maintain the specified maxi
 Sample names are sanitized to replace slashes and spaces with underscores to prevent path issues.
 .IP \[bu] 2
 For annotation commands, the script automatically determines whether to use the immunoglobulin or T-cell receptor pipeline based on the locus.
+.IP \[bu] 2
+When
+.B --directory_suffix
+is provided, output directories are written as:
+.B ./results/${sample}/${locus}_${suffix}
+instead of
+.B ./results/${sample}/${locus}.
+.IP \[bu] 2
+For each sample, the resolved output directory is echoed before job throttling/submission.
 .IP \[bu] 2
 Log files are named using the pattern: 
 .B slog/${sample}_${command}.slog
