@@ -4,7 +4,6 @@ import toml
 import glob
 import os
 import argparse
-import csv
 import re
 from receptor_utils import simple_bio_seq as simple
 
@@ -30,24 +29,41 @@ def count_tab_reads(file):
 loci = ['IGH', 'IGK', 'IGL', 'IGM', 'IGG', 'IGA', 'IGD', 'IGE', 'TRA', 'TRB', 'TRD', 'TRG']
 
 
-def find_samples(template):
-    samples = []
-    
-    # Walk through directory structure
-    for locus in loci:
-        pattern = template
-        pattern = pattern.replace("{sample}", "(?P<sample>[^/]+)").replace("{locus}", locus)
-        pattern = re.compile(pattern)
-        file_template = sample_dir.replace('\\', '/').replace('{locus}', locus).replace('{sample}', '*')
-        for p in glob.glob(file_template):
-            p = p.replace('\\', '/')
-            match = pattern.match(p)
-            if match:
-                sample = match.group("sample")
-                samples.append(sample)
-                # print(sample)
+def find_sample_roots(template):
+    sample_roots = []
+    template = template.replace('\\', '/')
+    locus_pattern = '|'.join(re.escape(locus) for locus in loci)
+    pattern = template.replace('{sample}', r'(?P<sample>[^/]+)')
+    pattern = pattern.replace(
+        '{locus}',
+        rf'(?P<locus_dir>(?P<locus>{locus_pattern})(?:_(?P<run>[^/]+))?)'
+    )
+    pattern = re.compile(rf'^{pattern}$')
+    file_template = template.replace('{sample}', '*').replace('{locus}', '*')
 
-    return sorted(list(set(samples)))
+    for path_name in glob.glob(file_template):
+        normalized_path = path_name.replace('\\', '/')
+        match = pattern.match(normalized_path)
+        if not match:
+            continue
+
+        sample_roots.append({
+            'sample': match.group('sample'),
+            'locus': match.group('locus'),
+            'locus_dir': match.group('locus_dir'),
+            'run': match.group('run') or '',
+            'root': path_name,
+        })
+
+    unique_roots = {}
+    for sample_root in sample_roots:
+        key = (sample_root['sample'], sample_root['locus_dir'], sample_root['root'])
+        unique_roots[key] = sample_root
+
+    return [
+        unique_roots[key]
+        for key in sorted(unique_roots, key=lambda item: (item[0], item[1], item[2]))
+    ]
 
 
 args = argparse.ArgumentParser(description='Summarise read counts at each pipeline stage for each sample')
@@ -62,58 +78,71 @@ results_perc = []
 
 sample_dir = config['sample_dir']
 print('Processing samples from directory ', sample_dir)
-samples = find_samples(sample_dir)
+sample_roots = find_sample_roots(sample_dir)
 
-if not samples:
+if not sample_roots:
     print("No samples found.")
     exit(0)
 
-for locus in loci:
-    for sample_name in samples:
-        root = sample_dir.replace('{locus}', locus).replace('{sample}', sample_name)
-    
-        rec = {'locus': locus, 'sample': sample_name}
-        rec_perc = {'locus': locus, 'sample': sample_name}
-        first_count = -1
-        found_data_for_sample = False
+for sample_root in sample_roots:
+    sample_name = sample_root['sample']
+    locus = sample_root['locus']
+    locus_dir = sample_root['locus_dir']
+    run = sample_root['run']
+    root = sample_root['root']
 
-        for stage, stage_filespec in config['sample_files']:
-            stage_filename_glob = glob.glob(os.path.join(root, stage_filespec).replace('{sample}', sample_name).replace('{locus}', locus))
+    rec = {'locus': locus, 'run': run, 'sample': sample_name}
+    rec_perc = {'locus': locus, 'run': run, 'sample': sample_name}
+    first_count = -1
+    found_data_for_sample = False
 
-            if len(stage_filename_glob) == 0:
-                rec[stage] = 'NA'
-                rec_perc[stage] = 'NA'
-                continue
-            elif len(stage_filename_glob) > 1:
-                print(f'Error: multiple files match {sample_name} {stage}')
-                exit(1)
+    for stage, stage_filespec in config['sample_files']:
+        stage_pattern_template = os.path.join(root, stage_filespec).replace('{sample}', sample_name)
+        stage_patterns = [stage_pattern_template.replace('{locus}', locus_dir)]
 
-            found_data_for_sample = True
-            stage_filename = stage_filename_glob[0]
-            file_type = os.path.splitext(stage_filename)[1]
+        if locus_dir != locus:
+            stage_patterns.append(stage_pattern_template.replace('{locus}', locus))
 
-            if file_type == '.fastq':
-                num_reads = count_fastq_reads(os.path.join(stage_filename))
-            elif file_type == '.fasta':
-                num_reads = count_fasta_reads(os.path.join(stage_filename))
-            elif file_type == '.tab' or file_type == '.tsv' or file_type == '.csv':
-                num_reads = count_tab_reads(os.path.join(stage_filename))
-            else:
-                print(f'Error: unsupported file type {file_type} in config file')
-                exit(1)
+        stage_filename_glob = []
+        for stage_pattern in stage_patterns:
+            for matched_file in glob.glob(stage_pattern):
+                if matched_file not in stage_filename_glob:
+                    stage_filename_glob.append(matched_file)
 
-            rec[stage] = num_reads
-            if first_count < 0:
-                first_count = num_reads
+        if len(stage_filename_glob) == 0:
+            rec[stage] = 'NA'
+            rec_perc[stage] = 'NA'
+            continue
+        elif len(stage_filename_glob) > 1:
+            print(f'Error: multiple files match {sample_name} {locus_dir} {stage}')
+            exit(1)
 
-            if first_count > 0:
-                rec_perc[stage] = round(100 * num_reads / first_count, 1)
-            else:
-                rec_perc[stage] = 0
+        found_data_for_sample = True
+        stage_filename = stage_filename_glob[0]
+        file_type = os.path.splitext(stage_filename)[1]
 
-        if found_data_for_sample:
-            results.append(rec)
-            results_perc.append(rec_perc)
+        if file_type == '.fastq':
+            num_reads = count_fastq_reads(os.path.join(stage_filename))
+        elif file_type == '.fasta':
+            num_reads = count_fasta_reads(os.path.join(stage_filename))
+        elif file_type == '.tab' or file_type == '.tsv' or file_type == '.csv':
+            num_reads = count_tab_reads(os.path.join(stage_filename))
+        else:
+            print(f'Error: unsupported file type {file_type} in config file')
+            exit(1)
+
+        rec[stage] = num_reads
+        if first_count < 0:
+            first_count = num_reads
+
+        if first_count > 0:
+            rec_perc[stage] = round(100 * num_reads / first_count, 1)
+        else:
+            rec_perc[stage] = 0
+
+    if found_data_for_sample:
+        results.append(rec)
+        results_perc.append(rec_perc)
 
 simple.write_csv(args.results_file, results)
 fn = os.path.splitext(args.results_file)
