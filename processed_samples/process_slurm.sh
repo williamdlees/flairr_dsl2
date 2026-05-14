@@ -260,6 +260,12 @@ export NXF_OPTS="-XX:ActiveProcessorCount=\$SLURM_CPUS_PER_TASK"
 
 trap 'echo "Spot interruption received, exiting gracefully..."; exit 143' SIGTERM SIGINT
 
+# avoid infinite requeue loops
+if [ "$SLURM_RESTART_COUNT" -gt "3" ]; then
+    echo "Job has been requeued $SLURM_RESTART_COUNT times. Aborting to save costs."
+    exit 1
+fi
+
 nextflow run ${NXF_SCRIPT} -offline \\
   -profile            \"$runtime\" \\
   --sample_name       \"$sample\" \\
