@@ -243,8 +243,8 @@ while IFS=$'\t' read -r sample pathToReads; do
     sleep 1
   done
   
-  # Create batch script content
-  batch_script="#!/usr/bin/env bash
+batch_script=$(cat <<EOF
+#!/usr/bin/env bash
 #SBATCH -p ${partition}
 #SBATCH -J ${sample}_${command}
 #SBATCH -o slog/${sample}_${command}.slog
@@ -252,33 +252,30 @@ while IFS=$'\t' read -r sample pathToReads; do
 #SBATCH --exclusive
 #SBATCH --requeue
 
-# skip Nextflow's internet/version check
 export NXF_OFFLINE=1
 export NXF_VER=22.10.6
 export NXF_OPTS="-XX:ActiveProcessorCount=\$SLURM_CPUS_PER_TASK"
-# module load nextflow   # if you need a module; otherwise remove
 
 trap 'echo "Spot interruption received, exiting gracefully..."; exit 143' SIGTERM SIGINT
 
-# avoid infinite requeue loops
-
-RESTARTS=${SLURM_RESTART_COUNT:-0}
-if [ "$RESTARTS" -gt "3" ]; then
-    echo "Job has been requeued $RESTARTS times. Aborting to save costs."
-    exit 1
+RESTARTS=\${SLURM_RESTART_COUNT:-0}
+if [ "\$RESTARTS" -gt 3 ]; then
+  echo "Job has been requeued \$RESTARTS times. Aborting to save costs."
+  exit 1
 fi
 
-nextflow run ${NXF_SCRIPT} -offline \\
-  -profile            \"$runtime\" \\
-  --sample_name       \"$sample\" \\
-  --reads             \"$pathToReads\" \\
-  --outdir            \"${sample_output_dir}\" \\
-  --locus             $locus \\
-  --species           Homo_sapiens \\
-  --germline_ref_dir  \"$germline_ref_dir\" \\
-  -with-report        \"${sample_output_dir}/${sample}_nextflow_${locus}_${command}.html\" \\
-  $additional_params"
-
+nextflow run ${NXF_SCRIPT} -offline \
+  -profile            "${runtime}" \
+  --sample_name       "${sample}" \
+  --reads             "${pathToReads}" \
+  --outdir            "${sample_output_dir}" \
+  --locus             ${locus} \
+  --species           Homo_sapiens \
+  --germline_ref_dir  "${germline_ref_dir}" \
+  -with-report        "${sample_output_dir}/${sample}_nextflow_${locus}_${command}.html" \
+  ${additional_params}
+EOF
+)
   # If echo mode, print the commands
   if [[ "$echo_only" == true ]]; then
     echo "Would submit the following batch script for sample $sample:"
