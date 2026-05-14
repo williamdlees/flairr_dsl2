@@ -250,12 +250,15 @@ while IFS=$'\t' read -r sample pathToReads; do
 #SBATCH -o slog/${sample}_${command}.slog
 #SBATCH --cpus-per-task=${cpus_per_task}
 #SBATCH --exclusive
+#SBATCH --requeue
 
 # skip Nextflow's internet/version check
 export NXF_OFFLINE=1
 export NXF_VER=22.10.6
 export NXF_OPTS="-XX:ActiveProcessorCount=\$SLURM_CPUS_PER_TASK"
 # module load nextflow   # if you need a module; otherwise remove
+
+trap 'echo "Spot interruption received, exiting gracefully..."; exit 143' SIGTERM SIGINT
 
 nextflow run ${NXF_SCRIPT} -offline \\
   -profile            \"$runtime\" \\
