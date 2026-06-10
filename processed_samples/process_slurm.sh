@@ -32,6 +32,7 @@ OPTIONS:
   --process.cpus <n>    Number of CPUs to request per job (default: 12)
                         This is also passed to Nextflow for process configuration
   --echo                Echo commands instead of executing them
+  --constant_region <r> Specifies the primer file used for masking in preprocessing (default: IG for IG loci, TR for TR loci)
   -help, --help         Display this help message
 
 EXAMPLES:
@@ -77,6 +78,8 @@ cpus_per_task=12
 echo_only=false
 # Optional directory suffix appended to locus in output paths
 directory_suffix=""
+# Constant region (empty means auto-detect from locus)
+constant_region=""
 
 # Process parameters
 USAGE="Usage: $0 <command> <input_tsv> <locus> <max_jobs> <container_runtime (docker or singularity)> <germline_ref_dir> [additional_nextflow_parameters...]. Use $0 --help for help."
@@ -98,14 +101,14 @@ while [[ $# -gt 0 ]]; do
             partition="$2"
             shift 2
             ;;
-    --directory_suffix)
-      if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then
-        echo "Error: --directory_suffix requires a non-empty argument"
-        exit 1
-      fi
-      directory_suffix="$2"
-      shift 2
-      ;;
+        --directory_suffix)
+            if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then
+                echo "Error: --directory_suffix requires a non-empty argument"
+                exit 1
+            fi
+            directory_suffix="$2"
+            shift 2
+            ;;
         --process.cpus)
             if [[ $2 =~ ^[0-9]+$ ]]; then
                 cpus_per_task="$2"
@@ -119,6 +122,14 @@ while [[ $# -gt 0 ]]; do
         --echo)
             echo_only=true
             shift
+            ;;
+        --constant_region)
+            if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then
+                echo "Error: --constant_region requires a non-empty argument"
+                exit 1
+            fi
+            constant_region="$2"
+            shift 2
             ;;
         *)
             additional_params+="$1 "
@@ -161,6 +172,22 @@ done
 
 if [ "$valid_locus" = false ]; then
     echo "Error: Invalid locus '$locus'. Must be one of: IGH, IGK, IGL, TRA, TRB, TRD, TRG."
+    exit 1
+fi
+
+# Set default constant_region based on locus if not specified
+if [[ -z "$constant_region" ]]; then
+  if [[ "$locus" == *"TR"* ]]; then
+    constant_region="TR"
+  else
+    constant_region="IG"
+  fi
+fi
+
+# Check that the resolved primer file exists
+primer_file="$NF_ROOT/preprocess/primers/CPRIMERS_${constant_region}.fasta"
+if [ ! -f "$primer_file" ]; then
+    echo "Error: Primer file '$primer_file' does not exist."
     exit 1
 fi
 
@@ -272,6 +299,7 @@ nextflow run ${NXF_SCRIPT} -offline \
   --locus             ${locus} \
   --species           Homo_sapiens \
   --germline_ref_dir  "${germline_ref_dir}" \
+  --constant_region   "${constant_region}" \
   -with-report        "${sample_output_dir}/${sample}_nextflow_${locus}_${command}.html" \
   ${additional_params}
 EOF

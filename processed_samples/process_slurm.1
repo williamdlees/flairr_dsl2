@@ -60,6 +60,16 @@ When set, output is written to:
 Default (when not set):
 .B ./results/${sample}/${locus}
 .TP
+.BI \-\-constant_region " constant_region"
+Specify the primer file to use: for masking/matching during preprocessing. The file used will be
+.B preprocess/primers/CPRIMERS_${constant_region}.fasta
+.br
+Defaults to
+.B TR
+for TR loci and
+.B IG
+for IG loci.
+.TP
 .BI \-\-process.cpus " number"
 Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
 .br
