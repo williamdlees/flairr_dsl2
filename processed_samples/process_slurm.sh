@@ -25,7 +25,12 @@ REQUIRED ARGUMENTS:
   <germline_ref_dir>    Path to the germline reference directory
 
 OPTIONS:
-  -p <partition>        Slurm partition to use (default: bioinfo)
+  -p <partition>        Slurm partition to use (default: bioinfo + --oversubscribe) / If -p is supplied, default becomes --exclusive
+                        options -> bioinfo / bigmem / compute 
+  --slurm-mode <mode>   Slurm allocation mode: --exclusive or --oversubscribe
+                        Default:
+                          if no -p supplied  -> bioinfo + --oversubscribe
+                          -p supplied     -> --exclusive
   --directory_suffix <s>
                         Optional suffix for locus output directory.
                         Output path becomes './results/<sample>/<locus>_<s>'
@@ -70,8 +75,9 @@ readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_tr/main.nf"
 mkdir -p slog
 mkdir -p results
 
-# Default partition
+# Default partition + slurm mode
 partition="bioinfo"
+slurm_mode="--oversubscribe"
 # Default CPU count
 cpus_per_task=12
 # Default echo mode
@@ -99,6 +105,11 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -p)
             partition="$2"
+            slurm_mode="--exclusive"
+            shift 2
+            ;;
+    --slurm-mode)
+            slurm_mode="$2"
             shift 2
             ;;
         --directory_suffix)
@@ -276,7 +287,7 @@ batch_script=$(cat <<EOF
 #SBATCH -J ${sample}_${command}
 #SBATCH -o slog/${sample}_${command}.slog
 #SBATCH --cpus-per-task=${cpus_per_task}
-#SBATCH --exclusive
+#SBATCH ${slurm_mode}
 #SBATCH --requeue
 
 export NXF_OFFLINE=1
