@@ -36,6 +36,7 @@ OPTIONS:
                         Output path becomes './results/<sample>/<locus>_<s>'
   --process.cpus <n>    Number of CPUs to request per job (default: 12)
                         This is also passed to Nextflow for process configuration
+  --noresume            Disable Nextflow resume. By default, jobs are run with -resume
   --echo                Echo commands instead of executing them
   --constant_region <r> Specifies the primer file used for masking in preprocessing (default: IG for IG loci, TR for TR loci)
   -help, --help         Display this help message
@@ -82,6 +83,8 @@ slurm_mode="--oversubscribe"
 cpus_per_task=12
 # Default echo mode
 echo_only=false
+# Default Nextflow resume behavior
+use_resume=true
 # Optional directory suffix appended to locus in output paths
 directory_suffix=""
 # Constant region (empty means auto-detect from locus)
@@ -134,6 +137,10 @@ while [[ $# -gt 0 ]]; do
             echo_only=true
             shift
             ;;
+        --noresume)
+          use_resume=false
+          shift
+          ;;
         --constant_region)
             if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then
                 echo "Error: --constant_region requires a non-empty argument"
@@ -256,6 +263,29 @@ if [ ! -f "$NXF_SCRIPT" ]; then
     exit 1
 fi
 
+# Function to sanitize run name to match pattern: ^[a-z](?:[a-z\d]|[-_](?=[a-z\d])){0,79}$
+sanitize_run_name() {
+    local name="$1"
+    # Convert to lowercase
+    name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+    # Replace invalid characters with underscores
+    name=$(echo "$name" | sed 's/[^a-z0-9_-]/_/g')
+    # Collapse consecutive underscores/hyphens into single underscore
+    name=$(echo "$name" | sed 's/[-_]\{2,\}/_/g')
+    # Remove leading non-alphanumeric characters
+    name=$(echo "$name" | sed 's/^[-_]*//') 
+    # Ensure starts with letter; if not, prepend 'r'
+    if [[ ! "$name" =~ ^[a-z] ]]; then
+        name="r${name}"
+    fi
+    # Remove trailing hyphens/underscores
+    name=$(echo "$name" | sed 's/[-_]*$//')
+    # Truncate to 80 characters
+    name="${name:0:80}"
+    # After truncation, remove trailing hyphens/underscores again
+    name=$(echo "$name" | sed 's/[-_]*$//')
+    echo "$name"
+}
 
 while IFS=$'\t' read -r sample pathToReads; do
   # skip empty or malformed lines
@@ -269,6 +299,17 @@ while IFS=$'\t' read -r sample pathToReads; do
     sample_locus_dir="${locus}_${directory_suffix}"
   fi
   sample_output_dir="./results/${sample}/${sample_locus_dir}"
+  run_name_raw="${sample}_${sample_locus_dir}_${command}"
+  run_name=$(sanitize_run_name "$run_name_raw")
+  work_dir="./work/sample/${sample}/${sample_locus_dir}"
+
+  # Keep a stable per-sample work path so spot requeues can resume safely.
+  mkdir -p "$work_dir"
+
+  resume_arg=""
+  if [[ "$use_resume" == true ]]; then
+    resume_arg="-resume ${run_name}"
+  fi
   
   if [[ "$command" == "annotate" ]]; then
     pathToReads=$(pwd)/results/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta
@@ -303,6 +344,9 @@ if [ "\$RESTARTS" -gt 3 ]; then
 fi
 
 nextflow run ${NXF_SCRIPT} -offline \
+  -name               "${run_name}" \
+  ${resume_arg} \
+  -w                  "${work_dir}" \
   -profile            "${runtime}" \
   --sample_name       "${sample}" \
   --reads             "${pathToReads}" \

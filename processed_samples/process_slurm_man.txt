@@ -1,99 +1,105 @@
-PROCESS_SLURM(1)					User Commands					    PROCESS_SLURM(1)
+PROCESS_SLURM(1)                                    User Commands                                    PROCESS_SLURM(1)
 
 NAME
        process_slurm.sh - batch process samples through Nextflow pipelines using Slurm
 
 SYNOPSIS
-       process_slurm.sh	  command   input_fofn	 locus	 max_jobs   container_runtime	germline_ref_dir   [options]  [addi‐
+       process_slurm.sh  command  input_fofn  locus  max_jobs  container_runtime  germline_ref_dir  [options]  [addi‐
        tional_nextflow_parameters...]
 
 DESCRIPTION
-       process_slurm.sh is a wrapper script that processes biological samples in batch through Nextflow pipelines using	 the
-       Slurm workload manager. The script supports both preprocessing and annotation workflows for immunoglobulin and T-cell
-       receptor analysis.
+       process_slurm.sh is a wrapper script that processes biological samples in batch through Nextflow pipelines us‐
+       ing  the  Slurm  workload  manager.  The  script  supports both preprocessing and annotation workflows for im‐
+       munoglobulin and T-cell receptor analysis.
 
-       The script reads a tab-separated input file containing sample names and file paths,  then  submits  individual  Slurm
-       jobs for each sample using the specified Nextflow pipeline.
+       The script reads a tab-separated input file containing sample names and file paths,  then  submits  individual
+       Slurm jobs for each sample using the specified Nextflow pipeline.
 
 ARGUMENTS
        command
-	      The pipeline command to execute. Must be either:
+              The pipeline command to execute. Must be either:
 
-	      • preprocess - Run the preprocessing pipeline
+              • preprocess - Run the preprocessing pipeline
 
-	      • annotate - Run the annotation pipeline
+              • annotate - Run the annotation pipeline
 
        input_fofn
-	      Path to a tab-separated file where each line contains: sample_name<TAB>fastq_path_name
+              Path to a tab-separated file where each line contains: sample_name<TAB>fastq_path_name
 
        locus  Target immunological locus. Valid values are: IGH, IGK, IGL, TRA, TRB, TRD, TRG
 
        max_jobs
-	      Maximum number of concurrent Slurm jobs to run (positive integer)
+              Maximum number of concurrent Slurm jobs to run (positive integer)
 
        container_runtime
-	      Container runtime to use for Nextflow execution. Must be either: docker or singularity
+              Container runtime to use for Nextflow execution. Must be either: docker or singularity
 
        germline_ref_dir
-	      Path  to	the  germline  reference  directory.  This  directory  must  exist and is passed to Nextflow via the
-	      --germline_ref_dir parameter.
+              Path  to  the germline reference directory. This directory must exist and is passed to Nextflow via the
+              --germline_ref_dir parameter.
 
 OPTIONS
        -p partition
-	      Specify the Slurm partition to use for job submission.
-	      Default: bioinfo
+              Specify the Slurm partition to use for job submission.
+              Default: bioinfo
 
        --directory_suffix suffix
-	      Append a suffix to the locus directory used for per-sample output paths.
-	      When set, output is written to: ./results/${sample}/${locus}_${suffix}
-	      Default (when not set): ./results/${sample}/${locus}
+              Append a suffix to the locus directory used for per-sample output paths.
+              When set, output is written to: ./results/${sample}/${locus}_${suffix}
+              Default (when not set): ./results/${sample}/${locus}
 
        --constant_region constant_region
-	      Specify the primer file to use: for masking/matching during preprocessing.  The  file  used  will	 be  prepro‐
-	      cess/primers/CPRIMERS_${constant_region}.fasta
-	      Defaults to TR for TR loci and IG for IG loci.
+              Specify the primer file to use: for masking/matching during preprocessing. The file used will  be  pre‐
+              process/primers/CPRIMERS_${constant_region}.fasta
+              Defaults to TR for TR loci and IG for IG loci.
 
        --process.cpus number
-	      Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
-	      Default: 12
-	      This parameter is also forwarded to Nextflow.
+              Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
+              Default: 12
+              This parameter is also forwarded to Nextflow.
 
-       --echo Echo the sbatch and nextflow commands to the terminal instead of executing them. Useful for debugging and pre‐
-	      viewing commands.
+       --noresume
+              Disable Nextflow resume. By default, jobs are run with -resume
+
+       --echo Echo  the  sbatch and nextflow commands to the terminal instead of executing them. Useful for debugging
+              and previewing commands.
 
        -help, --help
-	      Display comprehensive help message and exit.
+              Display comprehensive help message and exit.
 
 FILES
        slog/  Directory where Slurm log files are written. Created automatically if it doesn't exist.
 
        results/
-	      Directory where pipeline results are stored. Created automatically if it doesn't exist.
+              Directory where pipeline results are stored. Created automatically if it doesn't exist.
 
        ../preprocess/main.nf
-	      Nextflow script for preprocessing pipeline
+              Nextflow script for preprocessing pipeline
 
        ../annotate/main.nf
-	      Nextflow script for immunoglobulin annotation pipeline
+              Nextflow script for immunoglobulin annotation pipeline
 
        ../annotate_tr/main.nf
-	      Nextflow script for T-cell receptor annotation pipeline
+              Nextflow script for T-cell receptor annotation pipeline
 
 EXAMPLES
        Preprocess samples with default settings:
-	      ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs
 
        Annotate T-cell receptor samples with custom partition and CPU count:
-	      ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs -p bigmem --process.cpus 16
+              ./process_slurm.sh  annotate  results.txt  TRB  10   singularity   /path/to/germline/refs   -p   bigmem
+              --process.cpus 16
 
        Preview commands without execution:
-	      ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
 
        Annotate with a custom output directory suffix:
-	      ./process_slurm.sh annotate results.txt TRB 10 singularity /path/to/germline/refs --directory_suffix rerun1
+              ./process_slurm.sh  annotate  results.txt  TRB 10 singularity /path/to/germline/refs --directory_suffix
+              rerun1
 
        Pass additional Nextflow parameters:
-	      ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --process.cpus 8 -resume
+              ./process_slurm.sh preprocess input_samples.txt IGH 5 docker  /path/to/germline/refs  --process.cpus  8
+              -resume
 
 EXIT STATUS
        0      Successful execution
@@ -104,29 +110,30 @@ ENVIRONMENT
        USER   Used to query Slurm queue for job throttling
 
        NXF_OFFLINE
-	      Set to 1 to skip Nextflow's internet/version check
+              Set to 1 to skip Nextflow's internet/version check
 
 DEPENDENCIES
        nextflow
-	      Nextflow workflow management system (loaded via module)
+              Nextflow workflow management system (loaded via module)
 
        squeue Slurm queue query command (for job throttling)
 
        sbatch Slurm batch job submission command
 
        docker/singularity
-	      Container runtime as specified in arguments
+              Container runtime as specified in arguments
 
 NOTES
-       • The script automatically throttles job submission to maintain the specified maximum number of concurrent jobs.
+       • The  script  automatically  throttles  job submission to maintain the specified maximum number of concurrent
+         jobs.
 
        • Sample names are sanitized to replace slashes and spaces with underscores to prevent path issues.
 
-       • For annotation commands, the script automatically determines whether to use the immunoglobulin or  T-cell  receptor
-	 pipeline based on the locus.
+       • For annotation commands, the script automatically determines whether to use the immunoglobulin or T-cell re‐
+         ceptor pipeline based on the locus.
 
-       • When  --directory_suffix is provided, output directories are written as: ./results/${sample}/${locus}_${suffix} in‐
-	 stead of ./results/${sample}/${locus}.
+       • When  --directory_suffix is provided, output directories are written as: ./results/${sample}/${locus}_${suf‐
+         fix} instead of ./results/${sample}/${locus}.
 
        • For each sample, the resolved output directory is echoed before job throttling/submission.
 
@@ -138,4 +145,4 @@ AUTHOR
 SEE ALSO
        nextflow(1), sbatch(1), squeue(1), docker(1), singularity(1) sbatch(1), squeue(1), docker(1), singularity(1)
 
-FLAIRR DSL2						    2024					    PROCESS_SLURM(1)
+FLAIRR DSL2                                              2024                                        PROCESS_SLURM(1)
