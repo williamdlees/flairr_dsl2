@@ -46,6 +46,11 @@ def is_locus_run_dir(name: str) -> tuple[str, str] | None:
     if not locus or not run:
         return None
 
+    locus = locus.upper()
+
+    if locus not in ['IGH', 'IGK', 'IGL', 'TRA', 'TRB', 'TRG', 'TRD']:
+        return None
+
     return locus, run
 
 
@@ -57,6 +62,32 @@ def stream_append(src: Path, dst_handle) -> None:
 
 def warn(message: str) -> None:
     print(f"WARNING: {message}", file=sys.stderr)
+
+
+def select_single_match(
+    reads_dir: Path,
+    suffix: str,
+    sample: str,
+    locus: str,
+    run: str,
+) -> Path | None:
+    """Select one file in reads_dir ending with suffix.
+
+    If multiple files match, emit a warning and choose one deterministically.
+    """
+    matches = sorted(path for path in reads_dir.iterdir() if path.is_file() and path.name.endswith(suffix))
+
+    if not matches:
+        return None
+
+    if len(matches) > 1:
+        warn(
+            f"Multiple files found for sample={sample}, locus={locus}, run={run}, "
+            f"suffix={suffix}; selecting {matches[0]} from: "
+            f"{', '.join(str(path) for path in matches)}"
+        )
+
+    return matches[0]
 
 
 def summarize_sample_loci(sample: str, loci_to_runs: dict[str, list[tuple[str, Path]]]) -> None:
@@ -112,27 +143,27 @@ def consolidate_sample(
             for run, run_dir in sorted(loci_to_runs[locus], key=lambda item: item[0]):
                 reads_dir = run_dir / "reads"
 
-                src_atleast = reads_dir / f"{sample}_atleast-2.fasta"
-                src_collapsed = reads_dir / f"{sample}_collapsed_unique.fasta"
+                src_atleast = select_single_match(reads_dir, "atleast-2.fasta", sample, locus, run)
+                src_collapsed = select_single_match(reads_dir, "collapsed_unique.fasta", sample, locus, run)
 
-                if src_atleast.is_file():
+                if src_atleast is not None:
                     stream_append(src_atleast, atleast_handle)
                     appended_atleast += 1
                 else:
                     missing_files += 1
                     warn(
                         f"Missing file for sample={sample}, locus={locus}, run={run}: "
-                        f"{src_atleast}"
+                        f"*atleast-2.fasta"
                     )
 
-                if src_collapsed.is_file():
+                if src_collapsed is not None:
                     stream_append(src_collapsed, collapsed_handle)
                     appended_collapsed += 1
                 else:
                     missing_files += 1
                     warn(
                         f"Missing file for sample={sample}, locus={locus}, run={run}: "
-                        f"{src_collapsed}"
+                        f"*collapsed_unique.fasta"
                     )
 
         sample_summary[locus] = {
