@@ -76,6 +76,13 @@ readonly NXF_TR_SCRIPT="$NF_ROOT/annotate_tr/main.nf"
 mkdir -p slog
 mkdir -p results
 
+# Resolve stable absolute paths from invocation directory (where the user runs this script).
+RUN_ROOT="$(pwd)"
+RESULTS_ROOT="${RUN_ROOT}/results"
+WORK_ROOT="${RUN_ROOT}/work/sample"
+LAUNCH_ROOT="${RUN_ROOT}/.launch"
+mkdir -p "$RESULTS_ROOT" "$WORK_ROOT" "$LAUNCH_ROOT"
+
 # Default partition + slurm mode
 partition="bioinfo"
 slurm_mode="--oversubscribe"
@@ -263,30 +270,6 @@ if [ ! -f "$NXF_SCRIPT" ]; then
     exit 1
 fi
 
-# Function to sanitize run name to match pattern: ^[a-z](?:[a-z\d]|[-_](?=[a-z\d])){0,79}$
-sanitize_run_name() {
-    local name="$1"
-    # Convert to lowercase
-    name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-    # Replace invalid characters with underscores
-    name=$(echo "$name" | sed 's/[^a-z0-9_-]/_/g')
-    # Collapse consecutive underscores/hyphens into single underscore
-    name=$(echo "$name" | sed 's/[-_]\{2,\}/_/g')
-    # Remove leading non-alphanumeric characters
-    name=$(echo "$name" | sed 's/^[-_]*//') 
-    # Ensure starts with letter; if not, prepend 'r'
-    if [[ ! "$name" =~ ^[a-z] ]]; then
-        name="r${name}"
-    fi
-    # Remove trailing hyphens/underscores
-    name=$(echo "$name" | sed 's/[-_]*$//')
-    # Truncate to 80 characters
-    name="${name:0:80}"
-    # After truncation, remove trailing hyphens/underscores again
-    name=$(echo "$name" | sed 's/[-_]*$//')
-    echo "$name"
-}
-
 while IFS=$'\t' read -r sample pathToReads; do
   # skip empty or malformed lines
   [[ -z "$sample" ]] && continue
@@ -298,21 +281,20 @@ while IFS=$'\t' read -r sample pathToReads; do
   if [[ -n "$directory_suffix" ]]; then
     sample_locus_dir="${locus}_${directory_suffix}"
   fi
-  sample_output_dir="./results/${sample}/${sample_locus_dir}"
-  run_name_raw="${sample}_${sample_locus_dir}_${command}"
-  run_name=$(sanitize_run_name "$run_name_raw")
-  work_dir="./work/sample/${sample}/${sample_locus_dir}"
+  sample_output_dir="${RESULTS_ROOT}/${sample}/${sample_locus_dir}"
+  work_dir="${WORK_ROOT}/${sample}/${sample_locus_dir}"
+  launch_dir="${LAUNCH_ROOT}/${sample}/${sample_locus_dir}"
 
   # Keep a stable per-sample work path so spot requeues can resume safely.
-  mkdir -p "$work_dir"
+  mkdir -p "$work_dir" "$launch_dir" "$sample_output_dir"
 
   resume_arg=""
   if [[ "$use_resume" == true ]]; then
-    resume_arg="-resume ${run_name}"
+    resume_arg="-resume"
   fi
   
   if [[ "$command" == "annotate" ]]; then
-    pathToReads=$(pwd)/results/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta
+    pathToReads="${RESULTS_ROOT}/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta"
   fi
 
   echo "Sample ${sample}: output directory -> ${sample_output_dir}"
@@ -326,7 +308,7 @@ batch_script=$(cat <<EOF
 #!/usr/bin/env bash
 #SBATCH -p ${partition}
 #SBATCH -J ${sample}_${command}
-#SBATCH -o slog/${sample}_${command}.slog
+#SBATCH -o slog/${sample}_${locus}_${command}.slog
 #SBATCH --cpus-per-task=${cpus_per_task}
 #SBATCH ${slurm_mode}
 #SBATCH --requeue
@@ -343,8 +325,9 @@ if [ "\$RESTARTS" -gt 3 ]; then
   exit 1
 fi
 
+cd "${launch_dir}"
+
 nextflow run ${NXF_SCRIPT} -offline \
-  -name               "${run_name}" \
   ${resume_arg} \
   -w                  "${work_dir}" \
   -profile            "${runtime}" \
