@@ -110,8 +110,8 @@ for sample_root in sample_roots:
                     stage_filename_glob.append(matched_file)
 
         if len(stage_filename_glob) == 0:
-            rec[stage] = 'NA'
-            rec_perc[stage] = 'NA'
+            rec[stage] = ''
+            rec_perc[stage] = ''
             continue
         elif len(stage_filename_glob) > 1:
             print(f'Error: multiple files match {sample_name} {locus_dir} {stage}')
