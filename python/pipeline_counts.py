@@ -148,6 +148,27 @@ for sample_root in sample_roots:
 results.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
 results_perc.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
 
+# if there are just 2 records for a sample and one is an 'annotation' record which has no run, and the other is a 'run' record which has a run, 
+# then merge the two records into one
+compacted_results = []
+rec_index = 0
+sample = ''
+sample_recs = []
+for rec in list(results):
+    if rec['sample'] != sample:
+        if sample_recs:
+            if len(sample_recs) == 2 and sample_recs[0]['run'] == '' and sample_recs[1]['run'] != '':
+                for k in sample_recs[1].keys():
+                    if sample_recs[1][k] != '' and sample_recs[0][k] == '':
+                        sample_recs[0][k] = sample_recs[1][k]
+                compacted_results.append(sample_recs[0])
+            else:
+                if sample_recs[0]['run'] == '':
+                    sample_recs[0]['run'] = 'annotation'
+                compacted_results.extend(sample_recs)
+        sample = rec['sample']
+        sample_recs = [rec]
+
 simple.write_csv(args.results_file, results)
 fn = os.path.splitext(args.results_file)
 simple.write_csv(fn[0] + '_perc' + fn[1], results_perc)
