@@ -9,6 +9,8 @@ def parse_arguments():
                         help='Input directory containing sample directories (default: current directory)')
     parser.add_argument('--output_file', type=str, default='project_alignments.csv',
                         help='Output file path (default: project_alignments.csv)')
+    parser.add_argument('--personalized', action='store_true',
+                        help='Whether to use personalized alignment files (default: False)')
     return parser.parse_args()
 
 
@@ -28,23 +30,24 @@ def scan_directories(input_dir):
     return samples
 
 
-def find_alignment_file(input_dir, sample, locus):
+def find_alignment_file(input_dir, sample, locus, personalized):
     alignment_dir = os.path.join(input_dir, sample, locus, 'alignment')
+    target_suffix = 'align_personalized.tsv' if personalized else 'align_non-personalized.tsv'
     if os.path.isdir(alignment_dir):
         for file_name in os.listdir(alignment_dir):
-            if file_name.endswith('align_non-personalized.tsv'):
+            if file_name.endswith(target_suffix):
                 return os.path.join(alignment_dir, file_name)
     return None
 
 
-def concatenate_files(samples, input_dir, output_file):
+def concatenate_files(samples, input_dir, output_file, personalized):
     all_data = []
     header = None
 
     for sample, loci in samples.items():
         print(f"Processing sample '{sample}' with loci: {', '.join(loci)}")
         for locus in loci:
-            alignment_file = find_alignment_file(input_dir, sample, locus)
+            alignment_file = find_alignment_file(input_dir, sample, locus, personalized)
             if alignment_file:
                 with open(alignment_file, newline='') as csvfile:
                     reader = csv.DictReader(csvfile, delimiter='\t')
@@ -73,4 +76,4 @@ def concatenate_files(samples, input_dir, output_file):
 if __name__ == "__main__":
     args = parse_arguments()
     samples = scan_directories(args.input_dir)
-    concatenate_files(samples, args.input_dir, args.output_file)
+    concatenate_files(samples, args.input_dir, args.output_file, args.personalized)

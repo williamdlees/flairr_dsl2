@@ -144,6 +144,10 @@ for sample_root in sample_roots:
         results.append(rec)
         results_perc.append(rec_perc)
 
+# sort results by sample, locus, run
+results.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
+results_perc.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
+
 simple.write_csv(args.results_file, results)
 fn = os.path.splitext(args.results_file)
 simple.write_csv(fn[0] + '_perc' + fn[1], results_perc)
