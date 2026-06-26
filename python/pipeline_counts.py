@@ -86,10 +86,13 @@ if not sample_roots:
 
 for sample_root in sample_roots:
     sample_name = sample_root['sample']
+
     locus = sample_root['locus']
     locus_dir = sample_root['locus_dir']
     run = sample_root['run']
     root = sample_root['root']
+
+    print(f"{sample_name} {locus}")
 
     rec = {'locus': locus, 'run': run, 'sample': sample_name}
     rec_perc = {'locus': locus, 'run': run, 'sample': sample_name}
@@ -148,27 +151,88 @@ for sample_root in sample_roots:
 results.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
 results_perc.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
 
-# if there are just 2 records for a sample and one is an 'annotation' record which has no run, and the other is a 'run' record which has a run, 
-# then merge the two records into one
-compacted_results = []
-rec_index = 0
-sample = ''
-sample_recs = []
-for rec in list(results):
-    if rec['sample'] != sample:
-        if sample_recs:
-            if len(sample_recs) == 2 and sample_recs[0]['run'] == '' and sample_recs[1]['run'] != '':
-                for k in sample_recs[1].keys():
-                    if sample_recs[1][k] != '' and sample_recs[0][k] == '':
-                        sample_recs[0][k] = sample_recs[1][k]
-                compacted_results.append(sample_recs[0])
-            else:
-                if sample_recs[0]['run'] == '':
-                    sample_recs[0]['run'] = 'annotation'
-                compacted_results.extend(sample_recs)
-        sample = rec['sample']
-        sample_recs = [rec]
 
-simple.write_csv(args.results_file, results)
+def _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results):
+    if len(sample_recs) == 2 and sample_recs[0]['run'] == '' and sample_recs[1]['run'] != '':
+        print('merging')
+        for k in sample_recs[1].keys():
+            if sample_recs[1][k] != '' and sample_recs[0][k] == '':
+                sample_recs[0][k] = sample_recs[1][k]
+        for k in perc_recs[1].keys():
+            if perc_recs[1][k] != '' and perc_recs[0][k] == '':
+                perc_recs[0][k] = perc_recs[1][k]
+
+        if sample_recs[1]['filterSeq_quality']:
+            try:
+                total_reads = int(sample_recs[0]['filterSeq_quality'])
+            except ValueError:
+                total_reads = 0
+                
+        for k in sample_recs[0].keys():
+            if k not in ['sample', 'locus', 'run'] and sample_recs[0][k]:
+                try:
+                    perc_recs[0][k] = round(100 * int(sample_recs[0][k]) / total_reads, 1)
+                except ValueError:
+                    perc_recs[0][k] = ''
+        compacted_results.append(sample_recs[0])
+        perc_compacted_results.append(perc_recs[0])
+    else:
+        print('extending')
+        if sample_recs[0]['run'] == '':
+            sample_recs[0]['run'] = 'combined'
+
+        total_reads = 0
+        for i in range(1, len(sample_recs)):
+            if sample_recs[i]['filterSeq_quality']:
+                try:
+                    total_reads += int(sample_recs[i]['filterSeq_quality'])
+                except ValueError:
+                    pass
+
+            for k in sample_recs[0].keys():
+                if k not in ['sample', 'locus', 'run'] and sample_recs[0][k]:
+                    try:
+                        perc_recs[0][k] = round(100 * int(sample_recs[0][k]) / total_reads, 1)
+                    except ValueError:
+                        perc_recs[0][k] = ''
+
+        compacted_results.extend(sample_recs)
+        perc_compacted_results.extend(perc_recs)
+
+    return compacted_results, perc_compacted_results
+
+
+def compact_sample_results(records, perc_records):
+    # if there are just 2 records for a sample and one is an 'annotation' record which has no run, and the other is a 'run' record which has a run,
+    # then merge the two records into one
+    compacted_results = []
+    perc_compacted_results = []
+    locus_sample = ''
+    sample_recs = []
+    perc_recs = []
+
+    for rec, perc_rec in zip(records, perc_records):
+        rec_locus_sample = rec['locus'] + '_' + rec['sample']
+        if rec_locus_sample != locus_sample:
+            if sample_recs:
+                print(f"Processing {locus_sample} with {len(sample_recs)} records")
+                compacted_results, perc_compacted_results = _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results)
+            locus_sample = rec_locus_sample
+            sample_recs = [rec]
+            perc_recs = [perc_rec]
+        else:
+            sample_recs.append(rec)
+            perc_recs.append(perc_rec)
+
+    if sample_recs:
+        print(f"Processing {locus_sample} with {len(sample_recs)} records")
+        compacted_results, perc_compacted_results = _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results)
+
+    return compacted_results, perc_compacted_results
+
+
+compacted_results, perc_compacted_results = compact_sample_results(results, results_perc)
+
+simple.write_csv(args.results_file, compacted_results)
 fn = os.path.splitext(args.results_file)
-simple.write_csv(fn[0] + '_perc' + fn[1], results_perc)
+simple.write_csv(fn[0] + '_perc' + fn[1], perc_compacted_results)
