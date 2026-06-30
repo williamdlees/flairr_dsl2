@@ -48,7 +48,7 @@ for sample in samples.keys():
         samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
         cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
         if not os.path.exists(cd_path):
-            print(f"Error: file {cd_path} not found")
+            print(f"Warning: file {cd_path} not found")
             continue
 
         with open(cd_path, newline='') as csvfile:
@@ -60,35 +60,36 @@ for sample in samples.keys():
                     samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)
 
 annots = {}
+missing_samples = []
+
 with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
         locus = row['locus']
-        if sample not in annots:
-            annots[sample] = {}
-        if locus not in annots[sample]:
-            annots[sample][locus] = []
-        annots[sample][locus].append(row)
+
+        if sample not in samples or locus not in samples[sample]:
+            if f"{sample}_{locus}" not in missing_samples:
+                missing_samples.append(f"{sample}_{locus}")
+            continue
+
+        if 'cdr3s' not in samples[sample][locus]:
+            samples[sample][locus]['cdr3s'] = set()
+            samples[sample][locus] |= {'IGG1': 0, 'IGG2': 0, 'IGG3': 0, 'IGG4': 0, 'IGA': 0, 'IGM': 0, 'IGE': 0, 'IGD': 0}
+
+        samples[sample][locus]['cdr3s'].add(row['cdr3_aa'])
+
+        if locus == 'IGH':
+            if 'IGHG' in row['c_call']:
+                isotype = row['c_call'].split(',')[0][:5]
+            elif len(row['c_call']) > 4:
+                isotype = row['c_call'].split(',')[0][:4]
+            isotype = isotype.replace('IGH', 'IG')
+            samples[sample][locus][isotype] += 1
 
 for sample in samples.keys():
     for locus in samples[sample].keys():
-        if sample not in annots or locus not in annots[sample]:
-            continue
-        cdr3s = set()
-        iso = {'IGG1': 0, 'IGG2': 0, 'IGG3': 0, 'IGG4': 0, 'IGA': 0, 'IGM': 0, 'IGE': 0, 'IGD': 0}
-        for row in annots[sample][locus]:
-            cdr3s.add(row['cdr3_aa'])
-            if locus == 'IGH':
-                if 'IGHG' in row['c_call']:
-                    isotype = row['c_call'].split(',')[0][:5]
-                elif len(row['c_call']) > 4:
-                    isotype = row['c_call'].split(',')[0][:4]
-                isotype = isotype.replace('IGH', 'IG')
-                iso[isotype] += 1
-        samples[sample][locus]['cdr3s'] = len(cdr3s)
-        for isotype, count in iso.items():
-            samples[sample][locus][isotype] = count
+        samples[sample][locus]['cdr3s'] = len(samples[sample][locus]['cdr3s'])
 
 header = ['sample', 'locus', 'reads', 'sequences', 'clones', 'shannon', 'simpson', 'cdr3s', 'IGG1', 'IGG2', 'IGG3', 'IGG4', 'IGA', 'IGM', 'IGE', 'IGD']
 with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w', newline='') as csvfile:
@@ -97,3 +98,6 @@ with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w'
     for sample in samples.keys():
         for locus in samples[sample].keys():
             writer.writerow(samples[sample][locus])
+
+if missing_samples:
+    print(f"Warning: The following sample-locus combinations were found in project_alignments.csv but not in pipeline_counts.csv: {', '.join(missing_samples)}")

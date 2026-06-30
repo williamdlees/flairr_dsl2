@@ -62,17 +62,20 @@ def find_clone_ids(input_dir, sample, locus):
 
 
 def concatenate_files(samples, input_dir, output_file, personalized):
-    all_data = []
     header = None
+    writer = None
 
     for sample, loci in samples.items():
         print(f"Processing sample '{sample}' with loci: {', '.join(loci)}")
         for locus in loci:
+            locus_data = []
             alignment_file = find_alignment_file(input_dir, sample, locus, personalized)
             if alignment_file:
                 clone_ids = {}
                 if personalized and 'IG' in locus:
                     clone_ids = find_clone_ids(input_dir, sample, locus)
+                    if len(clone_ids) == 0:
+                        print(f"Warning: No clone IDs found for sample '{sample}', locus '{locus}'")    
                 with open(alignment_file, newline='') as csvfile:
                     reader = csv.DictReader(csvfile, delimiter='\t')
                     for row in reader:
@@ -89,25 +92,29 @@ def concatenate_files(samples, input_dir, output_file, personalized):
                         if 'c_call' in row and 'IGH' in row['c_call']:
                             row['isotype_call'] = row['c_call'].split(',')[0].split('*')[0]
 
-                        all_data.append(row)
+                        locus_data.append(row)
             else:
                 if '_' not in locus:
                     print(f"Warning: No alignment file found for sample '{sample}', locus '{locus}'")
                 continue
 
-    if all_data:
-        with open(output_file, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=header, extrasaction='ignore')
-            writer.writeheader()
-            writer.writerows(all_data)
+            if locus_data:
+                if not writer:
+                    print(f"Writing output to '{output_file}'")
+                    outfile = open(output_file, 'w', newline='')
+                    writer = csv.DictWriter(outfile, fieldnames=header, extrasaction='ignore')
+                    writer.writeheader()
+                
+                writer.writerows(locus_data)
+            else:
+                print(f"No data for locus '{locus}'.")
+
+    if writer:
+        outfile.close()
         print(f"Output written to '{output_file}'")
-    else:
-        print("No alignment files found to concatenate.")
 
 
 if __name__ == "__main__":
     args = parse_arguments()
     samples = scan_directories(args.input_dir)
-    k = list(samples.keys())[0]
-    samples = {k: samples[k]}  # first sample only for testing
     concatenate_files(samples, args.input_dir, args.output_file, args.personalized)

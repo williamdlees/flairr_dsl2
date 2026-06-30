@@ -41,11 +41,11 @@ config = toml.load(args.config_file)
 
 as_log = ''
 for fd, fn in config['sample_files']:
-    if fd == 'alignSets':
+    if fd == 'umis':
         as_log = fn
 
 if as_log == '':
-    print('Error: alignSets not found in config file')
+    print('Error: umis not found in config file')
     exit(1)
 
 sample_dir = config['sample_dir']

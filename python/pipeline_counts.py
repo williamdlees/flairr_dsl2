@@ -92,8 +92,6 @@ for sample_root in sample_roots:
     run = sample_root['run']
     root = sample_root['root']
 
-    print(f"{sample_name} {locus}")
-
     rec = {'locus': locus, 'run': run, 'sample': sample_name}
     rec_perc = {'locus': locus, 'run': run, 'sample': sample_name}
     first_count = -1
@@ -154,7 +152,6 @@ results_perc.sort(key=lambda x: (x['sample'], x['locus'], x['run']))
 
 def _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results):
     if len(sample_recs) == 2 and sample_recs[0]['run'] == '' and sample_recs[1]['run'] != '':
-        print('merging')
         for k in sample_recs[1].keys():
             if sample_recs[1][k] != '' and sample_recs[0][k] == '':
                 sample_recs[0][k] = sample_recs[1][k]
@@ -177,9 +174,10 @@ def _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compac
         compacted_results.append(sample_recs[0])
         perc_compacted_results.append(perc_recs[0])
     else:
-        print('extending')
         if sample_recs[0]['run'] == '':
             sample_recs[0]['run'] = 'combined'
+        if perc_recs[0]['run'] == '':
+            perc_recs[0]['run'] = 'combined'
 
         total_reads = 0
         for i in range(1, len(sample_recs)):
@@ -215,7 +213,6 @@ def compact_sample_results(records, perc_records):
         rec_locus_sample = rec['locus'] + '_' + rec['sample']
         if rec_locus_sample != locus_sample:
             if sample_recs:
-                print(f"Processing {locus_sample} with {len(sample_recs)} records")
                 compacted_results, perc_compacted_results = _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results)
             locus_sample = rec_locus_sample
             sample_recs = [rec]
@@ -225,7 +222,6 @@ def compact_sample_results(records, perc_records):
             perc_recs.append(perc_rec)
 
     if sample_recs:
-        print(f"Processing {locus_sample} with {len(sample_recs)} records")
         compacted_results, perc_compacted_results = _finalise_sample_recs(sample_recs, perc_recs, compacted_results, perc_compacted_results)
 
     return compacted_results, perc_compacted_results
