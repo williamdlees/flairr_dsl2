@@ -27,37 +27,56 @@ samples = {}
 project = None
 
 
+def to_int(value):
+    try:
+        return int(value)
+    except ValueError:
+        return 0
+
+
 with open(os.path.join(args.output_file_path, 'pipeline_counts.csv'), newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
-        locus = row['locus']
+        locus = row['locus'].split('_')[0]  # Remove any suffixes from locus
         if sample not in samples:
             samples[sample] = {}
         if locus not in samples[sample]:
             samples[sample][locus] = {
                 'sample': sample,
                 'locus': locus,
-                'reads': row['filterSeq_quality'],
-                'sequences': row['unique_atleast2'],
-                'clones': row['clones'],
+                'reads': to_int(row['filterSeq_quality']),
+                'sequences': to_int(row['unique_atleast2']),
             }
+            if 'IG' in locus:
+                samples[sample][locus]['clones'] = to_int(row['clones'])
+            else:
+                samples[sample][locus]['clones'] = ''
+        else:
+            samples[sample][locus]['reads'] += to_int(row['filterSeq_quality'])
+            samples[sample][locus]['sequences'] += to_int(row['unique_atleast2'])
+
+            if 'IG' in locus:
+                samples[sample][locus]['clones'] += to_int(row['clones'])
 
 for sample in samples.keys():
     for locus in samples[sample].keys():
-        samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
-        cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
-        if not os.path.exists(cd_path):
-            print(f"Warning: file {cd_path} not found")
-            continue
+        if 'IG' in locus:
+            samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
+            cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
+            if not os.path.exists(cd_path):
+                print(f"Warning: file {cd_path} not found")
+                continue
 
-        with open(cd_path, newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                if row['q'] == '1':
-                    samples[sample][locus]['shannon'] = round(log(float(row['d']), 10), 2)
-                elif row['q'] == '2':
-                    samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)
+            with open(cd_path, newline='') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    if row['q'] == '1':
+                        samples[sample][locus]['shannon'] = round(log(float(row['d']), 10), 2)
+                    elif row['q'] == '2':
+                        samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)
+        else:
+            samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
 
 annots = {}
 missing_samples = []
@@ -75,7 +94,11 @@ with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline
 
         if 'cdr3s' not in samples[sample][locus]:
             samples[sample][locus]['cdr3s'] = set()
-            samples[sample][locus] |= {'IGG1': 0, 'IGG2': 0, 'IGG3': 0, 'IGG4': 0, 'IGA': 0, 'IGM': 0, 'IGE': 0, 'IGD': 0}
+
+            if 'IGH' in locus:
+                samples[sample][locus] |= {'IGG1': 0, 'IGG2': 0, 'IGG3': 0, 'IGG4': 0, 'IGA': 0, 'IGM': 0, 'IGE': 0, 'IGD': 0}
+            else:
+                samples[sample][locus] |= {'IGG1': '', 'IGG2': '', 'IGG3': '', 'IGG4': '', 'IGA': '', 'IGM': '', 'IGE': '', 'IGD': ''}
 
         samples[sample][locus]['cdr3s'].add(row['cdr3_aa'])
 
