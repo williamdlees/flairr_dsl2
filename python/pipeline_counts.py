@@ -7,22 +7,24 @@ import argparse
 import re
 from receptor_utils import simple_bio_seq as simple
 
+BUFFER_SIZE = 250 * 1024
+
 
 # find number of reads in a fastq file
 def count_fastq_reads(file):
-    with open(file) as f:
+    with open(file, buffering=BUFFER_SIZE) as f:
         return sum(1 for line in f) // 4
 
 
 # find number of reads in a fasta file
 def count_fasta_reads(file):
-    with open(file) as f:
+    with open(file, buffering=BUFFER_SIZE) as f:
         return sum(1 for line in f if line.startswith('>'))
 
 
 # find number of reads listed in a tab file
 def count_tab_reads(file):
-    with open(file) as f:
+    with open(file, buffering=BUFFER_SIZE) as f:
         return sum(1 for line in f) - 1
 
 

@@ -3,6 +3,8 @@ import os
 import csv
 import argparse
 
+BUFFER_SIZE = 250 * 1024
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Concatenate alignment files from multiple samples and loci.')
@@ -34,7 +36,7 @@ def to_int(value):
         return 0
 
 
-with open(os.path.join(args.output_file_path, 'pipeline_counts.csv'), newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'pipeline_counts.csv'), newline='', buffering=BUFFER_SIZE) as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
@@ -68,7 +70,7 @@ for sample in samples.keys():
                 print(f"Warning: file {cd_path} not found")
                 continue
 
-            with open(cd_path, newline='') as csvfile:
+            with open(cd_path, newline='', buffering=BUFFER_SIZE) as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     if row['q'] == '1':
@@ -81,7 +83,7 @@ for sample in samples.keys():
 annots = {}
 missing_samples = []
 
-with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline='', buffering=BUFFER_SIZE) as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         sample = row['sample']
@@ -115,7 +117,7 @@ for sample in samples.keys():
         samples[sample][locus]['cdr3s'] = len(samples[sample][locus]['cdr3s'])
 
 header = ['sample', 'locus', 'reads', 'sequences', 'clones', 'shannon', 'simpson', 'cdr3s', 'IGG1', 'IGG2', 'IGG3', 'IGG4', 'IGA', 'IGM', 'IGE', 'IGD']
-with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w', newline='') as csvfile:
+with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w', newline='', buffering=BUFFER_SIZE) as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=header)
     writer.writeheader()
     for sample in samples.keys():

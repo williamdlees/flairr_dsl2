@@ -3,6 +3,9 @@ import csv
 import argparse
 
 
+BUFFER_SIZE = 250 * 1024
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Concatenate alignment files from multiple samples and loci.')
     parser.add_argument('--input_dir', type=str, default=os.getcwd(),
@@ -52,7 +55,7 @@ def find_clone_ids(input_dir, sample, locus):
     if clone_file:
         clone_file_path = os.path.join(clone_dir, clone_file)
         print(f"Found clone file for sample '{sample}', locus '{locus}': {clone_file_path}")
-        with open(clone_file_path, newline='') as tsvfile:
+        with open(clone_file_path, newline='', buffering=BUFFER_SIZE) as tsvfile:
             reader = csv.DictReader(tsvfile, delimiter='\t')
             for row in reader:
                 clone_id = row.get('clone_id')
@@ -76,7 +79,7 @@ def concatenate_files(samples, input_dir, output_file, personalized):
                     clone_ids = find_clone_ids(input_dir, sample, locus)
                     if len(clone_ids) == 0:
                         print(f"Warning: No clone IDs found for sample '{sample}', locus '{locus}'")    
-                with open(alignment_file, newline='') as csvfile:
+                with open(alignment_file, newline='', buffering=BUFFER_SIZE) as csvfile:
                     reader = csv.DictReader(csvfile, delimiter='\t')
                     for row in reader:
                         if header is None:
@@ -101,7 +104,7 @@ def concatenate_files(samples, input_dir, output_file, personalized):
             if locus_data:
                 if not writer:
                     print(f"Writing output to '{output_file}'")
-                    outfile = open(output_file, 'w', newline='')
+                    outfile = open(output_file, 'w', newline='', buffering=BUFFER_SIZE)
                     writer = csv.DictWriter(outfile, fieldnames=header, extrasaction='ignore')
                     writer.writeheader()
                 
