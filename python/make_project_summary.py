@@ -50,35 +50,31 @@ with open(os.path.join(args.output_file_path, 'pipeline_counts.csv'), newline=''
                 'reads': to_int(row['filterSeq_quality']),
                 'sequences': to_int(row['unique_atleast2']),
             }
-            if 'IG' in locus:
-                samples[sample][locus]['clones'] = to_int(row['clones'])
-            else:
-                samples[sample][locus]['clones'] = ''
+
+            samples[sample][locus]['clones'] = to_int(row['clones'])
         else:
             samples[sample][locus]['reads'] += to_int(row['filterSeq_quality'])
             samples[sample][locus]['sequences'] += to_int(row['unique_atleast2'])
 
-            if 'IG' in locus:
-                samples[sample][locus]['clones'] += to_int(row['clones'])
+            samples[sample][locus]['clones'] += to_int(row['clones'])
 
 for sample in samples.keys():
     for locus in samples[sample].keys():
-        if 'IG' in locus:
-            samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
-            cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
-            if not os.path.exists(cd_path):
-                print(f"Warning: file {cd_path} not found")
-                continue
+        samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
+        cd_path = f"{args.input_dir}/{sample}/{locus}/clones/{sample}_{locus}_clone_diversity.csv"
 
-            with open(cd_path, newline='', buffering=BUFFER_SIZE) as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    if row['q'] == '1':
-                        samples[sample][locus]['shannon'] = round(log(float(row['d']), 10), 2)
-                    elif row['q'] == '2':
-                        samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)
-        else:
+        if not os.path.exists(cd_path):
             samples[sample][locus]['shannon'] = samples[sample][locus]['simpson'] = ''
+            print(f"Warning: file {cd_path} not found")
+            continue
+
+        with open(cd_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if row['q'] == '1':
+                    samples[sample][locus]['shannon'] = round(log(float(row['d']), 10), 2)
+                elif row['q'] == '2':
+                    samples[sample][locus]['simpson'] = round(log(float(row['d']), 10), 2)            
 
 annots = {}
 missing_samples = []

@@ -75,7 +75,7 @@ def concatenate_files(samples, input_dir, output_file, personalized):
             alignment_file = find_alignment_file(input_dir, sample, locus, personalized)
             if alignment_file:
                 clone_ids = {}
-                if personalized and 'IG' in locus:
+                if personalized:
                     clone_ids = find_clone_ids(input_dir, sample, locus)
                     if len(clone_ids) == 0:
                         print(f"Warning: No clone IDs found for sample '{sample}', locus '{locus}'")    
