@@ -20,6 +20,7 @@ def find_samples(template):
     for locus in loci:
         pattern = template
         pattern = pattern.replace("{sample}", "(?P<sample>[^/]+)").replace("{locus}", locus)
+        print(pattern)
         pattern = re.compile(pattern)
         file_template = sample_dir.replace('\\', '/').replace('{locus}', locus).replace('{sample}', '*')
         for p in glob.glob(file_template):
@@ -50,12 +51,16 @@ if as_log == '':
 
 sample_dir = config['sample_dir']
 samples = find_samples(sample_dir)
+print(samples)
 
 for locus in loci:
     results = []
-    root = sample_dir.replace('{locus}', locus).replace('{sample}', '*')
+    root = sample_dir.replace('{locus}', locus + '*').replace('{sample}', '*')
+    print(root)
     data = None
+    print(os.path.join(root, as_log.replace('{sample}', '*')))
     for log_file in glob.glob(os.path.join(root, as_log.replace('{sample}', '*'))):
+        print(log_file)
         sample_name = os.path.basename(log_file).split(as_log.split('{sample}')[1])[0]
 
         data = simple.read_csv(os.path.join(log_file), delimiter='\t')
