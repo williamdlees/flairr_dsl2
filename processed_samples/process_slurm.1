@@ -70,6 +70,13 @@ for TR loci and
 .B IG
 for IG loci.
 .TP
+.B \-\-include_singletons
+For annotate runs, use
+.B ${sample}_collapsed_unique.fasta
+instead of
+.B ${sample}_atleast-2.fasta
+as the input reads file.
+.TP
 .BI \-\-process.cpus " number"
 Set the number of CPUs to request per Slurm job and pass to Nextflow for process configuration.
 .br

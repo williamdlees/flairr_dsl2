@@ -39,6 +39,7 @@ OPTIONS:
   --noresume            Disable Nextflow resume. By default, jobs are run with -resume
   --echo                Echo commands instead of executing them
   --constant_region <r> Specifies the primer file used for masking in preprocessing (default: IG for IG loci, TR for TR loci)
+  --include_singletons   For annotate runs, use <sample>_collapsed_unique.fasta instead of <sample>_atleast-2.fasta
   -help, --help         Display this help message
 
 EXAMPLES:
@@ -94,6 +95,8 @@ echo_only=false
 use_resume=true
 # Optional directory suffix appended to locus in output paths
 directory_suffix=""
+# Annotate input FASTA selection
+include_singletons=false
 # Constant region (empty means auto-detect from locus)
 constant_region=""
 
@@ -146,6 +149,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --noresume)
           use_resume=false
+          shift
+          ;;
+        --include_singletons)
+          include_singletons=true
           shift
           ;;
         --constant_region)
@@ -294,7 +301,11 @@ while IFS=$'\t' read -r sample pathToReads; do
   fi
   
   if [[ "$command" == "annotate" ]]; then
-    pathToReads="${RESULTS_ROOT}/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta"
+    if [[ "$include_singletons" == true ]]; then
+      pathToReads="${RESULTS_ROOT}/${sample}/${sample_locus_dir}/reads/${sample}_collapsed_unique.fasta"
+    else
+      pathToReads="${RESULTS_ROOT}/${sample}/${sample_locus_dir}/reads/${sample}_atleast-2.fasta"
+    fi
   fi
 
   echo "Sample ${sample}: output directory -> ${sample_output_dir}"
