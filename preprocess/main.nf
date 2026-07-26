@@ -27,7 +27,42 @@ include { presto_report } from '../modules/presto_report'
 
 
 workflow {
-	read_pairs_ch = channel.fromFilePairs(params.reads, checkIfExists: true)
+	def input_file = channel.fromFilePairs(params.reads, checkIfExists: true)
+	def read_pairs_ch
+
+	if (params.reads.endsWith('.csv')) {
+			
+			// CASE A: Input is a CSV samplesheet
+			read_pairs_ch = Channel
+				.fromPath(params.reads)
+				.splitCsv(header: true)
+				.map { row ->
+					def meta = [ id: row.sample ]
+					// Handle single or paired-end reads dynamically from CSV columns
+					def file_list = row.fastq_2 
+						? [ file(row.fastq_1), file(row.fastq_2) ] 
+						: [ file(row.fastq_1) ]
+					
+					return [ meta, file_list ]
+				}
+
+		} else {
+
+			// CASE B: Input is a single sequence file
+			read_pairs_ch = Channel
+				.fromPath(params.reads)
+				.map { seq_file ->
+					// Derive sample ID from the file name (e.g., "sample1.fastq.gz" -> "sample1")
+					def sample_id = seq_file.name.takeBefore('.')
+					def meta = [ id: sample_id ]
+					
+					return [ meta, [ seq_file ] ]
+				}
+
+		} 
+
+	}	
+
 	FastQC(read_pairs_ch)
 	
 	filter_seq_quality(read_pairs_ch, FastQC.out.ready)
