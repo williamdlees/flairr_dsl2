@@ -3,7 +3,7 @@
 
 process align_sets {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_AS.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_AS") && filename.endsWith(".log")) ? "reports/${filename}" : null}
 
 	input:
 		tuple val(name),path(reads)
@@ -12,8 +12,8 @@ process align_sets {
 	output:
 		tuple val(name), path("*_align-pass.fastq"), emit: output
 		tuple val(name), path("${name}_AS*"), emit: log_file
-		tuple val(name), path("*_align-fail.fastq") optional true
-		tuple val(name), path("out*") optional true
+		tuple val(name), path("*_align-fail.fastq"), optional: true
+		tuple val(name), path("out*"), optional: true
 
 	script:
 		name = params.sample_name

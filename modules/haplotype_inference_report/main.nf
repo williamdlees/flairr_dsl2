@@ -15,8 +15,8 @@ process haplotype_inference_report {
 		val(ready)
 
 	output:
-		path("*_haplotype.tsv") optional true
-		path("*_binomDel.tsv"), emit: deletions optional true
+		path("*_haplotype.tsv"), optional: true
+		path("*_binomDel.tsv"), emit: deletions, optional: true
 		val(true), emit: ready		
 
 	script:

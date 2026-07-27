@@ -1,8 +1,10 @@
 
 
 process FastQC {
+	errorStrategy 'retry'
+	maxRetries 5
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*.(html)$/) "reports/${name}_FastQC.html"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith(".html")) ? "reports/${filename.replace('.html', '_FastQC.html')}" : null}
 	
 	input:
 		tuple val(name), path(reads)
@@ -11,8 +13,6 @@ process FastQC {
 		path '*.{html,zip}'
 		val(true), emit: ready
 
-	errorStrategy 'retry'
-	maxRetries 5
 
 	script:
 		name = params.sample_name

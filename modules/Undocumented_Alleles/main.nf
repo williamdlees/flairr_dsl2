@@ -7,8 +7,8 @@ process Undocumented_Alleles {
 		path(v_germline_file)
 
 	output:
-		path("*.tsv"), emit: output optional true
-		path("${out_novel_germline}.*"), emit: novel_germline optional true
+		path("*.tsv"), emit: output, optional: true
+		path("*novel*.tsv"), emit: novel_germline, optional: true
 
 	script:
 		name = params.sample_name

@@ -7,9 +7,9 @@ process collapse_seq {
 		val ready
 
 	output:
-		tuple val(name),  path("*_collapse-unique.fast*"), emit: output
-		tuple val(name),  path("*_collapse-duplicate.fast*") optional true
-		tuple val(name),  path("*_collapse-undetermined.fast*") optional true
+		tuple val(name),  path("*_collapse-unique.fast?"), emit: output
+		tuple val(name),  path("*_collapse-duplicate.fast?"), optional: true
+		tuple val(name),  path("*_collapse-undetermined.fast?"), optional: true
 		tuple val(name),  path("CS_*"), emit: log_file
 
 	script:

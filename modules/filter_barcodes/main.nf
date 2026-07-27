@@ -12,9 +12,9 @@ process filter_barcodes {
 		val ready        
 
 	output:
-		tuple val(name), path(outFile), emit: output
-		path(logFile) optional true 
-        path(plotFile) optional true
+		tuple val(name), path("*_bc-filtered.fastq"), emit: output
+		path("*_bc-filter.log"), optional: true
+		path("*_bc-filter.pdf"), optional: true
 		val(true), emit: ready	        
 
 	script:

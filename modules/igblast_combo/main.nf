@@ -12,12 +12,12 @@ process igblast_combo {
 		path custom_internal_data
 
 	output:
-		path(outfile), emit: output
-		path(db_v_path), emit: db_v
-		path(db_d_path), emit: db_d
-		path(db_j_path), emit: db_j
-		path(db_c_path), emit: db_c
-		path("${reference_set}"), emit: consolidated_ref
+		path(".{out,tsv}"), emit: output
+		path(ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'), emit: db_v
+		path(ref_d_path.getExtension() == '.db' ? ref_d_path : ref_d_path.getSimpleName() + '.db'), emit: db_d
+		path(ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'), emit: db_j
+		path(ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'), emit: db_c
+		path("consolidated_ref.fasta"), emit: consolidated_ref
 
 	script:
 		num_threads = params.igblast.num_threads

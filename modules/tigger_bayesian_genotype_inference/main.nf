@@ -12,8 +12,8 @@ process TIgGER_bayesian_genotype_Inference {
 		val(ready)
 		
 	output:
-		path("*${call}_genotype_report.tsv"), emit: genotype_report, optional: true
-		path("*${call}_personal_reference.fasta"), emit: personal_reference
+		path("*_genotype_report.tsv"), emit: genotype_report, optional: true
+		path("*_personal_reference.fasta"), emit: personal_reference
 		val(true), emit: ready		
 
 	script:

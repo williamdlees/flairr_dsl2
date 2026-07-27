@@ -7,7 +7,7 @@ process split_seq {
 		val ready
 
 	output:
-		tuple val(name), path("*_atleast-*.fast*"), emit: output
+		tuple val(name), path("*_atleast-*.fast?"), emit: output
 
 	script:
 		field = params.split_seq.field

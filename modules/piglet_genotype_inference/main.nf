@@ -12,8 +12,8 @@ process PIgLET_IGHV_ASC_genotype_Inference {
 		path(germline_file)
 
 	output:
-		path("${call}_genotype_report.tsv")
-		path("${call}_personal_reference.fasta")
+		path("*_genotype_report.tsv")
+		path("*_personal_reference.fasta")
 
 	script:
 

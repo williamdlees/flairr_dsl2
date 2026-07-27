@@ -3,8 +3,8 @@
 
 process align_v {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_v_aligned.tsv$/) "alignment/${name}_v_align_${alignment_suffix}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_v_aligned.log$/) "alignment/${name}_v_align_${alignment_suffix}.log"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> filename.endsWith("_v_aligned.tsv") ? "alignment/${name}_v_align_${alignment_suffix}.tsv" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> filename.endsWith("_v_aligned.log") ? "alignment/${name}_v_align_${alignment_suffix}.log" : null}
 	
 	input:
 		path(passFile)
@@ -13,8 +13,8 @@ process align_v {
 		path(python_dir)
 
 	output:
-		path(outPassfile), emit: annotations
-		path(logFile) optional true 
+		path("*_v_aligned.tsv"), emit: annotations
+		path("*_v_aligned.log"), optional: true 
 
 	script:
         name = params.sample_name

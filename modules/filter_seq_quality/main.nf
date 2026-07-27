@@ -2,16 +2,16 @@
 
 process filter_seq_quality 
 {
-    publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_FS.*log$/) "reports/$filename"}
+    publishDir params.outdir, mode: 'copy', saveAs: { filename -> (filename.startsWith("${name}_FS") && filename.endsWith(".log")) ? "reports/${filename}" : null }
     input:
         tuple val(name), path(reads)
 		val(ready)
 
     output:
-        tuple val(name), path("${reads.getBaseName()}_${method}-pass.fast*"), emit: output       // reads passed to next stage
-        tuple val(name), path("${name}_FS*.log"), emit: log_file                     // log file passed to parse_log 
-        tuple val(name), path("*_${method}-fail.fast*") optional true     // failed reads
-        tuple val(name), path("out*") optional true                       // FilterSeq output
+        tuple val(name), path("*-pass.fast?"), emit: output       // reads passed to next stage
+        tuple val(name), path("*${name}_FS*.log"), emit: log_file                     // log file passed to parse_log 
+        tuple val(name), path("*-fail.fast?"), optional: true     // failed reads
+        tuple val(name), path("out*"), optional: true                       // FilterSeq output
 
     script:
 		name = params.sample_name
