@@ -3,8 +3,8 @@
 
 process filter_barcodes {
 
-	publishDir params.outdir, mode: 'copy', pattern: "*_bc-filter.pdf", saveAs: { "reports/${name}_bc-filter.pdf" }
-	publishDir params.outdir, mode: 'copy', pattern: "*_bc-filter.log", saveAs: { "reports/${name}_bc-filter.txt" }
+	publishDir params.outdir, mode: 'copy', pattern: "*_bc-filter.pdf", saveAs: { "${name}/${params.output_locus ?: params.locus}/reports/${name}_bc-filter.pdf" }
+	publishDir params.outdir, mode: 'copy', pattern: "*_bc-filter.log", saveAs: { "${name}/${params.output_locus ?: params.locus}/reports/${name}_bc-filter.txt" }
 	
 	input:
 		tuple val(name), path(inFile)
@@ -18,7 +18,6 @@ process filter_barcodes {
 		val(true), emit: ready	        
 
 	script:
-        name = params.sample_name
         outFile = inFile.getBaseName() + "_bc-filtered.fastq"
 		logFile = inFile.getBaseName() + "_bc-filter.log"
 		plotFile = inFile.getBaseName() + "_bc-filter.pdf"

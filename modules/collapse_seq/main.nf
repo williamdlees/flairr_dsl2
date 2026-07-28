@@ -1,7 +1,7 @@
 
 
 process collapse_seq {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "reads/${name}_collapsed_unique.fasta"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_collapse-unique.fast.*$/) "${name}/${params.output_locus ?: params.locus}/reads/${name}_collapsed_unique.fasta"}
 	input:
 		tuple val(name), path(reads)
 		val ready
@@ -13,7 +13,6 @@ process collapse_seq {
 		tuple val(name),  path("CS_*"), emit: log_file
 
 	script:
-		name = params.sample_name
 		max_missing = params.collapse_seq.max_missing
 		inner = params.collapse_seq.inner
 		fasta = params.collapse_seq.fasta

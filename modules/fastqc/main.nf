@@ -4,7 +4,7 @@ process FastQC {
 	errorStrategy 'retry'
 	maxRetries 5
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith(".html")) ? "reports/${filename.replace('.html', '_FastQC.html')}" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith(".html")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename.replace('.html', '_FastQC.html')}" : null}
 	
 	input:
 		tuple val(name), path(reads)
@@ -15,7 +15,6 @@ process FastQC {
 
 
 	script:
-		name = params.sample_name
 		nameAll = reads.toString()
 		if (nameAll.contains('.gz')) {
 			file =  nameAll - '.gz' - '.gz'

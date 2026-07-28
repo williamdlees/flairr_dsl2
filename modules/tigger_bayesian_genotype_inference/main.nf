@@ -1,25 +1,23 @@
 process TIgGER_bayesian_genotype_Inference {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_genotype_report.tsv/) "genotype_report/${name}_genotype_report_${call}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_personal_reference.fasta/) "genotype_report/${name}_personal_reference_${call}.fasta"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_genotype_report.tsv/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_genotype_report_${call}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_personal_reference.fasta/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_personal_reference_${call}.fasta"}
 	
 	input:
 		val(call)				// column in data with allele calls. Default is "v_call
 		val(seq)				// name of the column in data with the aligned, IMGT-numbered, V(D)J nucleotide sequence
 		val(find_unmutated)		// if true, use germline_db to find which samples are unmutated. No effect if allele_calls only represent unmutated samples.
 		val(single_assignments) // if true, the genotype is inferred only for sequences with a single assignment in the call column.
-		path(airrFile)
+		tuple val(name), path(airrFile)
 		path(germline_file)
-		val(ready)
+		tuple val(name_ready), val(ready)
 		
 	output:
-		path("*_genotype_report.tsv"), emit: genotype_report, optional: true
-		path("*_personal_reference.fasta"), emit: personal_reference
-		val(true), emit: ready		
+		tuple val(name), path("*_genotype_report.tsv"), emit: genotype_report, optional: true
+		tuple val(name), path("*_personal_reference.fasta"), emit: personal_reference
+		tuple val(name), val(true), emit: ready		
 
 	script:
 		// general params
-
-		name = params.sample_name
 		
 		if (!germline_file.exists()) {
 		"""

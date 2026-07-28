@@ -3,21 +3,21 @@
 process igblast_combo {
 
 	input:
-		path(fastaFile)
-		path(ref_v_path)
-		path(ref_d_path)
-		path(ref_j_path,)
+		tuple val(name), path(fastaFile)
+		tuple val(name_v), path(ref_v_path)
+		tuple val(name_d), path(ref_d_path)
+		tuple val(name_j), path(ref_j_path)
 		path(ref_c_path)
 		path auxiliary_data
 		path custom_internal_data
 
 	output:
-		path(".{out,tsv}"), emit: output
-		path(ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'), emit: db_v
-		path(ref_d_path.getExtension() == '.db' ? ref_d_path : ref_d_path.getSimpleName() + '.db'), emit: db_d
-		path(ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'), emit: db_j
-		path(ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'), emit: db_c
-		path("consolidated_ref.fasta"), emit: consolidated_ref
+		tuple val(name), path("*.{out,tsv}"), emit: output
+		tuple val(name), path(ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'), emit: db_v
+		tuple val(name), path(ref_d_path.getExtension() == '.db' ? ref_d_path : ref_d_path.getSimpleName() + '.db'), emit: db_d
+		tuple val(name), path(ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'), emit: db_j
+		tuple val(name), path(ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'), emit: db_c
+		tuple val(name), path("consolidated_ref.fasta"), emit: consolidated_ref
 
 	script:
 		num_threads = params.igblast.num_threads
@@ -26,7 +26,7 @@ process igblast_combo {
 		domain_system = params.igblast.domain_system
 		reference_set = "consolidated_ref.fasta"
 		
-		outfile = (outfmt=="MakeDb") ? fastaFile +".out" : fastaFile + ".tsv"
+		outfile = (outfmt=="MakeDb") ? fastaFile.getName() +".out" : fastaFile.getName() + ".tsv"
 		outfmt = (outfmt=="MakeDb") ? "'7 std qseq sseq btop'" : outfmt
 		
 		db_v_path = ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'

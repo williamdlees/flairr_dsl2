@@ -5,23 +5,22 @@ process define_clones {
 	publishDir params.outdir, 
 	mode: 'copy', 
 	saveAs: {
-		filename -> if (filename =~ /.*_clone-pass.tsv.*$/) {"clones/${name}_clone_pass.tsv"}
-			else if (filename =~ /.*.png$/) {"clones/${filename}"}
-			else if (filename =~ /.*.csv$/) {"clones/${filename}"}			
+		filename -> if (filename =~ /.*_clone-pass.tsv.*$/) {"${name}/${params.output_locus ?: params.locus}/clones/${name}_clone_pass.tsv"}
+			else if (filename =~ /.*.png$/) {"${name}/${params.output_locus ?: params.locus}/clones/${filename}"}
+			else if (filename =~ /.*.csv$/) {"${name}/${params.output_locus ?: params.locus}/clones/${filename}"}			
 	}
 
 	input:
-		path(airrFile)
+		tuple val(name), path(airrFile)
 		path(thresholdScript)
 		path(cloneStatsScript)
 
 	output:
-		path("*_clone-pass.tsv"), emit: output
-		path("*.png"), optional: true
-		path("*.csv"), optional: true
+		tuple val(name), path("*_clone-pass.tsv"), emit: output
+		tuple val(name), path("*.png"), optional: true
+		tuple val(name), path("*.csv"), optional: true
 
 	script:
-		name = params.sample_name
 		locus = params.locus
 		failed = params.define_clones.failed
 		format = params.define_clones.format

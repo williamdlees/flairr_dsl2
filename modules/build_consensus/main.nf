@@ -1,8 +1,8 @@
 
 
 process build_consensus {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_BC") && filename.endsWith(".log")) ? "reports/${filename}" : null}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "failed_reads/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_BC") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "${name}/${params.output_locus ?: params.locus}/failed_reads/$filename"}
 	
 	input:
 		tuple val(name), path(reads)
@@ -13,7 +13,6 @@ process build_consensus {
 		tuple val(name), path("*_consensus-fail.fastq"), optional: true
 
 	script:
-		name = params.sample_name
 		mate = params.mate
 		failed = params.build_consensus.failed
 		nproc = params.build_consensus.nproc

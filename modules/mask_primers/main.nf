@@ -2,8 +2,8 @@
 
 process MaskPrimers {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith("_primers-fail.fastq")) ? "failed_reads/$filename" : null}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_MP") && filename.endsWith(".log")) ? "reports/$filename" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith("_primers-fail.fastq")) ? "${name}/${params.output_locus ?: params.locus}/failed_reads/$filename" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_MP") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/$filename" : null}
 
 	input:
 		tuple val(name), path(reads)
@@ -19,7 +19,6 @@ process MaskPrimers {
 		tuple val(name), path("out*")
 
 	script:
-		name = params.sample_name
 		mate = mask_params.mate
 		method = mask_params.method
 		barcode_field = mask_params.barcode_field

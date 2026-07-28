@@ -3,6 +3,7 @@
 # Usage: ./process_slurm.sh <command> <input_fofn> <locus> <max_jobs> <container_runtime> [additional_nextflow_parameters...]
 # <command> must be preprocess or annotate
 # <input_fofn> should consist of lines of the form <sample_name>\t<fastq_path_name>
+# For annotate, the second column is ignored and the input FASTA is resolved from ./results/<sample>/<locus>/reads/<sample>_atleast-2.fasta
 # <container_runtime> must be docker or singularity
 # [additional_nextflow_parameters...] will be passed directly to nextflow
 # slurm log files are written to the subdirectory slog
@@ -19,6 +20,9 @@ DESCRIPTION:
 REQUIRED ARGUMENTS:
   <command>             Must be either 'preprocess' or 'annotate'
   <input_fofn>          Tab-separated file with <sample_name> and <fastq_path_name> on each line
+                        preprocess: second column is used as input FASTQ path
+                        annotate: second column is ignored; input FASTA is derived from
+                                  ./results/<sample>/<locus>/reads/<sample>_atleast-2.fasta
   <locus>               Target locus: IGH, IGK, IGL, TRA, TRB, TRD, or TRG
   <max_jobs>            Maximum number of jobs to run in parallel
   <container_runtime>   Container runtime to use: 'docker' or 'singularity'
@@ -48,7 +52,7 @@ EXAMPLES:
   ./process_slurm.sh preprocess input_samples.txt IGH 5 docker /path/to/germline/refs --echo
 
 OUTPUT:
-  - Results are stored in the './results/<sample>/' directory
+  - Results are stored in the './results/<sample>/<locus>/' directory
   - Slurm logs are written to the './slog/' directory
 EOF
   exit 0
@@ -333,7 +337,8 @@ nextflow run ${NXF_SCRIPT} -offline \
   -profile            "${runtime}" \
   --sample_name       "${sample}" \
   --reads             "${pathToReads}" \
-  --outdir            "${sample_output_dir}" \
+  --outdir            "${RESULTS_ROOT}" \
+  --output_locus      "${sample_locus_dir}" \
   --locus             ${locus} \
   --species           Homo_sapiens \
   --germline_ref_dir  "${germline_ref_dir}" \

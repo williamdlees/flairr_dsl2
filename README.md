@@ -57,9 +57,23 @@ sample_01	/path/to/sample_01.fastq
 sample_02	/path/to/sample_02.fastq
 ```
 
+For `preprocess`, the second column is the input FASTQ path.
+
+For `annotate`, the same TSV format is accepted but the second column is ignored. Annotation input is derived from preprocessing output using:
+`./results/<sample>/<locus>/reads/<sample>_atleast-2.fasta`
+
 **Output Directories:**
 - `./results/`: Pipeline results organized by sample and locus
 - `./slog/`: Slurm job logs for monitoring and debugging
+
+### 1b. Direct Nextflow Input Modes for Annotation
+
+Both `annotate/main.nf` and `annotate_tr/main.nf` support:
+- Single-sample mode: `--reads` + `--sample_name`
+- TSV mode: `--input` using the same two-column format as preprocess
+
+In TSV mode for annotation workflows, the read-path column is validated but ignored. For each sample, input fasta is resolved from:
+`<outdir>/<sample>/<output_locus-or-locus>/reads/<sample>_atleast-2.fasta`
 
 ### 2. Project Summaries with `singularity_summaries.sh`
 

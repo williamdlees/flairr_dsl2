@@ -3,7 +3,7 @@
 
 process align_sets {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_AS") && filename.endsWith(".log")) ? "reports/${filename}" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_AS") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null}
 
 	input:
 		tuple val(name),path(reads)
@@ -16,7 +16,6 @@ process align_sets {
 		tuple val(name), path("out*"), optional: true
 
 	script:
-		name = params.sample_name
 		method = params.align_sets.method
 		bf = params.align_sets.bf
 		div = params.align_sets.div
