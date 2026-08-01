@@ -56,6 +56,14 @@ library(prestor)
 
 file_config = read.config(file.path(params$config_file))
 
+# Safety check to fail early with a clear message
+if (!is.list(file_config) || is.null(file_config$sample_files)) {
+  stop(paste0(
+    "Failed to parse TOML configuration from path: ", params$config_file, 
+    ". Current working directory is: ", getwd()
+  ))
+}
+
 str(file_config)
 
 get_log_file <- function(phase, config, sample, locus) {

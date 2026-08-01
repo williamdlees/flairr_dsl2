@@ -7,8 +7,8 @@ params.sample_name = null		// Sample name, to be used in reports and report file
 params.locus = "IGH"
 params.output_locus = null
 
-params.outdir = "${launchDir}/results"	// base output root; artifacts are written under <sample>/<locus>
 params.python_dir = "$baseDir/../python"
+params.presto_report_config_file = "$projectDir/flairr_logs.toml"
 
 
 include { filter_seq_quality } from '../modules/filter_seq_quality'
@@ -27,8 +27,10 @@ include { split_seq } from '../modules/split_seq'
 include { presto_report } from '../modules/presto_report'
 
 params.input = null				// TSV file with sample_name<TAB>file_path
+params.outdir = "$baseDir/../results"
 
 workflow {
+    println "Results will be saved to: ${params.outdir}"
 	def single_mode = params.reads && params.sample_name && !params.input
 	def table_mode = params.input && !params.reads && !params.sample_name
 
@@ -57,6 +59,7 @@ workflow {
 
 				tuple(sample, reads)
 			}
+
 
 	FastQC(read_pairs_ch)
 	
@@ -103,6 +106,6 @@ workflow {
 	split_seq(collapse_seq.out.output, parse_headers_collapse.out.ready)
 	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
 
-	presto_report(file("$baseDir/../presto_r/FLAIRR.Rmd", checkIfExists: true), parse_headers_split.out.output)
+	presto_report(file("$baseDir/../presto_r"), file(params.presto_report_config_file), parse_headers_split.out.output)
 }
 

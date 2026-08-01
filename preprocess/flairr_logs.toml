@@ -11,6 +11,6 @@ sample_files = [
     ["unique", "{sample}/{locus}/reports/{sample}_BC_UNIQUE_headers.tab"],
     ["unique_atleast2", "{sample}/{locus}/reports/{sample}_BC_ATLEAST2_headers.tab"],
     ["align", "{sample}/{locus}/alignment/{sample}_v_align_non-personalized.tsv"],
-    ["align_personalized", "{sample}/{locus}/alignment/{sample}_v_align_non-personalized.tsv"],
+    ["align_personalized", "{sample}/{locus}/alignment/{sample}_v_align_personalized.tsv"],
     ["clones", "{sample}/{locus}/clones/{sample}_{locus}_clone_freqs.csv"],
 ]
