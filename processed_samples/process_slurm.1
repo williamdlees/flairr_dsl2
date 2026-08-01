@@ -28,6 +28,15 @@ The pipeline command to execute. Must be either:
 .I input_fofn
 Path to a tab-separated file where each line contains:
 .B sample_name<TAB>fastq_path_name
+.br
+For
+.B preprocess
+, the second column is used as the input FASTQ path.
+.br
+For
+.B annotate
+, the second column is ignored; input FASTA is resolved as:
+.B ./results/${sample}/${locus}/reads/${sample}_atleast-2.fasta
 .TP
 .I locus
 Target immunological locus. Valid values are:

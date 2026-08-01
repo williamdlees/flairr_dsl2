@@ -12,9 +12,9 @@ process collapse_annotations {
 		val alignment_suffix
 
 	output:
-		path("${outfile}" + "passed.tsv"), emit: output
-		path("${outfile}" + "failed*") optional true
-		path(".command.out") optional true
+		path("*passed.tsv"), emit: output
+		path("*failed*"), optional: true
+		path(".command.out"), optional: true
 
 	script:
 		name = params.sample_name

@@ -8,10 +8,9 @@ process cluster_sets {
 
 	output:
 		tuple val(name),path("*_cluster-pass.fastq"), emit: output
-		tuple val(name),path("*_cluster-fail.fastq") optional true
+		tuple val(name),path("*_cluster-fail.fastq"), optional: true
 
 	script:
-		name = params.sample_name
 		method = params.cluster_sets.method
 		failed = params.cluster_sets.failed
 		nproc = params.cluster_sets.nproc
@@ -41,16 +40,19 @@ process cluster_sets {
 		barcode_field = (barcode_field.size==2) ? barcode_field : [barcode_field[0],barcode_field[0]]
 
 		def args_values = [];
-		[method, failed, cluster_field, ident, length, prefix, cluster_tool, cluster_exec, set_field, start, end, barcode_field].transpose().each { m, f, cf, i, l, p, ct, ce, sf, s, e, bf -> {
-			f = (f=="true") ? "--failed" : ""
-			p = (p=="") ? "" : "--prefix ${p}" 
-			ce = (ce=="") ? "" : "--exec ${ce}" 
-			sf = (m=="set") ? "-f ${sf}" : ""
-			s = (m=="barcode") ? "" : "--start ${s}" 
-			e = (m=="barcode") ? "" : (e=="") ? "" : "--end ${e}" 
-			bf = (m=="barcode") ? "-f ${bf}" : ""
-			args_values.add("${m} ${f} -k ${cf} --ident ${i} --length ${l} ${p} --cluster ${ct} ${ce} ${sf} ${s} ${e} ${bf}")
-		}}
+		
+		[method, failed, cluster_field, ident, length, prefix, cluster_tool, cluster_exec, set_field, start, end, barcode_field]
+			.transpose()
+			.each { m, f, cf, i, l, p, ct, ce, sf, s, e, bf ->
+				f = (f=="true") ? "--failed" : ""
+				p = (p=="") ? "" : "--prefix ${p}" 
+				ce = (ce=="") ? "" : "--exec ${ce}" 
+				sf = (m=="set") ? "-f ${sf}" : ""
+				s = (m=="barcode") ? "" : "--start ${s}" 
+				e = (m=="barcode") ? "" : (e=="") ? "" : "--end ${e}" 
+				bf = (m=="barcode") ? "-f ${bf}" : ""
+				args_values.add("${m} ${f} -k ${cf} --ident ${i} --length ${l} ${p} --cluster ${ct} ${ce} ${sf} ${s} ${e} ${bf}")
+			}
 
 
 		if(mate=="pair"){

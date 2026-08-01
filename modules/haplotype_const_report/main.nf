@@ -3,23 +3,21 @@
 
 process haplotype_const_report {
 
-	publishDir "${params.outdir}/genotype_report", mode: 'copy'
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> "${name}/${params.output_locus ?: params.locus}/genotype_report/${filename}"}
 	
 	input:
-		path(passAlignmentFile)
+		tuple val(name), path(passAlignmentFile)
 		path(vdj_reference)
 		path(python_dir)
-		val(ready)		
+		tuple val(name_ready), val(ready)		
 
 	output:
-		path "*_haplotype_const_report*.csv", optional:true
-		path "*_haplotype_const_report*.html", optional:true
-		path "*_haplotype_const_report.log"
-		val(true), emit: ready
+		tuple val(name), path("*_haplotype_const_report*.csv"), optional:true
+		tuple val(name), path("*_haplotype_const_report*.html"), optional:true
+		tuple val(name), path("*_haplotype_const_report.log")
+		tuple val(name), val(true), emit: ready
 
 	script:
-		name = params.sample_name
-
 		if (params.locus == "IGH") {
         """
     	python3 ${python_dir}/haplotype_const.py \\

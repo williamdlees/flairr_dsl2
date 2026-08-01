@@ -26,6 +26,11 @@ ARGUMENTS
        input_fofn
               Path to a tab-separated file where each line contains: sample_name<TAB>fastq_path_name
 
+              For preprocess, the second column is used as the input FASTQ path.
+
+              For annotate, the second column is ignored; input FASTA is resolved as:
+              ./results/${sample}/${locus}/reads/${sample}_atleast-2.fasta
+
        locus  Target immunological locus. Valid values are: IGH, IGK, IGL, TRA, TRB, TRD, TRG
 
        max_jobs

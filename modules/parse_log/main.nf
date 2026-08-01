@@ -2,7 +2,7 @@
 
 process parse_log {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*table.tab$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*table.tab$/) "${name}/${params.output_locus ?: params.locus}/reports/$filename"}
 
 	input:
 		 tuple val(name), path(log_file)

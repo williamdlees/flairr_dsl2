@@ -20,7 +20,7 @@ All computational processes run within containers to ensure reproducibility and 
 
 ## Core Workflow
 
-### 1. Sample Processing with `process_slurm.sh`
+### 1a. Sample Processing with `process_slurm.sh`
 
 The main entry point is the `process_slurm.sh` script, which orchestrates batch processing of repertoire samples. 
 
@@ -57,9 +57,23 @@ sample_01	/path/to/sample_01.fastq
 sample_02	/path/to/sample_02.fastq
 ```
 
+For `preprocess`, the second column is the input FASTQ path.
+
+For `annotate`, the same TSV format is accepted but the second column is ignored. Annotation input is derived from preprocessing output using:
+`./results/<sample>/<locus>/reads/<sample>_atleast-2.fasta`
+
 **Output Directories:**
 - `./results/`: Pipeline results organized by sample and locus
 - `./slog/`: Slurm job logs for monitoring and debugging
+
+### 1b. Direct Nextflow Input Modes for Annotation
+
+Alternatively, nextflow can be called directly. The nextflow preprocess and annotation scripts support:
+- Single-sample mode: `--reads` + `--sample_name`
+- TSV mode: `--input` using the same two-column format as process_slurm.sh.
+
+In TSV mode for annotation workflows, the read-path column is validated but ignored. For each sample, input fasta is resolved from:
+`<outdir>/<sample>/<output_locus-or-locus>/reads/<sample>_atleast-2.fasta`
 
 ### 2. Project Summaries with `singularity_summaries.sh`
 

@@ -1,14 +1,16 @@
 // FLAIRR-seq workflow
 
-// these two params must be specified on the command line
-params.reads = ""			// FASTA file containing the reads
-params.sample_name = ""		// Sample name, to be used in reports and report filenames
+// single-sample mode params
+params.reads = null			// FASTA file containing the reads
+params.sample_name = null		// Sample name, to be used in reports and report filenames
+params.input = null			// TSV with sample_name<TAB>ignored_read_path
 
 // modify these params to meet your requirements
 params.species = "Homo_sapiens"
 params.locus = "IGH"
+params.output_locus = null
 params.germline_ref_dir = "$baseDir/../../reference"
-params.outdir = "$baseDir/../results"
+params.outdir = "${launchDir}/results"
 //params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
 params.haplotype_genes = "IGHJ6"
 
@@ -36,12 +38,44 @@ include { haplotype_const_report } from '../modules/haplotype_const_report'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
-	seqs = channel.fromPath(params.reads)
-	
-	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
-	align_v1(igblast_combo1.out.output, params.v_ref, 'non-personalized', params.python_dir)
+	def output_locus = params.output_locus ?: params.locus
+	def single_mode = params.reads && params.sample_name && !params.input
+	def table_mode = params.input && !params.reads && !params.sample_name
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, "true")
+	if (!single_mode && !table_mode) {
+		error "Specify either --reads and --sample_name, or --input (TSV: sample_name<TAB>ignored_read_path)."
+	}
+
+	def seqs = single_mode \
+		? channel
+			.fromPath(params.reads, checkIfExists: true)
+			.map { reads -> tuple(params.sample_name.toString(), reads) }
+		: channel
+			.fromPath(params.input, checkIfExists: true)
+			.splitCsv(header: false, sep: '\t')
+			.filter { row -> row && row.size() > 0 && row[0].toString().trim() && !row[0].toString().trim().startsWith('#') }
+			.map { row ->
+				if (row.size() < 2) {
+					error "Invalid --input row: ${row}. Expected sample_name<TAB>read_path"
+				}
+				def sample = row[0].toString().trim()
+				def sample_reads = file(params.outdir)
+					.resolve(sample)
+					.resolve(output_locus)
+					.resolve("reads")
+					.resolve("${sample}_atleast-2.fasta")
+				tuple(sample, file(sample_reads.toString(), checkIfExists: true))
+			}
+
+	def ref_v_ch = seqs.map { name, reads_path -> tuple(name, file(params.v_ref, checkIfExists: true)) }
+	def ref_d_ch = seqs.map { name, reads_path -> tuple(name, file(params.d_ref, checkIfExists: true)) }
+	def ref_j_ch = seqs.map { name, reads_path -> tuple(name, file(params.j_ref, checkIfExists: true)) }
+	def first_ready_ch = seqs.map { name, reads_path -> tuple(name, true) }
+
+	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm)
+	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
+
+	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
 	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
 
