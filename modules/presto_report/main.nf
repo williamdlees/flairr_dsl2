@@ -14,13 +14,20 @@ process presto_report {
 	script:
 		def locus = params.output_locus ?: params.locus
         def output_file = "${name}.pdf"
-		def s3_target = "${params.outdir}/${name}/${locus}/"
 
-		"""
-		mkdir -p results/${name}/${locus}
-		s5cmd cp "${s3_target}**/*" "./results/${name}/${locus}/"
-		R -e "rmarkdown::render(file.path(getwd(), '${script_dir}', 'FLAIRR.Rmd'), params=list(data='../results', sample='${name}', locus='${locus}', config_file='../${report_config_file}'), knit_root_dir=file.path(getwd(), 'presto_r'), output_dir=getwd(), output_file='${output_file}')"
-		"""
+		if (params.outdir.startsWith('s3://')) {
+			def s3_target = "${params.outdir}/${name}/${locus}/"
 
+			"""
+			mkdir -p results/${name}/${locus}
+			s5cmd cp "${s3_target}**/*" "./results/${name}/${locus}/"
+			R -e "rmarkdown::render(file.path(getwd(), '${script_dir}', 'FLAIRR.Rmd'), params=list(data='../results', sample='${name}', locus='${locus}', config_file='../${report_config_file}'), knit_root_dir=file.path(getwd(), 'presto_r'), output_dir=getwd(), output_file='${output_file}')"
+			"""
+		} else {
+			"""
+			RESULTS_PATH=\$(readlink -f "${params.outdir}")
+			R -e "rmarkdown::render(file.path(getwd(), '${script_dir}', 'FLAIRR.Rmd'), params=list(data='\$RESULTS_PATH', sample='${name}', locus='${locus}', config_file='../${report_config_file}'), knit_root_dir=file.path(getwd(), 'presto_r'), output_dir=getwd(), output_file='${output_file}')"
+			"""
+		}
 }
 
