@@ -14,10 +14,10 @@ process igblast_combo {
 
 	output:
 		tuple val(name), path("*.{out,tsv}"), emit: output
-		tuple val(name), path(ref_v_path.name.endsWith('.db') ? ref_v_path.name : "${ref_v_path.getSimpleName()}.db"), emit: db_v
-        tuple val(name), path(ref_d_path.name.endsWith('.db') ? ref_d_path.name : "${ref_d_path.getSimpleName()}.db"), emit: db_d
-        tuple val(name), path(ref_j_path.name.endsWith('.db') ? ref_j_path.name : "${ref_j_path.getSimpleName()}.db"), emit: db_j
-        tuple val(name), path(ref_c_path.name.endsWith('.db') ? ref_c_path.name : "${ref_c_path.getSimpleName()}.db"), emit: db_c		
+		tuple val(name), path("v.db*"), emit: db_v
+		tuple val(name), path("d.db*"), emit: db_d
+		tuple val(name), path("j.db*"), emit: db_j
+		tuple val(name), path("c.db*"), emit: db_c
 		tuple val(name), path("consolidated_ref.fasta"), emit: consolidated_ref
 
 	script:
@@ -46,10 +46,13 @@ process igblast_combo {
 
 		paths=("${ref_v_path}" "${ref_d_path}" "${ref_j_path}" "${ref_c_path}")
 		echo \$paths
+		outnames=("v.db" "d.db" "j.db" "c.db")
 		db_list=()
 
 		# Loop through each item in the paths array
-		for item in "\${paths[@]}"; do		
+		for i in "\${!paths[@]}"; do
+			item="\${paths[i]}"
+			outname="\${outnames[i]}"
 			# Get the file extension in lowercase
 			extension="\${item##*.}"
 			extension="\${extension,,}"
@@ -62,17 +65,14 @@ process igblast_combo {
 					echo -e ">XXX\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n" > "\$item"
 				fi
 
-				# Get the base name and append .db
-				simple="\${item##*/}"
-				base_name="\${simple%.*}"
-				ddb="\${base_name}.db"
 				python3 "${python_dir}/degap.py" \$item germline.fasta
-				touch \${ddb}
-				makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out \${ddb}
+				touch \${outname}
+				makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out \${outname}
 
-				db_list+=("\$ddb")
+				db_list+=("\$outname")
 			else
 				db_list+=("\$item")
+				cp -r "\$item" "\${outname}"
 			fi
 		done	
 
