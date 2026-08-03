@@ -66,14 +66,14 @@ workflow {
 	def ref_j_ch = seqs.map { name, reads_path -> tuple(name, file(params.j_ref, checkIfExists: true)) }
 	def first_ready_ch = seqs.map { name, reads_path -> tuple(name, true) }
 
-	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm)
+	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
 
 	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
 	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
 
-	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
+	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	def define_ready_ch = define_clones.out.output.map { name, clone_file -> tuple(name, true) }
