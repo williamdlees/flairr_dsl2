@@ -9,7 +9,8 @@ process haplotype_const_report {
 		tuple val(name), path(passAlignmentFile)
 		path(vdj_reference)
 		path(python_dir)
-		tuple val(name_ready), val(ready)		
+		tuple val(name_ready), val(ready)
+		path(threshold_file)
 
 	output:
 		tuple val(name), path("*_haplotype_const_report*.csv"), optional:true
@@ -23,7 +24,7 @@ process haplotype_const_report {
     	python3 ${python_dir}/haplotype_const.py \\
 			${passAlignmentFile} \\
 			${vdj_reference} \\
-			${moduleDir}/allele_threshold_table_ogrdb.tsv \\
+			${threshold_file} \\
 			${name}_haplotype_const_report.csv > ${name}_haplotype_const_report.log \\
 			--plot
         """

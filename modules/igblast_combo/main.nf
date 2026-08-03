@@ -10,13 +10,14 @@ process igblast_combo {
 		path(ref_c_path)
 		path auxiliary_data
 		path custom_internal_data
+		path python_dir
 
 	output:
 		tuple val(name), path("*.{out,tsv}"), emit: output
-		tuple val(name), path(ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'), emit: db_v
-		tuple val(name), path(ref_d_path.getExtension() == '.db' ? ref_d_path : ref_d_path.getSimpleName() + '.db'), emit: db_d
-		tuple val(name), path(ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'), emit: db_j
-		tuple val(name), path(ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'), emit: db_c
+		tuple val(name), path(ref_v_path.name.endsWith('.db') ? ref_v_path.name : "${ref_v_path.getSimpleName()}.db"), emit: db_v
+        tuple val(name), path(ref_d_path.name.endsWith('.db') ? ref_d_path.name : "${ref_d_path.getSimpleName()}.db"), emit: db_d
+        tuple val(name), path(ref_j_path.name.endsWith('.db') ? ref_j_path.name : "${ref_j_path.getSimpleName()}.db"), emit: db_j
+        tuple val(name), path(ref_c_path.name.endsWith('.db') ? ref_c_path.name : "${ref_c_path.getSimpleName()}.db"), emit: db_c		
 		tuple val(name), path("consolidated_ref.fasta"), emit: consolidated_ref
 
 	script:
@@ -34,11 +35,7 @@ process igblast_combo {
 		db_j_path = ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'
 		db_c_path = ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'
 
-		ref_v_path = ref_v_path.toRealPath()
-		ref_d_path = ref_d_path.toRealPath()
-		ref_j_path = ref_j_path.toRealPath()
-		ref_c_path = ref_c_path.toRealPath()
-		
+
 		
 		"""
 		if [[ -f "${ref_d_path}" ]]; then
@@ -69,7 +66,7 @@ process igblast_combo {
 				simple="\${item##*/}"
 				base_name="\${simple%.*}"
 				ddb="\${base_name}.db"
-				python3 "${baseDir}/../python/degap.py" \$item germline.fasta
+				python3 "${python_dir}/degap.py" \$item germline.fasta
 				touch \${ddb}
 				makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out \${ddb}
 
