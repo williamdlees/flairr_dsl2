@@ -26,7 +26,7 @@ process presto_report {
 		} else {
 			"""
 			RESULTS_PATH=\$(readlink -f "${params.outdir}")
-			R -e "rmarkdown::render(file.path(getwd(), '${script_dir}', 'FLAIRR.Rmd'), params=list(data='\$RESULTS_PATH', sample='${name}', locus='${locus}', config_file='../${report_config_file}'), knit_root_dir=file.path(getwd(), 'presto_r'), output_dir=getwd(), output_file='${output_file}')"
+			R -e "rmarkdown::render(file.path(getwd(), '${script_dir}', 'FLAIRR.Rmd'), params=list(data='\$RESULTS_PATH', sample='${name}', locus='${locus}', config_file='${report_config_file}'), knit_root_dir=file.path(getwd(), 'presto_r'), output_dir=getwd(), output_file='${output_file}')"
 			"""
 		}
 }
