@@ -73,7 +73,13 @@ workflow {
 			}
 
 	def ref_v_ch = seqs.map { name, reads_path -> tuple(name, file(params.v_ref, checkIfExists: true)) }
-	def ref_d_ch = seqs.map { name, reads_path -> tuple(name, file(params.d_ref, checkIfExists: true)) }
+	def ref_d_ch = seqs.map { name, reads_path ->
+		def d_ref = file(params.d_ref)
+		if (!d_ref.exists()) {
+			log.warn "D reference not found: ${params.d_ref}; continuing with a placeholder reference."
+		}
+		tuple(name, d_ref)
+	}
 	def ref_j_ch = seqs.map { name, reads_path -> tuple(name, file(params.j_ref, checkIfExists: true)) }
 	def first_ready_ch = seqs.map { name, reads_path -> tuple(name, true) }
 
