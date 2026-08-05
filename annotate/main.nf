@@ -86,17 +86,26 @@ workflow {
 	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
-	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
-	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
+	def d_file_pers = ref_d_ch
 
-	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
+	if(params.locus == 'IGH' || params.locus == 'TRB' || params.locus == 'TRD')
+	{
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)
+		d_file_pers = tigger_d_call.out.personal_reference	
+	} else {
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_j_call.out.ready)
+	}
+
+	igblast_combo2(seqs, tigger_v_call.out.personal_reference, d_file_pers, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 
 	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	single_clone_representative(define_clones.out.output)
 
-	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
+	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, d_file_pers, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
 	haplotype_const_report(align_v2.out.annotations, params.vdj_ref, params.python_dir, haplotype_inference_report.out.ready, file(moduleDir + '/../modules/haplotype_const_report/allele_threshold_table_ogrdb.tsv'))
 	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_const_report.out.ready)	
 }

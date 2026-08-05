@@ -58,7 +58,12 @@ workflow {
 					.resolve(output_locus)
 					.resolve("reads")
 					.resolve("${sample}_atleast-2.fasta")
-				tuple(sample, file(sample_reads.toString(), checkIfExists: true))
+
+				if (!sample_reads.exists()) {
+					error "Input file does not exist: ${sample_reads.toUriString()}"
+				}	
+
+				tuple(sample, sample_reads)
 			}
 
 	def ref_v_ch = seqs.map { name, reads_path -> tuple(name, file(params.v_ref, checkIfExists: true)) }
@@ -75,11 +80,20 @@ workflow {
 	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
-	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
-	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
+	def d_file_pers = ref_d_ch
 
-	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
+	if(params.locus == 'IGH' || params.locus == 'TRB' || params.locus == 'TRD')
+	{
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)
+		d_file_pers = tigger_d_call.out.personal_reference	
+	} else {
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_j_call.out.ready)
+	}
+
+	igblast_combo2(seqs, tigger_v_call.out.personal_reference, d_file_pers, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	def define_ready_ch = define_clones.out.output.map { name, clone_file -> tuple(name, true) }

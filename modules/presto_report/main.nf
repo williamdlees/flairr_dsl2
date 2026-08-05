@@ -15,7 +15,8 @@ process presto_report {
         def output_file = "${name}.pdf"
 
 		if (params.outdir.startsWith('s3://')) {
-			def s3_target = "${params.outdir}/${name}/${locus}/"
+			def clean_outdir = params.outdir.replaceAll('/+', '/')
+			def s3_target = "${clean_outdir}${name}/${locus}/".replaceAll('s3:/', 's3://')
 
 			"""
 			mkdir -p results/${name}/${locus}
