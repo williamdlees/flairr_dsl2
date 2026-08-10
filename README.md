@@ -75,6 +75,45 @@ Alternatively, nextflow can be called directly. The nextflow preprocess and anno
 In TSV mode for annotation workflows, the read-path column is validated but ignored. For each sample, input fasta is resolved from:
 `<outdir>/<sample>/<output_locus-or-locus>/reads/<sample>_atleast-2.fasta`
 
+**Example Usage**
+
+**Preprocessing**
+```bash
+nextflow run /mnt/f/wsl_repos/flairr_dsl2/preprocess/main.nf \
+ -offline \
+ -w "/mnt/f/flairr_dsl2_tests/work" \
+ -profile "docker" \
+ --outdir /mnt/f/flairr_dsl2_tests/results \
+ --input "/mnt/f/flairr_dsl2_tests/samples/fofn_full.tsv" \
+ --locus IGH \
+ --species Homo_sapiens \
+ --germline_ref_dir "/mnt/f/flairr_germline_ref" \
+ --constant_region "IG" \
+ -with-report "/mnt/f/flairr_dsl2_tests/results/nextflow_IGH_preprocess.html" \
+ -resume
+```
+
+**Annotation**
+
+```bash
+nextflow run /mnt/f/wsl_repos/flairr_dsl2/annotate/main.nf \
+ -offline \
+ -w "/mnt/f/flairr_dsl2_tests/work" \
+ --outdir "/mnt/f/flairr_dsl2_tests/results" \
+ -profile "docker" \
+ --input "/mnt/f/flairr_dsl2_tests/samples/fofn_full.tsv" \
+ --locus IGH \
+ --species Homo_sapiens \
+ --germline_ref_dir "/mnt/f/flairr_germline_ref" \
+ --constant_region "IG" \
+ -with-report "/mnt/f/flairr_dsl2_tests/results/nextflow_IGH_annotate.html" \
+ -resume
+```
+
+The nextflow `aws-batch` executor is supported, for use with s3 storage and Fargate. 
+
+
+
 ### 2. Project Summaries with `singularity_summaries.sh`
 
 After all samples have been processed and annotated, generate project-wide summaries:
