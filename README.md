@@ -10,6 +10,23 @@ The FLAIRR DSL2 pipeline provides a comprehensive workflow for analyzing adaptiv
 - **Annotation**: V(D)J gene assignment, CDR3 identification, and repertoire analysis
 - **Summary Generation**: Project-wide statistics and visualizations
 
+### Changes in this release
+
+Nextflow syntax has been updated to conform to the more rigorous requirements of v26.0.4 and other recent releases.
+
+The nextflow preprocessing and annotation scripts will now accept a file of filenames as input, using the same format expected by `process_slurm.sh`, rather than a single file (single files can still be used). This means that jobs can be submitted locally under nextflow's management, rather than using the process_slurm script. Config for the local executor has been updated to include memory and CPU requirements for each process, to allow nextflow to manage resources efficiently when processing multiple samples. 
+
+Support for the aws-batch executor, using AWS Fargate, has been introduced. This enables processing in the cloud without the need for expensive shared storage, as all
+files, including work and intermediate files, can be stored in S3. The aws-batch executor should be regarded as experimental for the time being.
+
+BREAKING CHANGE: dummy FASTA files must now be included in the germline reference set for all loci that do not have D-genes. These should follow the same naming 
+convention as the other reference files, e.g. `Homo_sapiens_IGKD.fasta`. Suggested content for all these files is:
+
+```
+>XXX
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
+
 ## Architecture
 
 The pipeline is designed specifically for **Slurm-managed HPC environments** and supports containerized execution using either:
