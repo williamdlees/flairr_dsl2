@@ -3,8 +3,8 @@
 
 process annot_const {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-pass_with-const.tsv$/) "alignment/${name}_makedb_pass_inc_const_${alignment_suffix}.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_db-fail_with-const.tsv$/) "alignment/${name}_makedb_fail_inc_const_${alignment_suffix}.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> filename.endsWith("_db-pass_with-const.tsv") ? "alignment/${name}_makedb_pass_inc_const_${alignment_suffix}.tsv" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> filename.endsWith("_db-fail_with-const.tsv") ? "alignment/${name}_makedb_fail_inc_const_${alignment_suffix}.tsv" : null}
 	
 	input:
 		path(passFile)
@@ -14,8 +14,8 @@ process annot_const {
 		path(python_dir)
 
 	output:
-		path(outPassfile), emit: annotations
-		path(outFailFile) optional true 
+		path("*_db-pass_with-const.tsv"), emit: annotations
+		path("*_db-fail_with-const.tsv"), optional: true 
 
 	script:
         name = params.sample_name

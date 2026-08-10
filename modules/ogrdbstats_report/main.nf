@@ -1,25 +1,24 @@
 process ogrdbstats_report {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*pdf$/) "genotype_report/${name}_ogrdb_plots.pdf"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*csv$/) "genotype_report/${name}_ogrdb_stats.csv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*pdf$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_ogrdb_plots.pdf"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*csv$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_ogrdb_stats.csv"}
 
 	input:
-		path(airrFile)
-		path(germline_file)
-		path(v_germline_file)
+		tuple val(name), path(airrFile)
+		tuple val(name_germline), path(germline_file)
+		tuple val(name_v), path(v_germline_file)
 		val(chain)
 		val(haplotype_genes)
 		val(species)
-		val(ready)
+		tuple val(name_ready), val(ready)
 
 	output:
-		path "*pdf"
-		path "*csv"
-		val(true), emit: ready
+		tuple val(name), path("*pdf")
+		tuple val(name), path("*csv")
+		tuple val(name), val(true), emit: ready
 		
 	script:
 		// general params
-		name = params.sample_name
 		outname = airrFile.getBaseName() + "_ogrdb_stats.csv"
 		
 		haplotype = ""

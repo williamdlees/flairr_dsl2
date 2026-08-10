@@ -1,14 +1,16 @@
 // FLAIRR-seq workflow
 
-// these two params must be specified on the command line
-params.reads = ""			// FASTA file containing the reads
-params.sample_name = ""		// Sample name, to be used in reports and report filenames
+// single-sample mode params
+params.reads = null			// FASTA file containing the reads
+params.sample_name = null		// Sample name, to be used in reports and report filenames
+params.input = null			// TSV with sample_name<TAB>ignored_read_path
 
 // modify these params to meet your requirements
 params.species = "Homo_sapiens"
 params.locus = "IGH"
+params.output_locus = null
 params.germline_ref_dir = "$baseDir/../../reference"
-params.outdir = "$baseDir/../results"
+params.outdir = "${launchDir}/results"
 //params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
 params.haplotype_genes = "IGHJ6"
 
@@ -36,22 +38,74 @@ include { haplotype_const_report } from '../modules/haplotype_const_report'
 include { ogrdbstats_report } from '../modules/ogrdbstats_report'
 
 workflow {
-	seqs = channel.fromPath(params.reads)
-	
-	igblast_combo1(seqs, params.v_ref, params.d_ref, params.j_ref, params.c_ref, params.aux, params.ndm)
-	align_v1(igblast_combo1.out.output, params.v_ref, 'non-personalized', params.python_dir)
+	def output_locus = params.output_locus ?: params.locus
+	def single_mode = params.reads && params.sample_name && !params.input
+	def table_mode = params.input && !params.reads && !params.sample_name
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, "true")
-	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
-	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)	
+	if (!single_mode && !table_mode) {
+		error "Specify either --reads and --sample_name, or --input (TSV: sample_name<TAB>ignored_read_path)."
+	}
 
-	igblast_combo2(seqs, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm)
+	def seqs = single_mode \
+		? channel
+			.fromPath(params.reads, checkIfExists: true)
+			.map { reads -> tuple(params.sample_name.toString(), reads) }
+		: channel
+			.fromPath(params.input, checkIfExists: true)
+			.splitCsv(header: false, sep: '\t')
+			.filter { row -> row && row.size() > 0 && row[0].toString().trim() && !row[0].toString().trim().startsWith('#') }
+			.map { row ->
+				if (row.size() < 2) {
+					error "Invalid --input row: ${row}. Expected sample_name<TAB>read_path"
+				}
+				def sample = row[0].toString().trim()
+				def sample_reads = file(params.outdir)
+					.resolve(sample)
+					.resolve(output_locus)
+					.resolve("reads")
+					.resolve("${sample}_atleast-2.fasta")
+
+				if (!sample_reads.exists()) {
+					error "Input file does not exist: ${sample_reads.toUriString()}"
+				}	
+
+				tuple(sample, sample_reads)
+			}
+
+	def ref_v_ch = seqs.map { name, reads_path -> tuple(name, file(params.v_ref, checkIfExists: true)) }
+	def ref_d_ch = seqs.map { name, reads_path ->
+		def d_ref = file(params.d_ref)
+		if (!d_ref.exists()) {
+			log.warn "D reference not found: ${params.d_ref}; continuing with a placeholder reference."
+		}
+		tuple(name, d_ref)
+	}
+	def ref_j_ch = seqs.map { name, reads_path -> tuple(name, file(params.j_ref, checkIfExists: true)) }
+	def first_ready_ch = seqs.map { name, reads_path -> tuple(name, true) }
+
+	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm, params.python_dir)
+	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
+
+	def d_file_pers = ref_d_ch
+
+	if(params.locus == 'IGH' || params.locus == 'TRB' || params.locus == 'TRD')
+	{
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)
+		d_file_pers = tigger_d_call.out.personal_reference	
+	} else {
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_j_call.out.ready)
+	}
+
+	igblast_combo2(seqs, tigger_v_call.out.personal_reference, d_file_pers, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
 	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
 
 	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 	single_clone_representative(define_clones.out.output)
 
-	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
-	haplotype_const_report(align_v2.out.annotations, params.vdj_ref, params.python_dir, haplotype_inference_report.out.ready)
+	haplotype_inference_report(align_v2.out.annotations, tigger_v_call.out.personal_reference, d_file_pers, params.locus, params.haplotype_genes, single_clone_representative.out.ready)
+	haplotype_const_report(align_v2.out.annotations, params.vdj_ref, params.python_dir, haplotype_inference_report.out.ready, file(moduleDir + '/../modules/haplotype_const_report/allele_threshold_table_ogrdb.tsv'))
 	ogrdbstats_report(align_v2.out.annotations, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_const_report.out.ready)	
 }

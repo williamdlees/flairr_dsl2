@@ -2,19 +2,18 @@
 
 process single_clone_representative {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_rep-passed.tsv.*$/) "clones/${name}_clone_rep-passed.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*txt$/) "clones/${name}_clone_report.txt"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_clone_rep-passed.tsv.*$/) "${name}/${params.output_locus ?: params.locus}/clones/${name}_clone_rep-passed.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*txt$/) "${name}/${params.output_locus ?: params.locus}/clones/${name}_clone_report.txt"}
 	
 	input:
-		path(airrFile)
+		tuple val(name), path(airrFile)
 
 	output:
-		path("*_clone_rep-passed.tsv*"), emit: output
-		path("*txt")
-		val(true), emit: ready
+		tuple val(name), path("*_clone_rep-passed.tsv*"), emit: output
+		tuple val(name), path("*txt")
+		tuple val(name), val(true), emit: ready
 
 	script:
-		name = params.sample_name
 		outname = airrFile.toString() - '.tsv' +"_clone_rep-passed"
 		outfile = outname + ".tsv"
 

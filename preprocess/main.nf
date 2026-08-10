@@ -1,13 +1,14 @@
 // FLAIRR-seq preprocessing workflow
 
 
-// these two params must be specified on the command line
-params.reads = ""			// FASTQ file containing the reads
-params.sample_name = ""		// Sample name, to be used in reports and report filenames
+// single-sample mode params
+params.reads = null			// FASTQ file containing the reads
+params.sample_name = null		// Sample name, to be used in reports and report filenames
 params.locus = "IGH"
+params.output_locus = null
 
-params.outdir = "$baseDir/../results"
 params.python_dir = "$baseDir/../python"
+params.presto_report_config_file = "$projectDir/flairr_logs.toml"
 
 
 include { filter_seq_quality } from '../modules/filter_seq_quality'
@@ -25,9 +26,41 @@ include { collapse_seq } from '../modules/collapse_seq'
 include { split_seq } from '../modules/split_seq'
 include { presto_report } from '../modules/presto_report'
 
+params.input = null				// TSV file with sample_name<TAB>file_path
+params.outdir = "$baseDir/../results"
 
 workflow {
-	read_pairs_ch = channel.fromFilePairs(params.reads, checkIfExists: true)
+    println "Results will be saved to: ${params.outdir}"
+	def single_mode = params.reads && params.sample_name && !params.input
+	def table_mode = params.input && !params.reads && !params.sample_name
+
+	if (!single_mode && !table_mode) {
+		error "Specify either --reads and --sample_name, or --input (TSV: sample_name<TAB>file_path)."
+	}
+
+	read_pairs_ch = single_mode \
+		? channel
+			.fromFilePairs(params.reads, checkIfExists: true)
+			.map { ignored_name, reads -> tuple(params.sample_name.toString(), reads) }
+		: channel
+			.fromPath(params.input, checkIfExists: true)
+			.splitCsv(header: false, sep: '\t')
+			.filter { row -> row && row.size() > 0 && row[0].toString().trim() && !row[0].toString().trim().startsWith('#') }
+			.map { row ->
+				if (row.size() < 2) {
+					error "Invalid --input row: ${row}. Expected sample_name<TAB>file_path"
+				}
+
+				def sample = row[0].toString().trim()
+				def read_spec = row[1].toString().trim()
+				def reads = read_spec.contains(',')
+					? read_spec.split(',').collect { file(it.trim(), checkIfExists: true) }
+					: file(read_spec, checkIfExists: true)
+
+				tuple(sample, reads)
+			}
+
+
 	FastQC(read_pairs_ch)
 	
 	filter_seq_quality(read_pairs_ch, FastQC.out.ready)
@@ -73,6 +106,6 @@ workflow {
 	split_seq(collapse_seq.out.output, parse_headers_collapse.out.ready)
 	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
 
-	presto_report(channel.fromPath("$baseDir/../presto_r/FLAIRR.Rmd"), parse_headers_split.out.output)
+	presto_report(file("$baseDir/../presto_r"), file(params.presto_report_config_file), parse_headers_split.out.output)
 }
 

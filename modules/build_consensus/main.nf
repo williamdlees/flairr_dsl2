@@ -1,8 +1,8 @@
 
 
 process build_consensus {
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_BC.*$/) "reports/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "failed_reads/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_BC") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_consensus-fail.fastq$/) "${name}/${params.output_locus ?: params.locus}/failed_reads/$filename"}
 	
 	input:
 		tuple val(name), path(reads)
@@ -10,10 +10,9 @@ process build_consensus {
 	output:
 		tuple val(name), path("*_consensus-pass.fastq"), emit: output
 		tuple val(name), path("${name}_BC*"), emit: log_file
-		tuple val(name), path("*_consensus-fail.fastq") optional true
+		tuple val(name), path("*_consensus-fail.fastq"), optional: true
 
 	script:
-		name = params.sample_name
 		mate = params.mate
 		failed = params.build_consensus.failed
 		nproc = params.build_consensus.nproc
@@ -64,7 +63,7 @@ process build_consensus {
 
 
 boolean isCollectionOrArray_bc(object) {    
-    [Collection, Object[]].any { it.isAssignableFrom(object.getClass()) }
+    (object instanceof Collection) || (object != null && object.getClass().isArray())
 }
 
 def args_creator_bc(barcode_field, primer_field, act, copy_field, mincount, minqual, minfreq, maxerror, prcons, maxgap, maxdiv, dep){
@@ -82,18 +81,23 @@ def args_creator_bc(barcode_field, primer_field, act, copy_field, mincount, minq
     	maxdiv = (isCollectionOrArray_bc(maxdiv)) ? maxdiv : [maxdiv,maxdiv]
     	dep = (isCollectionOrArray_bc(dep)) ? dep : [dep,dep]
     	args_values = []
-        [barcode_field,primer_field,act,copy_field,mincount,minqual,minfreq,maxerror,prcons,maxgap,maxdiv,dep].transpose().each { bf,pf,a,cf,mc,mq,mf,mr,pc,mg,md,d -> {
-            bf = (bf=="") ? "" : "--bf ${bf}"
-            pf = (pf=="") ? "" : "--pf ${pf}" 
-            a = (a=="none") ? "" : "--act ${a}" 
-            cf = (cf=="") ? "" : "--cf ${cf}" 
-            mr = (mr=="none") ? "" : "--maxerror ${mr}" 
-            pc = (pc=="none") ? "" : "--prcons ${pc}" 
-            mg = (mg=="none") ? "" : "--maxgap ${mg}" 
-            md = (md=="none") ? "" : "--maxdiv ${md}" 
-            d = (d=="true") ? "--dep" : "" 
-            args_values.add("${bf} ${pf} ${a} ${cf} -n ${mc} -q ${mq} --freq ${mf} ${mr} ${pc} ${mg} ${md} ${d}")
-        }}
+
+        [barcode_field,primer_field,act,copy_field,mincount,minqual,minfreq,maxerror,prcons,maxgap,maxdiv,dep]
+			.transpose()
+			.each { bf,pf,a,cf,mc,mq,mf,mr,pc,mg,md,d ->
+
+				bf = (bf=="") ? "" : "--bf ${bf}"
+				pf = (pf=="") ? "" : "--pf ${pf}" 
+				a = (a=="none") ? "" : "--act ${a}" 
+				cf = (cf=="") ? "" : "--cf ${cf}" 
+				mr = (mr=="none") ? "" : "--maxerror ${mr}" 
+				pc = (pc=="none") ? "" : "--prcons ${pc}" 
+				mg = (mg=="none") ? "" : "--maxgap ${mg}" 
+				md = (md=="none") ? "" : "--maxdiv ${md}" 
+				d = (d=="true") ? "--dep" : "" 
+
+				args_values.add("${bf} ${pf} ${a} ${cf} -n ${mc} -q ${mq} --freq ${mf} ${mr} ${pc} ${mg} ${md} ${d}")
+			}		
     }else{
         barcode_field = (barcode_field=="") ? "" : "--bf ${barcode_field}"
         primer_field = (primer_field=="") ? "" : "--pf ${primer_field}" 

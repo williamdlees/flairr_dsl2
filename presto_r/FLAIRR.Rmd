@@ -56,9 +56,17 @@ library(prestor)
 
 file_config = read.config(file.path(params$config_file))
 
+# Safety check to fail early with a clear message
+if (!is.list(file_config) || is.null(file_config$sample_files)) {
+  stop(paste0(
+    "Failed to parse TOML configuration from path: ", params$config_file, 
+    ". Current working directory is: ", getwd()
+  ))
+}
+
 str(file_config)
 
-get_log_file <- function(phase, config, sample) {
+get_log_file <- function(phase, config, sample, locus) {
   phase_found <- FALSE
   template_path <- NULL
 
@@ -66,6 +74,7 @@ get_log_file <- function(phase, config, sample) {
     if (element[1] == phase) {
       phase_found <- TRUE
       template = stri_replace_all_fixed(element[2], "{sample}", sample)
+      template = stri_replace_all_fixed(template, "{locus}", locus)
       template_path <- file.path(params$data, template)
       matched_files <- Sys.glob(template_path)
 
@@ -80,14 +89,14 @@ get_log_file <- function(phase, config, sample) {
 }
 
 # Get log files and their diagnostic information
-quality_result = get_log_file('filterSeq_quality', file_config, params$sample)
-length_result = get_log_file('filterSeq_length', file_config, params$sample)
-primer_result_1 = get_log_file('maskPrimer_C', file_config, params$sample)
-primer_result_2 = get_log_file('maskPrimer_V', file_config, params$sample)
-align_result = get_log_file('alignSets', file_config, params$sample)
-total_result = get_log_file('total', file_config, params$sample)
-unique_result = get_log_file('unique', file_config, params$sample)
-atleast2_result = get_log_file('unique_atleast2', file_config, params$sample)
+quality_result = get_log_file('filterSeq_quality', file_config, params$sample, params$locus)
+length_result = get_log_file('filterSeq_length', file_config, params$sample, params$locus)
+primer_result_1 = get_log_file('maskPrimer_C', file_config, params$sample, params$locus)
+primer_result_2 = get_log_file('maskPrimer_V', file_config, params$sample, params$locus)
+align_result = get_log_file('alignSets', file_config, params$sample, params$locus)
+total_result = get_log_file('total', file_config, params$sample, params$locus)
+unique_result = get_log_file('unique', file_config, params$sample, params$locus)
+atleast2_result = get_log_file('unique_atleast2', file_config, params$sample, params$locus)
 
 # Extract file paths for backward compatibility
 quality_log_file = quality_result$file

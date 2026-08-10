@@ -7,11 +7,12 @@ params.sample_name = ""		// Sample name, to be used in reports and report filena
 // modify these params to meet your requirements
 params.species = "Homo_sapiens"
 params.locus = "IGH"
+params.output_locus = null
 //params.haplotype_genes = "IGHJ6,IGHD2-21,IGHD2-8"
 params.haplotype_genes = "IGHJ6"
 
 params.germline_ref_dir = "$baseDir/../../reference"
-params.outdir = "$baseDir/../results"
+params.outdir = "${launchDir}/results"
 
 params.Undocumented_Alleles.germline_min = 1  // for test data
 
@@ -41,7 +42,15 @@ include { vdjbase_genotype_report } from '../modules/vdjbase_genotype_report'
 
 
 workflow {
-	seqs = channel.fromPath(params.reads)
+	if (!params.sample_name) {
+		error "Please provide --sample_name"
+	}
+	def output_locus = params.output_locus ?: params.locus
+	params.outdir = file(params.outdir).resolve(params.sample_name).resolve(output_locus).toString()
+
+	def seqs = channel.fromPath(params.reads)
+	def seqs_keyed = seqs.map { reads -> tuple(params.sample_name.toString(), reads) }
+	def infer_ready_ch = seqs_keyed.map { name, reads_path -> tuple(name, true) }
 
 	make_blast_db_first_v(params.v_ref, true)
 	make_blast_db_first_d(params.d_ref, make_blast_db_first_v.out.ready)
@@ -64,24 +73,24 @@ workflow {
 
 	collapse_annotations_second(makedb_second.out.annotations, "v-personalised-1")	
 	create_germlines_first(collapse_annotations_second.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "false", 'v-personalised-1')
-	define_clones(create_germlines_first.out.output)
-	create_germlines_second(define_clones.out.output, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "true", 'v-personalised-2')
-	single_clone_representative(create_germlines_second.out.output)
+	define_clones(create_germlines_first.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) })
+	create_germlines_second(define_clones.out.output.map { name, airrFile -> airrFile }, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "true", 'v-personalised-2')
+	single_clone_representative(create_germlines_second.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) })
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.j_ref, "true")
+	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.j_ref, infer_ready_ch)
 	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.d_ref, tigger_j_call.out.ready)	
 	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.v_ref, tigger_d_call.out.ready)	
 	
-	make_blast_db_third_v(tigger_v_call.out.personal_reference, tigger_v_call.out.ready)
-	make_blast_db_third_d(tigger_d_call.out.personal_reference, make_blast_db_third_v.out.ready)
-	make_blast_db_third_j(tigger_j_call.out.personal_reference, make_blast_db_third_d.out.ready)
+	make_blast_db_third_v(tigger_v_call.out.personal_reference.map { name, fasta -> fasta }, tigger_v_call.out.ready.map { name, ready -> ready })
+	make_blast_db_third_d(tigger_d_call.out.personal_reference.map { name, fasta -> fasta }, make_blast_db_third_v.out.ready)
+	make_blast_db_third_j(tigger_j_call.out.personal_reference.map { name, fasta -> fasta }, make_blast_db_third_d.out.ready)
 	
 	igblast_third(seqs, make_blast_db_third_v.out.blastdb, make_blast_db_third_d.out.blastdb, make_blast_db_third_j.out.blastdb, make_blast_db_first_c.out.blastdb, params.aux, params.ndm)
-	makedb_third(seqs, igblast_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, tigger_j_call.out.personal_reference, params.c_ref, 'final')
+	makedb_third(seqs, igblast_third.out.output, tigger_v_call.out.personal_reference.map { name, fasta -> fasta }, tigger_d_call.out.personal_reference.map { name, fasta -> fasta }, tigger_j_call.out.personal_reference.map { name, fasta -> fasta }, params.c_ref, 'final')
 
 	collapse_annotations_third(makedb_third.out.annotations, "final")	
 	
-	haplotype_inference_report(collapse_annotations_third.out.output, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, "true")
-	ogrdbstats_report(collapse_annotations_third.out.output, makedb_first.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)
-	vdjbase_genotype_report(collapse_annotations_second.out.output, collapse_annotations_third.out.output, tigger_v_call.out.genotype_report, tigger_d_call.out.genotype_report, tigger_j_call.out.genotype_report, haplotype_inference_report.out.deletions, "true")
+	haplotype_inference_report(collapse_annotations_third.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, infer_ready_ch)
+	ogrdbstats_report(collapse_annotations_third.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }, makedb_first.out.consolidated_ref.map { ref -> tuple(params.sample_name.toString(), ref) }, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)
+	vdjbase_genotype_report(collapse_annotations_second.out.output, collapse_annotations_third.out.output, tigger_v_call.out.genotype_report.map { name, report -> report }, tigger_d_call.out.genotype_report.map { name, report -> report }, tigger_j_call.out.genotype_report.map { name, report -> report }, haplotype_inference_report.out.deletions.map { name, report -> report }, "true")
 }

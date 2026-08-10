@@ -3,24 +3,23 @@ process haplotype_inference_report {
 	// means that there aren't any single-assigned records in the set that can be genotyped with the siigned gene
 	// to avoid this problem, don't do D haplotying with small test datasets
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "genotype_report/${name}_haplotype.tsv"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "genotype_report/${name}_binomDel.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_haplotype.tsv$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_haplotype.tsv"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_binomDel.tsv"}
 	
 	input:
-		path(airrFile)
-		path(v_germline)
-		path(d_germline)
+		tuple val(name), path(airrFile)
+		tuple val(name_v), path(v_germline)
+		tuple val(name_d), path(d_germline)
 		val(locus)
 		val(haplotype_genes)
-		val(ready)
+		tuple val(name_ready), val(ready)
 
 	output:
-		path("*_haplotype.tsv") optional true
-		path("*_binomDel.tsv"), emit: deletions optional true
-		val(true), emit: ready		
+		tuple val(name), path("*_haplotype.tsv"), optional: true
+		tuple val(name), path("*_binomDel.tsv"), emit: deletions, optional: true
+		tuple val(name), val(true), emit: ready		
 
 	script:
-		name = params.sample_name
 		v_germline = v_germline.name.startsWith('NO_FILE') ? "" : "${v_germline}"
 		d_germline = d_germline.name.startsWith('NO_FILE') ? "" : "${d_germline}"
 		outname = airrFile.getBaseName() + "_haplotype.tsv"

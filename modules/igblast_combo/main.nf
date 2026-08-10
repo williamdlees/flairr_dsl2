@@ -3,21 +3,22 @@
 process igblast_combo {
 
 	input:
-		path(fastaFile)
-		path(ref_v_path)
-		path(ref_d_path)
-		path(ref_j_path,)
+		tuple val(name), path(fastaFile)
+		tuple val(name_v), path(ref_v_path)
+		tuple val(name_d), path(ref_d_path)
+		tuple val(name_j), path(ref_j_path)
 		path(ref_c_path)
 		path auxiliary_data
 		path custom_internal_data
+		path python_dir
 
 	output:
-		path(outfile), emit: output
-		path(db_v_path), emit: db_v
-		path(db_d_path), emit: db_d
-		path(db_j_path), emit: db_j
-		path(db_c_path), emit: db_c
-		path("${reference_set}"), emit: consolidated_ref
+		tuple val(name), path("*.{out,tsv}"), emit: output
+		tuple val(name), path("v.db*"), emit: db_v
+		tuple val(name), path("d.db*"), emit: db_d
+		tuple val(name), path("j.db*"), emit: db_j
+		tuple val(name), path("c.db*"), emit: db_c
+		tuple val(name), path("consolidated_ref.fasta"), emit: consolidated_ref
 
 	script:
 		num_threads = params.igblast.num_threads
@@ -26,7 +27,7 @@ process igblast_combo {
 		domain_system = params.igblast.domain_system
 		reference_set = "consolidated_ref.fasta"
 		
-		outfile = (outfmt=="MakeDb") ? fastaFile +".out" : fastaFile + ".tsv"
+		outfile = (outfmt=="MakeDb") ? fastaFile.getName() +".out" : fastaFile.getName() + ".tsv"
 		outfmt = (outfmt=="MakeDb") ? "'7 std qseq sseq btop'" : outfmt
 		
 		db_v_path = ref_v_path.getExtension() == '.db' ? ref_v_path : ref_v_path.getSimpleName() + '.db'
@@ -34,48 +35,44 @@ process igblast_combo {
 		db_j_path = ref_j_path.getExtension() == '.db' ? ref_j_path : ref_j_path.getSimpleName() + '.db'
 		db_c_path = ref_c_path.getExtension() == '.db' ? ref_c_path : ref_c_path.getSimpleName() + '.db'
 
-		ref_v_path = ref_v_path.toRealPath()
-		ref_d_path = ref_d_path.toRealPath()
-		ref_j_path = ref_j_path.toRealPath()
-		ref_c_path = ref_c_path.toRealPath()
-		
+
 		
 		"""
-		if [[ -f "${ref_d_path}" ]]; then
-			cat ${ref_v_path} ${ref_d_path} ${ref_j_path} ${ref_c_path} > ${reference_set};
+		if [[ -f "${ref_d_path}" && -s "${ref_d_path}" ]]; then
+			cat "${ref_v_path}" "${ref_d_path}" "${ref_j_path}" "${ref_c_path}" > "${reference_set}"
 		else
-			cat ${ref_v_path} ${ref_j_path} ${ref_c_path} > ${reference_set};
+			echo "D reference missing or empty: ${ref_d_path}; excluding it." >&2
+			cat "${ref_v_path}" "${ref_j_path}" "${ref_c_path}" > "${reference_set}"
 		fi
 
 		paths=("${ref_v_path}" "${ref_d_path}" "${ref_j_path}" "${ref_c_path}")
 		echo \$paths
+		outnames=("v.db" "d.db" "j.db" "c.db")
 		db_list=()
 
 		# Loop through each item in the paths array
-		for item in "\${paths[@]}"; do		
+		for i in "\${!paths[@]}"; do
+			item="\${paths[i]}"
+			outname="\${outnames[i]}"
 			# Get the file extension in lowercase
 			extension="\${item##*.}"
 			extension="\${extension,,}"
 
 			if [[ "\$extension" == "fasta" ]]; then
 				# create a dummy file if it does not exist
-				if [[ ! -f "\$item" || ! -s "\$item" ]]; then
+				if [[ ! -e "\$item" || ! -s "\$item" ]]; then
 					item="\${item##*/}"
-					rm "\$item"			# remove symbolic link to nonexistent item
+					rm -f "\$item"
 					echo -e ">XXX\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n" > "\$item"
 				fi
+				python3 "${python_dir}/degap.py" \$item germline.fasta
+				touch \${outname}
+				makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out \${outname}
 
-				# Get the base name and append .db
-				simple="\${item##*/}"
-				base_name="\${simple%.*}"
-				ddb="\${base_name}.db"
-				python3 "${baseDir}/../python/degap.py" \$item germline.fasta
-				touch \${ddb}
-				makeblastdb -parse_seqids -dbtype nucl -in germline.fasta -out \${ddb}
-
-				db_list+=("\$ddb")
+				db_list+=("\$outname")
 			else
 				db_list+=("\$item")
+				cp -r "\$item" "\${outname}"
 			fi
 		done	
 

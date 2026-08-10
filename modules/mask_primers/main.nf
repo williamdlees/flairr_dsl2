@@ -2,8 +2,8 @@
 
 process MaskPrimers {
 
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_primers-fail.fastq$/) "failed_reads/$filename"}
-	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /${name}_MP.*$/) "reports/$filename"}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith("_primers-fail.fastq")) ? "${name}/${params.output_locus ?: params.locus}/failed_reads/$filename" : null}
+	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_MP") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/$filename" : null}
 
 	input:
 		tuple val(name), path(reads)
@@ -14,12 +14,11 @@ process MaskPrimers {
 
 	output:
 		tuple val(name), path("*_primers-pass.fastq"), emit: output
-		tuple val(name), path("*_primers-fail.fastq") optional true
+		tuple val(name), path("*_primers-fail.fastq"), optional: true
 		tuple val(name), path("${name}_MP*"), emit: log_file						// to parse_log
 		tuple val(name), path("out*")
 
 	script:
-		name = params.sample_name
 		mate = mask_params.mate
 		method = mask_params.method
 		barcode_field = mask_params.barcode_field
@@ -52,36 +51,35 @@ process MaskPrimers {
 		skiprc = (skiprc.collect().size==2) ? skiprc : [skiprc[0],skiprc[0]]
 		failed = (failed=="true") ? "--failed" : ""
 
-		def args_values = [];
-		[method,barcode_field,primer_field,barcode,revpr,mode,maxerror,umi_length,start,extract_length,maxlen,skiprc].transpose().each { m,bf,pf,bc,rp,md,mr,ul,s,el,ml,sk -> {
-			
-			if(m=="align"){
-				s = ""
-			}else{
-				if(bc=="false"){
-					s = "--start ${s}"
-				}else{
-					s = s + ul
-					s = "--start ${s}"
+		def args_values = []
+
+		[method,barcode_field,primer_field,barcode,revpr,mode,maxerror,umi_length,start,extract_length,maxlen,skiprc]
+			.transpose()
+			.each { m, bf, pf, bc, rp, md, mr, ul, s, el, ml, sk ->
+
+				if (m == "align") {
+					s = ""
+				} else {
+					if (bc == "false") {
+						s = "--start ${s}"
+					} else {
+						s = s + ul
+						s = "--start ${s}"
+					}
 				}
+
+				el = (m == "extract") ? "--len ${el}" : ""
+				mr = (m == "extract") ? "" : "--maxerror ${mr}"
+				ml = (m == "align") ? "--maxlen ${ml}" : ""
+				sk = (m == "align" && sk == "true") ? "--skiprc" : ""
+
+				bf = (bf == "") ? "" : "--bf ${bf}"
+				pf = (pf == "") ? "" : "--pf ${pf}"
+				bc = (bc == "false") ? "" : "--barcode"
+				rp = (rp == "false") ? "" : "--revpr"
+
+				args_values.add("${m} --mode ${md} ${bf} ${pf} ${bc} ${rp} ${mr} ${s} ${el} ${ml} ${sk}")
 			}
-			
-			el = (m=="extract") ? "--len ${el}" : ""
-			mr = (m=="extract") ? "" : "--maxerror ${mr}" 
-			ml = (m=="align") ? "--maxlen ${ml}" : "" 
-			sk = (m=="align" && sk=="true") ? "--skiprc" : "" 
-			
-			PRIMER_FIELD = "${pf}"
-			
-			// all
-			bf = (bf=="") ? "" : "--bf ${bf}"
-			pf = (pf=="") ? "" : "--pf ${pf}"
-			bc = (bc=="false") ? "" : "--barcode"
-			rp = (rp=="false") ? "" : "--revpr"
-			args_values.add("${m} --mode ${md} ${bf} ${pf} ${bc} ${rp} ${mr} ${s} ${el} ${ml} ${sk}")
-			
-			
-		}}
 
 		readArray = reads.toString().split(' ')
 		if(mate=="pair"){
