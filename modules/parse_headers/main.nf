@@ -21,18 +21,30 @@ process parse_headers {
 			out="_reheader.fastq"
 			act = (act=="none") ? "" : "--act ${act}"
 			"""
-			ParseHeaders.py  ${method} --outname ${outname} -s ${reads} ${args} ${act}
+			if [ ! -s ${reads} ]; then
+				touch ${outname}${out}
+			else
+				ParseHeaders.py  ${method} --outname ${outname} -s ${reads} ${args} ${act}
+			fi
 			"""
 		}else{
 			if(method=="table"){
 					out=".tab"
 					"""
-					ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
+					if [ ! -s ${reads} ]; then
+						touch ${outname}${out}
+					else
+						ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
+					fi
 					"""	
 			}else{
 				out="_reheader.fastq"
 				"""
-				ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
+				if [ ! -s ${reads} ]; then
+					touch ${outname}${out}
+				else
+					ParseHeaders.py ${method} --outname ${outname} -s ${reads} ${args}
+				fi
 				"""		
 			}
 		}
