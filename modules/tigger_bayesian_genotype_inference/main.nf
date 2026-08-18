@@ -7,9 +7,8 @@ process TIgGER_bayesian_genotype_Inference {
 		val(seq)				// name of the column in data with the aligned, IMGT-numbered, V(D)J nucleotide sequence
 		val(find_unmutated)		// if true, use germline_db to find which samples are unmutated. No effect if allele_calls only represent unmutated samples.
 		val(single_assignments) // if true, the genotype is inferred only for sequences with a single assignment in the call column.
-		tuple val(name), path(airrFile)
+		tuple val(name), path(airrFile), val(ready)
 		path(germline_file)
-		tuple val(name_ready), val(ready)
 		
 	output:
 		tuple val(name), path("*_genotype_report.tsv"), emit: genotype_report, optional: true

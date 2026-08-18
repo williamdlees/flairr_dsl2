@@ -75,7 +75,7 @@ workflow {
 	MaskPrimers_VPRIMERS(MaskPrimers_CPRIMERS.out.output, params.MaskPrimers_VPRIMERS, params.V_R1_primers, params.V_R2_primers, parse_log_MPC.out.ready)
 	parse_log_MPV(MaskPrimers_VPRIMERS.out.log_file, "MPV", "ID PRIMER BARCODE ERROR")
 
-	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output, params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers, parse_log_FSL.out.ready)
+	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output, params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers, parse_log_MPV.out.ready)
 	parse_log_MPE(MaskPrimers_EPRIMERS.out.log_file, "MPE", "ID PRIMER BARCODE ERROR")
 
 	// randomly subsample large umi groups so that no umi has >99 sequences associated with it

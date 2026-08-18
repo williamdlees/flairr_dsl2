@@ -7,12 +7,9 @@ process haplotype_inference_report {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*_binomDel.tsv$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_binomDel.tsv"}
 	
 	input:
-		tuple val(name), path(airrFile)
-		tuple val(name_v), path(v_germline)
-		tuple val(name_d), path(d_germline)
+		tuple val(name), path(airrFile), path(v_germline), path(d_germline), val(ready)
 		val(locus)
 		val(haplotype_genes)
-		tuple val(name_ready), val(ready)
 
 	output:
 		tuple val(name), path("*_haplotype.tsv"), optional: true

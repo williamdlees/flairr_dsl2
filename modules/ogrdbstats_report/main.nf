@@ -4,13 +4,10 @@ process ogrdbstats_report {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> if (filename =~ /.*csv$/) "${name}/${params.output_locus ?: params.locus}/genotype_report/${name}_ogrdb_stats.csv"}
 
 	input:
-		tuple val(name), path(airrFile)
-		tuple val(name_germline), path(germline_file)
-		tuple val(name_v), path(v_germline_file)
+		tuple val(name), path(airrFile), path(germline_file), path(v_germline_file), val(ready)
 		val(chain)
 		val(haplotype_genes)
 		val(species)
-		tuple val(name_ready), val(ready)
 
 	output:
 		tuple val(name), path("*pdf")

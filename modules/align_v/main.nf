@@ -7,8 +7,7 @@ process align_v {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> filename.endsWith("_v_aligned.log") ? "${name}/${params.output_locus ?: params.locus}/alignment/${name}_v_align_${alignment_suffix}.log" : null}
 	
 	input:
-		tuple val(name), path(passFile)
-		tuple val(name_germline), path(c_germline_file)
+		tuple val(name), path(passFile), path(c_germline_file)
 		val alignment_suffix
 		path(python_dir)
 

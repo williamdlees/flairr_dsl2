@@ -3,10 +3,7 @@
 process igblast_combo {
 
 	input:
-		tuple val(name), path(fastaFile)
-		tuple val(name_v), path(ref_v_path)
-		tuple val(name_d), path(ref_d_path)
-		tuple val(name_j), path(ref_j_path)
+		tuple val(name), path(fastaFile), path(ref_v_path), path(ref_d_path), path(ref_j_path)
 		path(ref_c_path)
 		path auxiliary_data
 		path custom_internal_data

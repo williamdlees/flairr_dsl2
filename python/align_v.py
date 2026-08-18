@@ -98,6 +98,7 @@ def main(infile, outfile, germline_ref, logfile, condense_errors, echo_errors, m
         v_call = rec['v_call'].split(',')[0]
         if v_call not in germlines:
             reporter.report(f"{rec['sequence_id']}: {v_call} not found in germline reference: please provide in the reference all sequences that were used by IgBlast")
+            print(f"{rec['sequence_id']}: {v_call} not found in germline reference: please provide in the reference all sequences that were used by IgBlast")
             exit(1)
 
         if not rec['v_sequence_start'] or not rec['v_sequence_end']:

@@ -77,9 +77,12 @@ workflow {
 	create_germlines_second(define_clones.out.output.map { name, airrFile -> airrFile }, Undocumented_Alleles.out.novel_germline, params.d_ref, params.j_ref, "true", 'v-personalised-2')
 	single_clone_representative(create_germlines_second.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) })
 
-	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.j_ref, infer_ready_ch)
-	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.d_ref, tigger_j_call.out.ready)	
-	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', single_clone_representative.out.output, params.v_ref, tigger_d_call.out.ready)	
+	def tigger_j_input = single_clone_representative.out.output.join(infer_ready_ch)
+	tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', tigger_j_input, params.j_ref)
+	def tigger_d_input = single_clone_representative.out.output.join(tigger_j_call.out.ready)
+	tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', tigger_d_input, params.d_ref)	
+	def tigger_v_input = single_clone_representative.out.output.join(tigger_d_call.out.ready)
+	tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', tigger_v_input, params.v_ref)	
 	
 	make_blast_db_third_v(tigger_v_call.out.personal_reference.map { name, fasta -> fasta }, tigger_v_call.out.ready.map { name, ready -> ready })
 	make_blast_db_third_d(tigger_d_call.out.personal_reference.map { name, fasta -> fasta }, make_blast_db_third_v.out.ready)
@@ -90,7 +93,17 @@ workflow {
 
 	collapse_annotations_third(makedb_third.out.annotations, "final")	
 	
-	haplotype_inference_report(collapse_annotations_third.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }, tigger_v_call.out.personal_reference, tigger_d_call.out.personal_reference, params.locus, params.haplotype_genes, infer_ready_ch)
-	ogrdbstats_report(collapse_annotations_third.out.output.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }, makedb_first.out.consolidated_ref.map { ref -> tuple(params.sample_name.toString(), ref) }, tigger_v_call.out.personal_reference, params.locus, "", params.species, haplotype_inference_report.out.ready)
+	def haplotype_input = collapse_annotations_third.out.output
+		.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }
+		.join(tigger_v_call.out.personal_reference)
+		.join(tigger_d_call.out.personal_reference)
+		.join(infer_ready_ch)
+	haplotype_inference_report(haplotype_input, params.locus, params.haplotype_genes)
+	def ogrdb_input = collapse_annotations_third.out.output
+		.map { airrFile -> tuple(params.sample_name.toString(), airrFile) }
+		.join(makedb_first.out.consolidated_ref.map { ref -> tuple(params.sample_name.toString(), ref) })
+		.join(tigger_v_call.out.personal_reference)
+		.join(haplotype_inference_report.out.ready)
+	ogrdbstats_report(ogrdb_input, params.locus, "", params.species)
 	vdjbase_genotype_report(collapse_annotations_second.out.output, collapse_annotations_third.out.output, tigger_v_call.out.genotype_report.map { name, report -> report }, tigger_d_call.out.genotype_report.map { name, report -> report }, tigger_j_call.out.genotype_report.map { name, report -> report }, haplotype_inference_report.out.deletions.map { name, report -> report }, "true")
 }

@@ -77,26 +77,36 @@ workflow {
 	def ref_j_ch = seqs.map { name, reads_path -> tuple(name, file(params.j_ref, checkIfExists: true)) }
 	def first_ready_ch = seqs.map { name, reads_path -> tuple(name, true) }
 
-	igblast_combo1(seqs, ref_v_ch, ref_d_ch, ref_j_ch, params.c_ref, params.aux, params.ndm, params.python_dir)
-	align_v1(igblast_combo1.out.output, ref_v_ch, 'non-personalized', params.python_dir)
+	def igblast1_input = seqs.join(ref_v_ch).join(ref_d_ch).join(ref_j_ch)
+	igblast_combo1(igblast1_input, params.c_ref, params.aux, params.ndm, params.python_dir)
+	def align1_input = igblast_combo1.out.output.join(ref_v_ch)
+	align_v1(align1_input, 'non-personalized', params.python_dir)
 
 	def d_file_pers = ref_d_ch
 
 	if(params.locus == 'IGH' || params.locus == 'TRB' || params.locus == 'TRD')
 	{
-		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
-		tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.d_ref, tigger_j_call.out.ready)	
-		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_d_call.out.ready)
+		def tigger_j_input = align_v1.out.annotations.join(first_ready_ch)
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', tigger_j_input, params.j_ref)
+		def tigger_d_input = align_v1.out.annotations.join(tigger_j_call.out.ready)
+		tigger_d_call('d_call', 'sequence_alignment', 'false', 'false', tigger_d_input, params.d_ref)	
+		def tigger_v_input = align_v1.out.annotations.join(tigger_d_call.out.ready)
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', tigger_v_input, params.v_ref)
 		d_file_pers = tigger_d_call.out.personal_reference	
 	} else {
-		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.j_ref, first_ready_ch)
-		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', align_v1.out.annotations, params.v_ref, tigger_j_call.out.ready)
+		def tigger_j_input = align_v1.out.annotations.join(first_ready_ch)
+		tigger_j_call('j_call', 'sequence_alignment', 'false', 'false', tigger_j_input, params.j_ref)
+		def tigger_v_input = align_v1.out.annotations.join(tigger_j_call.out.ready)
+		tigger_v_call('v_call', 'sequence_alignment', 'false', 'false', tigger_v_input, params.v_ref)
 	}
 
-	igblast_combo2(seqs, tigger_v_call.out.personal_reference, d_file_pers, tigger_j_call.out.personal_reference, params.c_ref, params.aux, params.ndm, params.python_dir)
-	align_v2(igblast_combo2.out.output, tigger_v_call.out.personal_reference, 'personalized', params.python_dir)
+	def igblast2_input = seqs.join(tigger_v_call.out.personal_reference).join(d_file_pers).join(tigger_j_call.out.personal_reference)
+	igblast_combo2(igblast2_input, params.c_ref, params.aux, params.ndm, params.python_dir)
+	def align2_input = igblast_combo2.out.output.join(tigger_v_call.out.personal_reference)
+	align_v2(align2_input, 'personalized', params.python_dir)
 	define_clones(align_v2.out.annotations, "$baseDir/../python/clonality_threshold.R", "$baseDir/../python/clone_stats.R")
 
 	def define_ready_ch = define_clones.out.output.map { name, clone_file -> tuple(name, true) }
-	ogrdbstats_report(define_clones.out.output, igblast_combo1.out.consolidated_ref, tigger_v_call.out.personal_reference, params.locus, "", params.species, define_ready_ch)	
+	def ogrdb_input = define_clones.out.output.join(igblast_combo1.out.consolidated_ref).join(tigger_v_call.out.personal_reference).join(define_ready_ch)
+	ogrdbstats_report(ogrdb_input, params.locus, "", params.species)	
 }

@@ -6,10 +6,9 @@ process haplotype_const_report {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> "${name}/${params.output_locus ?: params.locus}/genotype_report/${filename}"}
 	
 	input:
-		tuple val(name), path(passAlignmentFile)
+		tuple val(name), path(passAlignmentFile), val(ready)
 		path(vdj_reference)
 		path(python_dir)
-		tuple val(name_ready), val(ready)
 		path(threshold_file)
 
 	output:
