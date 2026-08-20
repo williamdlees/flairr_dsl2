@@ -12,15 +12,15 @@ process airr_seq_for_clone {
 		path("*.fasta"), emit: germlineClone
 
 	script: 
-		airrSeq = airrSeq.ifEmpty("")
-		v_germline_file = v_germline_file.ifEmpty("")
-		airrSeqNovel = airrSeqNovel.ifEmpty("")
-		v_novel_germline_file = v_novel_germline_file.ifEmpty("")
+		airr_seq_arg = airrSeq.ifEmpty("")
+		v_germline_arg = v_germline_file.ifEmpty("")
+		airr_seq_novel_arg = airrSeqNovel.ifEmpty("")
+		v_novel_germline_arg = v_novel_germline_file.ifEmpty("")
 
-		airrSeqClone = v_novel_germline_file.endsWith("fasta") ? airrSeqNovel : airrSeq
-		airr_name = v_novel_germline_file.endsWith("fasta") ? airrSeqNovel.name : airrSeq.name
-		germlineClone = v_novel_germline_file.endsWith("fasta") ? v_novel_germline_file : v_germline_file
-		germ_name = v_novel_germline_file.endsWith("fasta") ? v_novel_germline_file.name : v_germline_file.name
+		airrSeqClone = v_novel_germline_arg.endsWith("fasta") ? airr_seq_novel_arg : airr_seq_arg
+		airr_name = v_novel_germline_arg.endsWith("fasta") ? airr_seq_novel_arg.name : airr_seq_arg.name
+		germlineClone = v_novel_germline_arg.endsWith("fasta") ? v_novel_germline_arg : v_germline_arg
+		germ_name = v_novel_germline_arg.endsWith("fasta") ? v_novel_germline_arg.name : v_germline_arg.name
 
 
 		"""

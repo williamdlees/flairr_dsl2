@@ -19,7 +19,7 @@ process PIgLET_IGHV_ASC_genotype_Inference {
 
 		// ASC specific params
 
-		germline_file = germline_file.name.startsWith('NO_FILE') ? "" : "${germline_file}"
+		germline_file_arg = germline_file.name.startsWith('NO_FILE') ? "" : "${germline_file}"
 
 		"""
 		#!/usr/bin/env Rscript
@@ -43,7 +43,7 @@ process PIgLET_IGHV_ASC_genotype_Inference {
 		# read the data
 		data <- fread("${airrFile}", data.table=FALSE)
 		# read the germline db
-		germline_db <- if("${germline_file}"!="") readIgFasta("${germline_file}") else NA
+		germline_db <- if("${germline_file_arg}"!="") readIgFasta("${germline_file_arg}") else NA
 		# check params
 		find_unmutated_ <- "${find_unmutated}"=="true"
 		single_assignment <- "${single_assignment}"=="true"

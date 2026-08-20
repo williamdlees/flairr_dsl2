@@ -28,7 +28,7 @@ process create_germlines {
 		clone_field = params.create_germlines.clone_field
 		
 		d_field = d_germline_file.exists() ? params.create_germlines.d_field : ""
-		d_germline_file = d_germline_file.exists() ? d_germline_file : ""
+		d_germline_arg = d_germline_file.exists() ? "${d_germline_file}" : ""
 
 
 		failed = (failed=="true") ? "--failed" : ""
@@ -44,7 +44,7 @@ process create_germlines {
 		"""
 		CreateGermlines.py \
 			-d ${airrFile} \
-			-r ${v_germline_file} ${d_germline_file} ${j_germline_file} \
+			-r ${v_germline_file} ${d_germline_arg} ${j_germline_file} \
 			${failed} \
 			${format} \
 			${g} \

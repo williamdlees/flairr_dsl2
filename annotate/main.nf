@@ -54,7 +54,7 @@ workflow {
 			.fromPath(params.input, checkIfExists: true)
 			.splitCsv(header: false, sep: '\t')
 			.filter { row -> row && row.size() > 0 && row[0].toString().trim() && !row[0].toString().trim().startsWith('#') }
-			.map { row ->
+			.flatMap { row ->
 				if (row.size() < 2) {
 					error "Invalid --input row: ${row}. Expected sample_name<TAB>read_path"
 				}
@@ -65,11 +65,7 @@ workflow {
 					.resolve("reads")
 					.resolve("${sample}_atleast-2.fasta")
 
-				if (!sample_reads.exists()) {
-					error "Input file does not exist: ${sample_reads.toUriString()}"
-				}	
-
-				tuple(sample, sample_reads)
+				(sample_reads.exists() && sample_reads.size() > 0) ? [tuple(sample, sample_reads)] : []
 			}
 
 	def ref_v_ch = seqs.map { name, reads_path -> tuple(name, file(params.v_ref, checkIfExists: true)) }

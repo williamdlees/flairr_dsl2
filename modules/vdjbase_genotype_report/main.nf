@@ -18,12 +18,9 @@ process vdjbase_genotype_report {
 	script:
 
 		name = params.sample_name
-		d_genotype = ""
-		if ("$params.locus" == "IGH" || "$params.locus" == "TRB") {
-			d_genotype = "${d_genotype}"
-		}
+		d_genotype_arg = (params.locus == "IGH" || params.locus == "TRB") ? "${d_genotype}" : ""
 		
-		deletion_run = deletion_run.name.startsWith('NO_FILE') ? "" : "${deletion_run}"
+		deletion_run_arg = deletion_run.name.startsWith('NO_FILE') ? "" : "${deletion_run}"
 		outname = initial_run.name.substring(0, initial_run.name.indexOf("_db-pass"))
 
 		"""
@@ -91,7 +88,7 @@ process vdjbase_genotype_report {
 		  )
 		  
 		# for the d_calls; first check if the genotype file for d exists
-		if("${d_genotype}"!=""){
+		if("${d_genotype_arg}"!=""){
 			# for the d_calls
 			print("d_call_fractions")
 			tab_freq_d <- getFreq(data_genotyped, call = "d_call")
@@ -99,7 +96,7 @@ process vdjbase_genotype_report {
 			# keep just alleles that passed the genotype
 			tab_clone_d <- tab_clone_d[names(tab_freq_d)]
 			# read the genotype table
-			genoD <- fread("${d_genotype}", data.table = FALSE, colClasses = "character")
+			genoD <- fread("${d_genotype_arg}", data.table = FALSE, colClasses = "character")
 			# add information to the genotype table
 			print(tab_clone_d)
 			print(tab_freq_d)
@@ -120,9 +117,9 @@ process vdjbase_genotype_report {
 
 		## add deletion information.
 
-		if("${deletion_run}"!=""){
+		if("${deletion_run_arg}"!=""){
 			print("deletion_information")
-			binom_del <- fread("${deletion_run}", data.table = FALSE)
+			binom_del <- fread("${deletion_run_arg}", data.table = FALSE)
 			genos_names <- names(genos)
 			
 			deleted_genes <- binom_del[["gene"]][grep("^Deletion", binom_del[["deletion"]])]

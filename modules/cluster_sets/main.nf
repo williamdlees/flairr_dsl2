@@ -3,8 +3,7 @@
 process cluster_sets {
 
 	input:
-		tuple val(name),path(reads)
-		val ready
+		tuple val(name), path(reads), val(ready)
 
 	output:
 		tuple val(name),path("*_cluster-pass.fastq"), emit: output

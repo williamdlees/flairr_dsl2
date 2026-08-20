@@ -4,16 +4,15 @@ process parse_headers {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.endsWith("_reheader.fastq") || filename.endsWith(".tab")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null}
 	
 	input:
-		tuple val(name), path(reads)
+		tuple val(name), path(reads), val(ready)
 		val prefix
 		val method
 		val act
 		val args
-		val ready
 
 	output:
 		tuple val(name), path("{*.tab,*_reheader.fastq}"), emit: output
-		val(true), emit: ready
+		tuple val(name), val(true), emit: ready
 
 	script:
 		outname = name + "_" + prefix

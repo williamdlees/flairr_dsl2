@@ -6,11 +6,10 @@ process MaskPrimers {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_MP") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/$filename" : null}
 
 	input:
-		tuple val(name), path(reads)
+		tuple val(name), path(reads), val(ready)
 		val mask_params
 		path R1_primers
 		path R2_primers
-		val ready
 
 	output:
 		tuple val(name), path("*_primers-pass.fastq"), emit: output
@@ -92,26 +91,26 @@ process MaskPrimers {
 			R1 = readArray[0]
 			R2 = readArray[1]
 			
-			R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
-			R2_primers = (method[1]=="extract") ? "" : "-p ${R2_primers}"
+			r1_primer_arg = (method[0]=="extract") ? "" : "-p ${R1_primers}"
+			r2_primer_arg = (method[1]=="extract") ? "" : "-p ${R2_primers}"
 			
 			
 			"""
 			
-			MaskPrimers.py ${args_1} -s ${R1} ${R1_primers} --log ${name}_MP_R1.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
-			MaskPrimers.py ${args_2} -s ${R2} ${R2_primers} --log ${name}_MP_R2.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_1} -s ${R1} ${r1_primer_arg} --log ${name}_MP_R1.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_2} -s ${R2} ${r2_primer_arg} --log ${name}_MP_R2.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 			"""
 		}else{
 			args_1 = args_values[0]
-			
-			R1_primers = (method[0]=="extract") ? "" : "-p ${R1_primers}"
+
+			r1_primer_arg = (method[0]=="extract") ? "" : "-p ${R1_primers}"
 			
 			R1 = readArray[0]
 
 			"""
 			echo -e "Assuming inputs for R1\n"
 			
-			MaskPrimers.py ${args_1} -s ${reads} ${R1_primers} --log ${name}_MP.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
+			MaskPrimers.py ${args_1} -s ${reads} ${r1_primer_arg} --log ${name}_MP.log  --nproc ${nproc} ${failed} >> out_${R1}_MP.log
 			"""
 		}
 

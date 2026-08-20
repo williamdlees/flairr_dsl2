@@ -26,7 +26,7 @@ def scan_directories(input_dir):
             loci = []
             for locus_name in os.listdir(sample_path):
                 locus_path = os.path.join(sample_path, locus_name)
-                if os.path.isdir(locus_path):
+                if os.path.isdir(locus_path) and (locus_name.startswith('IG') or locus_name.startswith('TR')):
                     loci.append(locus_name)
             samples[sample_name] = loci
 

@@ -11,7 +11,7 @@ process parse_log {
 	 
 	output:
 		tuple val(name), path("*table.tab")
-		val(true), emit: ready
+		tuple val(name), val(true), emit: ready
 
 	script:
 		readArray = log_file.toString()

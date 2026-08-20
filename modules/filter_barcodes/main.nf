@@ -7,15 +7,14 @@ process filter_barcodes {
 	publishDir params.outdir, mode: 'copy', pattern: "*_bc-filter.log", saveAs: { "${name}/${params.output_locus ?: params.locus}/reports/${name}_bc-filter.txt" }
 	
 	input:
-		tuple val(name), path(inFile)
+		tuple val(name), path(inFile), val(ready)
 		path(python_dir)
-		val ready        
 
 	output:
 		tuple val(name), path("*_bc-filtered.fastq"), emit: output
 		path("*_bc-filter.log"), optional: true
 		path("*_bc-filter.pdf"), optional: true
-		val(true), emit: ready	        
+		tuple val(name), val(true), emit: ready	        
 
 	script:
         outFile = inFile.getBaseName() + "_bc-filtered.fastq"

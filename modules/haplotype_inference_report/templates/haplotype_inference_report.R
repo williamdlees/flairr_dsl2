@@ -10,8 +10,8 @@ library(alakazam)
 data <- fread("${airrFile}", data.table=FALSE)
 
 # read the germline
-v_germline_db <- if("${v_germline}"!="") readIgFasta("${v_germline}") else NA
-d_germline_db <- if("${d_germline}"!="") readIgFasta("${d_germline}") else NA
+v_germline_db <- if("${v_germline_arg}"!="") readIgFasta("${v_germline_arg}") else NA
+d_germline_db <- if("${d_germline_arg}"!="") readIgFasta("${d_germline_arg}") else NA
 
 
 binom_del <-

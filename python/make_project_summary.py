@@ -101,16 +101,22 @@ with open(os.path.join(args.output_file_path, 'project_alignments.csv'), newline
         samples[sample][locus]['cdr3s'].add(row['cdr3_aa'])
 
         if locus == 'IGH':
+            isotype = None
             if 'IGHG' in row['c_call']:
                 isotype = row['c_call'].split(',')[0][:5]
             elif len(row['c_call']) > 4:
                 isotype = row['c_call'].split(',')[0][:4]
-            isotype = isotype.replace('IGH', 'IG')
-            samples[sample][locus][isotype] += 1
+
+            if isotype:
+                isotype = isotype.replace('IGH', 'IG')
+                samples[sample][locus][isotype] += 1
 
 for sample in samples.keys():
     for locus in samples[sample].keys():
-        samples[sample][locus]['cdr3s'] = len(samples[sample][locus]['cdr3s'])
+        if 'cdr3s' in samples[sample][locus]:
+            samples[sample][locus]['cdr3s'] = len(samples[sample][locus]['cdr3s'])
+        else:
+            samples[sample][locus]['cdr3s'] = 0
 
 header = ['sample', 'locus', 'reads', 'sequences', 'clones', 'shannon', 'simpson', 'cdr3s', 'IGG1', 'IGG2', 'IGG3', 'IGG4', 'IGA', 'IGM', 'IGE', 'IGD']
 with open(os.path.join(args.output_file_path, 'flairr_project_summary.csv'), 'w', newline='', buffering=BUFFER_SIZE) as csvfile:

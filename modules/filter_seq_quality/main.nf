@@ -4,8 +4,7 @@ process filter_seq_quality
 {
 	publishDir params.outdir, mode: 'copy', saveAs: { filename -> (filename.startsWith("${name}_FS") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null }
     input:
-        tuple val(name), path(reads)
-		val(ready)
+        tuple val(name), path(reads), val(ready)
 
     output:
         tuple val(name), path("*-pass.fast?"), emit: output       // reads passed to next stage

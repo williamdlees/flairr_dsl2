@@ -63,48 +63,48 @@ workflow {
 
 	FastQC(read_pairs_ch)
 	
-	filter_seq_quality(read_pairs_ch, FastQC.out.ready)
+	filter_seq_quality(read_pairs_ch.join(FastQC.out.ready))
 	parse_log_FSQ(filter_seq_quality.out.log_file, "FSQ", "ID QUALITY")
 
-	filter_seq_length(filter_seq_quality.out.output, parse_log_FSQ.out.ready)
+	filter_seq_length(filter_seq_quality.out.output.join(parse_log_FSQ.out.ready))
 	parse_log_FSL(filter_seq_length.out.log_file, "FSL", "ID LENGTH")
 	
-	MaskPrimers_CPRIMERS(filter_seq_length.out.output, params.MaskPrimers_CPRIMERS, params.C_R1_primers, params.C_R2_primers, parse_log_FSL.out.ready)
+	MaskPrimers_CPRIMERS(filter_seq_length.out.output.join(parse_log_FSL.out.ready), params.MaskPrimers_CPRIMERS, params.C_R1_primers, params.C_R2_primers)
 	parse_log_MPC(MaskPrimers_CPRIMERS.out.log_file, "MPC", "ID PRIMER BARCODE ERROR")
 
-	MaskPrimers_VPRIMERS(MaskPrimers_CPRIMERS.out.output, params.MaskPrimers_VPRIMERS, params.V_R1_primers, params.V_R2_primers, parse_log_MPC.out.ready)
+	MaskPrimers_VPRIMERS(MaskPrimers_CPRIMERS.out.output.join(parse_log_MPC.out.ready), params.MaskPrimers_VPRIMERS, params.V_R1_primers, params.V_R2_primers)
 	parse_log_MPV(MaskPrimers_VPRIMERS.out.log_file, "MPV", "ID PRIMER BARCODE ERROR")
 
-	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output, params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers, parse_log_MPV.out.ready)
+	MaskPrimers_EPRIMERS(MaskPrimers_VPRIMERS.out.output.join(parse_log_MPV.out.ready), params.MaskPrimers_EXTRACT, params.E_R1_primers, params.E_R2_primers)
 	parse_log_MPE(MaskPrimers_EPRIMERS.out.log_file, "MPE", "ID PRIMER BARCODE ERROR")
 
 	// randomly subsample large umi groups so that no umi has >99 sequences associated with it
-	filter_barcodes(MaskPrimers_EPRIMERS.out.output, params.python_dir, parse_log_MPE.out.ready)
+	filter_barcodes(MaskPrimers_EPRIMERS.out.output.join(parse_log_MPE.out.ready), params.python_dir)
 	
 	// remove any reads that contain a primer sequence (we have already masked primers, so this should only happen if PCR amplification started at the wrong site)
-	check_for_seqs(filter_barcodes.out.output, params.V_R1_primers, true)
+	check_for_seqs(filter_barcodes.out.output.map { name, reads -> tuple(name, reads, true) }, params.V_R1_primers)
 	
 	// align reads for each umi, bearing in mind the possibility that a umi may be re-used if there is insufficient diversity
-	align_sets(filter_barcodes.out.output, check_for_seqs.out.ready)
+	align_sets(filter_barcodes.out.output.join(check_for_seqs.out.ready))
 	parse_log_AS(align_sets.out.log_file, "AS", "ID BARCODE SEQCOUNT ERROR")
 	
 	// cluster the sequences together by umi
-	cluster_sets(align_sets.out.output, parse_log_AS.out.ready)
-	parse_headers_copy(cluster_sets.out.output, "CS", "copy", "cat", "-f BARCODE -k CLUSTER", true)
+	cluster_sets(align_sets.out.output.join(parse_log_AS.out.ready))
+	parse_headers_copy(cluster_sets.out.output.map { name, reads -> tuple(name, reads, true) }, "CS", "copy", "cat", "-f BARCODE -k CLUSTER")
 	
 	// build a consensus sequence for each umi. Creates CONSCOUNT
 	build_consensus(parse_headers_copy.out.output)
 	parse_log_BC(build_consensus.out.log_file, "BC", "BARCODE SEQCOUNT CONSCOUNT PRCONS PRFREQ ERROR")
-	parse_headers_consensus(build_consensus.out.output, "BC_TOTAL", "table", "min", "-f ID PRCONS CONSCOUNT", parse_log_BC.out.ready)
+	parse_headers_consensus(build_consensus.out.output.join(parse_log_BC.out.ready), "BC_TOTAL", "table", "min", "-f ID PRCONS CONSCOUNT")
 	
 	// collapse duplicate consensus sequences. Creates DUPCOUNT and aggregates CONSCOUNT when sequences are collapsed
-	collapse_seq(build_consensus.out.output, parse_headers_consensus.out.ready)
-	parse_headers_collapse(collapse_seq.out.output, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
+	collapse_seq(build_consensus.out.output.join(parse_headers_consensus.out.ready))
+	parse_headers_collapse(collapse_seq.out.output.map { name, reads -> tuple(name, reads, true) }, "BC_UNIQUE", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
 	
 	// split sequences into those with at least 2 reads contributing to the consensus vs those with only 1
 	// the criterion is CONSCOUNT>=2 (bearing in mind that CONSCOUNT has already been aggregated when collapsing)
-	split_seq(collapse_seq.out.output, parse_headers_collapse.out.ready)
-	parse_headers_split(split_seq.out.output, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT", true)
+	split_seq(collapse_seq.out.output.join(parse_headers_collapse.out.ready))
+	parse_headers_split(split_seq.out.output.map { name, reads -> tuple(name, reads, true) }, "BC_ATLEAST2", "table", "min", "-f ID PRCONS CONSCOUNT DUPCOUNT")
 
 	presto_report(file("$baseDir/../presto_r"), file(params.presto_report_config_file), parse_headers_split.out.output)
 }

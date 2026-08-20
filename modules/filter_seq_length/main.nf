@@ -5,8 +5,7 @@ process filter_seq_length {
 	publishDir params.outdir, mode: 'copy', saveAs: {filename -> (filename.startsWith("${name}_FS") && filename.endsWith(".log")) ? "${name}/${params.output_locus ?: params.locus}/reports/${filename}" : null}
 
 	input:
-		tuple val(name), path(reads)
-		val ready
+		tuple val(name), path(reads), val(ready)
 
 	output:
 		tuple val(name), path("*-pass.fast?"), emit: output  					// for FastQC, MaskPrimers_CPRIMERS

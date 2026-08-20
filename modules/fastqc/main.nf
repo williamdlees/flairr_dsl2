@@ -11,7 +11,7 @@ process FastQC {
 
 	output:
 		path '*.{html,zip}'
-		val(true), emit: ready
+		tuple val(name), val(true), emit: ready
 
 
 	script:

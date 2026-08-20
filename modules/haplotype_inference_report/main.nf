@@ -17,8 +17,8 @@ process haplotype_inference_report {
 		tuple val(name), val(true), emit: ready		
 
 	script:
-		v_germline = v_germline.name.startsWith('NO_FILE') ? "" : "${v_germline}"
-		d_germline = d_germline.name.startsWith('NO_FILE') ? "" : "${d_germline}"
+		v_germline_arg = v_germline.name.startsWith('NO_FILE') ? "" : "${v_germline}"
+		d_germline_arg = d_germline.name.startsWith('NO_FILE') ? "" : "${d_germline}"
 		outname = airrFile.getBaseName() + "_haplotype.tsv"
 			
 		template "haplotype_inference_report.R"
