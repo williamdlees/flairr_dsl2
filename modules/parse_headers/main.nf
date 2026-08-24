@@ -18,12 +18,12 @@ process parse_headers {
 		outname = name + "_" + prefix
 		if(method=="collapse" || method=="copy" || method=="rename" || method=="merge"){
 			out="_reheader.fastq"
-			act = (act=="none") ? "" : "--act ${act}"
+			act_cmd = (act=="none") ? "" : "--act ${act}"
 			"""
 			if [ ! -s ${reads} ]; then
 				touch ${outname}${out}
 			else
-				ParseHeaders.py  ${method} --outname ${outname} -s ${reads} ${args} ${act}
+				ParseHeaders.py  ${method} --outname ${outname} -s ${reads} ${args} ${act_cmd}
 			fi
 			"""
 		}else{
