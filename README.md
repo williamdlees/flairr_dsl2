@@ -1,5 +1,7 @@
 # FLAIRR DSL2 Pipeline
 
+For demultiplexing PacBio FLAIRR-seq data, please refer to [FLAIRR-seq Demultiplexing](./demultiplexing/DEMULTIPLEXING.md).
+
 A Nextflow-based pipeline for preprocessing and annotating immunoglobulin and T-cell FLAIRR-seq receptor repertoires, designed for high-performance computing environments using Slurm workload management.
 
 ## Overview
